@@ -19,6 +19,34 @@ class _RegisterViewState extends State<RegisterView> {
   bool? check1 = false;
   String? gender;
 
+  void _showAlertDialog(BuildContext context) {
+    AlertDialog alertDialog = AlertDialog(
+      title: Text('Perhatian!'),
+      content: Text('Apakah Data Sudah Benar?'),
+      actions: <Widget>[
+        TextButton(
+          child: Text('OK'),
+          onPressed: () {
+            Navigator.of(context).push(LoginView.route());
+          },
+        ),
+        TextButton(
+          child: Text('Cancel'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alertDialog;
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -123,35 +151,6 @@ class _RegisterViewState extends State<RegisterView> {
               ),
               //*sampai sini
 
-              // dialog alert
-              void _showAlertDialog(BuildContext context) {
-                AlertDialog alertDialog = AlertDialog(
-                  title: Text('Perhatian!'),
-                  content: Text('Apakah Data Sudah Benar?'),
-                  actions: <Widget>[
-                    TextButton(
-                      child: Text('OK'),
-                      onPressed: () {
-                        Navigator.of(context).push(LoginView.route());
-                      },
-                    ),
-                    TextButton(
-                      child: Text('Cancel'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                );
-
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return alertDialog;
-                  },
-                );
-              }
-              
               ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
