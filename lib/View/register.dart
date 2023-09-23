@@ -72,25 +72,18 @@ class _RegisterViewState extends State<RegisterView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Form(
           key: _formKey,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElevatedButton(
-                onPressed: () => _selectDate(context),
-                child: Text(selectedDate != null
-                    ? 'Tanggal Lahir: ${selectedDate!.toLocal()}'.split(' ')[0]
-                    : 'Pilih Tanggal Lahir'),
-              ),
               inputForm((p0) {
                 if (p0 == null || p0.isEmpty) {
                   return 'Username Tidak Boleh Kosong';
                 }
                 if (p0.toLowerCase() == 'anjing') {
-                  return 'Tidak Boleh Menggunakan Kata Kasar';
+                  return 'Tidak Boleh Menggunakan kata Kasar';
                 }
                 return null;
               },
@@ -98,7 +91,6 @@ class _RegisterViewState extends State<RegisterView> {
                   hintTxt: "Username",
                   helperTxt: "Ucup Surucup",
                   iconData: Icons.person),
-
               // idel-------------
               Padding(
                 padding: const EdgeInsets.symmetric(
