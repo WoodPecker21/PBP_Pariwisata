@@ -94,6 +94,52 @@ class _RegisterViewState extends State<RegisterView> {
                   hintTxt: "Username",
                   helperTxt: "Ucup Surucup",
                   iconData: Icons.person),
+
+              // idel-------------
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 17), // Adjust the horizontal margin
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: RadioListTile(
+                        title: const Text("Laki-Laki"),
+                        value: "Laki-Laki",
+                        groupValue: gender,
+                        onChanged: (value) {
+                          setState(() {
+                            gender = value.toString();
+                          });
+                        },
+                        controlAffinity: ListTileControlAffinity
+                            .leading, // Move radio button to the left
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 3), // Adjust the spacing
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 8, // Add spacing between radio buttons
+                    ),
+                    Expanded(
+                      child: RadioListTile(
+                        title: const Text("Perempuan"),
+                        value: "Perempuan",
+                        groupValue: gender,
+                        onChanged: (value) {
+                          setState(() {
+                            gender = value.toString();
+                          });
+                        },
+                        controlAffinity: ListTileControlAffinity
+                            .leading, // Move radio button to the left
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 3), // Adjust the spacing
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // -----------------------
               inputForm(((p0) {
                 if (p0 == null || p0.isEmpty) {
                   return 'Email Tidak Boleh Kosong';
@@ -137,43 +183,23 @@ class _RegisterViewState extends State<RegisterView> {
                   helperTxt: "082123456789",
                   iconData: Icons.phone_android),
 
-              //* --------------------------idelia checkbox-------------------------
-              CheckboxListTile(
-                value: check1,
-                controlAffinity: ListTileControlAffinity.leading,
-                onChanged: (bool? value) {
-                  setState(() {
-                    check1 = value;
-                  });
-                },
-                title: Text("Turis Domestik"),
-              ),
+              //* --------------------------idel-------------------------
 
-              //* gender
-              Column(
-                children: [
-                  RadioListTile(
-                    title: Text("Laki-Laki"),
-                    value: "Laki-Laki",
-                    groupValue: gender,
-                    onChanged: (value) {
-                      setState(() {
-                        gender = value.toString();
-                      });
-                    },
-                  ),
-                  RadioListTile(
-                    title: Text("Perempuan"),
-                    value: "Perempuan",
-                    groupValue: gender,
-                    onChanged: (value) {
-                      setState(() {
-                        gender = value.toString();
-                      });
-                    },
-                  )
-                ],
+              Padding(
+                padding: const EdgeInsets.only(left: 8, top: 10),
+                child: CheckboxListTile(
+                  value: check1,
+                  controlAffinity: ListTileControlAffinity.leading,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      check1 = value;
+                    });
+                  },
+                  title: const Text("Saya Turis Domestik"),
+                ),
               ),
+              //------------ until here----------------
+
               inputForm(
                 (p0) {
                   if (p0 == null || p0.isEmpty) {
