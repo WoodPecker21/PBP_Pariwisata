@@ -6,6 +6,9 @@ import 'package:ugd1/component/form_component.dart';
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
 
+  static route() =>
+      MaterialPageRoute(builder: (context) => const RegisterView());
+
   @override
   State<RegisterView> createState() => _RegisterViewState();
 }
@@ -69,6 +72,7 @@ class _RegisterViewState extends State<RegisterView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Form(
           key: _formKey,
