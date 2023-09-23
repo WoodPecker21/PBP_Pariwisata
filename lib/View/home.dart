@@ -1,87 +1,100 @@
 import 'package:flutter/material.dart';
 
-class GridItem {
-  final String
-      imageAsset; // You can change this to a URL if loading from the internet.
-  GridItem(this.imageAsset);
+void main() {
+  runApp(MyApp());
 }
 
-class HomeView extends StatefulWidget {
-  const HomeView({super.key});
-
-  @override
-  State<HomeView> createState() => _HomeViewState();
-}
-
-class _HomeViewState extends State<HomeView> {
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  static const List<Widget> _widgetOptions = <Widget>[
-    // Grid view of images
-    GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, // Adjust this as per your needs
-      ),
-      itemBuilder: (context, index) {
-        return GridItemWidget(
-            index); // Create a separate widget for each grid item
-      },
-    ),
-  ];
-
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home,
-            ),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.person,
-            ),
-            label: 'Profile',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-      ),
-      body: _widgetOptions.elementAt(_selectedIndex),
+    return MaterialApp(
+      home: HomeView(),
     );
   }
 }
 
-class GridItemWidget extends StatelessWidget {
-  final int index;
+class HomeView extends StatefulWidget {
+  const HomeView({Key? key}) : super(key: key);
 
-  GridItemWidget(this.index);
+  @override
+  _HomeViewState createState() => _HomeViewState();
+}
 
-  // Define your list of image assets or URLs here
-  final List<String> imageList = [
-    'image/1.jpg',
-    'image/2.jpg',
-    'image/3.jpg',
-    'image/4.jpg',
-    'image/5.jpg',
-    'image/6.jpg',
-  ];
+class _HomeViewState extends State<HomeView> {
+  int _selectedGridIndex = -1;
+  bool _isGridEnlarged = false;
+
+  void _onGridTapped(int index) {
+    setState(() {
+      if (_selectedGridIndex == index) {
+        _isGridEnlarged = !_isGridEnlarged;
+      } else {
+        _selectedGridIndex = index;
+        _isGridEnlarged = true;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return GridTile(
-      child:
-          Image.asset(imageList[index]), // You can use Image.network() for URLs
-      // Add any other styling or functionality you want for each grid item here
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('My Apps'),
+      ),
+      body: Container(
+        color: Colors.blue,
+        child: Wrap(
+          spacing: 8.0,
+          runSpacing: 8.0,
+          children: List.generate(8, (index) {
+            return GestureDetector(
+              onTap: () {
+                _onGridTapped(index);
+              },
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: 300),
+                width: _isGridEnlarged && _selectedGridIndex == index
+                    ? 400.0
+                    : 200.0,
+                height: _isGridEnlarged && _selectedGridIndex == index
+                    ? 400.0
+                    : 200.0,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(0.7 * 8),
+                    color: Colors.blue),
+                child: Card(
+                  child: Center(
+                    child: Text(
+                      'Grid Ke $index',
+                      style: TextStyle(
+                        color: const Color.fromARGB(255, 185, 44, 44),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }),
+        ),
+      ),
+      bottomNavigationBar: _selectedGridIndex != -1
+          ? Card(
+              margin: EdgeInsets.all(0),
+              elevation: 4.0,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Deskripsi Grid $_selectedGridIndex',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            )
+          : null,
     );
   }
 }
