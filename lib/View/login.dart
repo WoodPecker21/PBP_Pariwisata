@@ -4,7 +4,8 @@ import 'package:ugd1/View/register.dart';
 import 'package:ugd1/component/form_component.dart';
 
 class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+  final Map? data;
+  const LoginView({super.key, this.data});
 
   static route() => MaterialPageRoute(builder: (context) => const LoginView());
 
