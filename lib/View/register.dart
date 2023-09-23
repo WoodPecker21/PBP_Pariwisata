@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ugd1/View/login.dart';
+import 'package:intl/intl.dart';
 import 'package:ugd1/component/form_component.dart';
 
 class RegisterView extends StatefulWidget {
@@ -15,6 +16,24 @@ class _RegisterViewState extends State<RegisterView> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController notelpController = TextEditingController();
+  TextEditingController dateController = TextEditingController();
+  DateTime selectedDate = DateTime.now();
+
+  Future<void> showDatePickerDialog(BuildContext context) async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+
+    if (picked != null) {
+      setState(() {
+        selectedDate = picked;
+        dateController.text = DateFormat('dd/MM/yyyy').format(selectedDate);
+      });
+    }
+  }
 
   bool? check1 = false;
   String? gender;
@@ -56,6 +75,12 @@ class _RegisterViewState extends State<RegisterView> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              ElevatedButton(
+                onPressed: () => _selectDate(context),
+                child: Text(selectedDate != null
+                    ? 'Tanggal Lahir: ${selectedDate!.toLocal()}'.split(' ')[0]
+                    : 'Pilih Tanggal Lahir'),
+              ),
               inputForm((p0) {
                 if (p0 == null || p0.isEmpty) {
                   return 'Username Tidak Boleh Kosong';
@@ -149,14 +174,27 @@ class _RegisterViewState extends State<RegisterView> {
                   )
                 ],
               ),
-              //*sampai sini
-
+              inputForm(
+                (p0) {
+                  if (p0 == null || p0.isEmpty) {
+                    return 'Tanggal tidak boleh kosong';
+                  }
+                  return null;
+                },
+                controller: dateController,
+                hintTxt: "Tanggal",
+                helperTxt: DateFormat('dd/MM/yyyy').format(selectedDate),
+                iconData: Icons.calendar_today,
+                onTap: () => showDatePickerDialog(context),
+              ),
               ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       Map<String, dynamic> formData = {};
                       formData['username'] = usernameController.text;
                       formData['password'] = passwordController.text;
+                      formData['date'] = dateController.text;
+
                       Navigator.push(
                           context,
                           MaterialPageRoute(
