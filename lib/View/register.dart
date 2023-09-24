@@ -72,6 +72,7 @@ class _RegisterViewState extends State<RegisterView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -91,6 +92,7 @@ class _RegisterViewState extends State<RegisterView> {
                   hintTxt: "Username",
                   helperTxt: "Ucup Surucup",
                   iconData: Icons.person),
+
               // idel-------------
               Padding(
                 padding: const EdgeInsets.symmetric(
