@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ugd1/View/home.dart';
 import 'package:ugd1/View/register.dart';
-import 'package:ugd1/component/form_component.dart';
 import 'package:ugd1/config/theme.dart';
 
 class LoginView extends StatefulWidget {
@@ -17,11 +16,11 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
   bool _isPasswordVisible = false;
+    final TextEditingController passwordController = TextEditingController();
+    final TextEditingController usernameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController usernameController = TextEditingController();
-    TextEditingController passwordController = TextEditingController();
 
     Map? dataForm = widget.data;
     
@@ -42,7 +41,7 @@ class _LoginViewState extends State<LoginView> {
                   return null;
                 },
                 controller: usernameController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: "Username",
                   icon: Icon(Icons.person),
                 ),
@@ -58,7 +57,7 @@ class _LoginViewState extends State<LoginView> {
                 controller: passwordController,
                 decoration: InputDecoration(
                   labelText: "Password",
-                  icon: Icon(Icons.lock),
+                  icon: const Icon(Icons.lock),
                   suffixIcon: InkWell(
                     onTap: () {
                       setState(() {
@@ -82,7 +81,7 @@ class _LoginViewState extends State<LoginView> {
                       if (_formKey.currentState!.validate()) {
                         //*jika vlid, cek username dan pass inputaan form udah sesuai dgn data di bawah
                         if (dataForm != null &&
-                            dataForm!['username'] == usernameController.text &&
+                            dataForm['username'] == usernameController.text &&
                             dataForm['password'] == passwordController.text) {
                           //* jika sesuai, navigasi ke hal home
                           Navigator.push(

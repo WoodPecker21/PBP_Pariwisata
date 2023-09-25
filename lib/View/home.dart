@@ -3,9 +3,11 @@ import 'package:ugd1/View/profile.dart';
 import 'package:ugd1/config/theme.dart';
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: HomeView(),
     );
   }
@@ -55,7 +57,7 @@ class _HomeViewState extends State<HomeView> {
      home : Scaffold(
       //resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: Text('Go Trip'),
+        title: const Text('Go Trip'),
       ),
       body: _selectedIndex == 0
           ? buildHomeContent() // Display Home content if selected index is 0
@@ -83,47 +85,50 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget buildHomeContent() {
-    return Column(
-      children: [
-        // Your Home content goes here
-        Container(
-          // color: const Color.fromARGB(255, 51, 55, 58),
-          child: Wrap(
-            spacing: 8.0,
-            runSpacing: 8.0,
-            children: List.generate(8, (index) {
-              return GestureDetector(
-                onTap: () {
-                  _onGridTapped(index);
-                },
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  width: _isGridEnlarged && _selectedGridIndex == index
-                      ? 400.0
-                      : 200.0,
-                  height: _isGridEnlarged && _selectedGridIndex == index
-                      ? 400.0
-                      : 200.0,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(0.7 * 8),
-                      color: Colors.blue),
-                  child: Card(
-                    child: Center(
-                      child: Text(
-                        'Grid Ke $index',
-                        style: const TextStyle(
-                          color: Color.fromARGB(255, 185, 44, 44),
-                          fontWeight: FontWeight.bold,
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          // Your Home content goes here
+          Container(
+            child: Wrap(
+              spacing: 8.0,
+              runSpacing: 8.0,
+              children: List.generate(8, (index) {
+                return GestureDetector(
+                  onTap: () {
+                    _onGridTapped(index);
+                  },
+                  child: AnimatedContainer(
+                    // color: Colors.blue,
+                    duration: const Duration(milliseconds: 300),
+                    width: _isGridEnlarged && _selectedGridIndex == index
+                        ? 400.0
+                        : 200.0,
+                    height: _isGridEnlarged && _selectedGridIndex == index
+                        ? 400.0
+                        : 200.0,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(0.7 * 8),
+                        color: Colors.blue),
+                    child: Card(
+                      color: Colors.blue,
+                      child: Center(
+                        child: Text(
+                          'Grid Ke ${index + 1}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              );
-            }),
+                );
+              }),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
