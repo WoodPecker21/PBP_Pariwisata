@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ugd1/View/profile.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -54,6 +50,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      //resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text('Go Trip'),
       ),

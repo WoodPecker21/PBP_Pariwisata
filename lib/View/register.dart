@@ -151,7 +151,7 @@ class _RegisterViewState extends State<RegisterView> {
                 "Jenis Kelamin", // Your label text
                 style: TextStyle(
                   fontSize: 16, // You can adjust the font size
-                  fontWeight: FontWeight.bold, // You can adjust the text style
+                  //fontWeight: FontWeight.bold, // You can adjust the text style
                 ),
               ),
               Padding(
