@@ -41,7 +41,7 @@ class _RegisterViewState extends State<RegisterView> {
   bool? check1 = false;
   String? gender;
 
-  void _showAlertDialog(BuildContext context) {
+  void _showAlertDialog(BuildContext context, Map<String, dynamic> formData) {
     AlertDialog alertDialog = AlertDialog(
       title: Text('Perhatian!'),
       content: Text('Apakah Data Sudah Benar?'),
@@ -49,7 +49,15 @@ class _RegisterViewState extends State<RegisterView> {
         TextButton(
           child: Text('OK'),
           onPressed: () {
-            Navigator.of(context).push(LoginView.route());
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => LoginView(
+                  data: formData,
+                ),
+              ),
+            );
+            //Navigator.of(context).push(LoginView.route());
           },
         ),
         TextButton(
@@ -217,9 +225,9 @@ class _RegisterViewState extends State<RegisterView> {
                 iconData: Icons.calendar_today,
                 onTap: () => showDatePickerDialog(context),
               ),
+
               ElevatedButton(
                 onPressed: () {
-                  _showAlertDialog(context);
                   if (_formKey.currentState!.validate()) {
                     if (gender == null) {
                       showDialog(
@@ -236,22 +244,12 @@ class _RegisterViewState extends State<RegisterView> {
                           ],
                         ),
                       );
-                    } else {
-                      Map<String, dynamic> formData = {};
-                      formData['username'] = usernameController.text;
-                      formData['password'] = passwordController.text;
-                      formData['date'] = dateController.text;
-
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => LoginView(
-                            data: formData,
-                          ),
-                        ),
-                      );
-                      _showAlertDialog(context);
                     }
+                    Map<String, dynamic> formData = {};
+                    formData['username'] = usernameController.text;
+                    formData['password'] = passwordController.text;
+
+                    _showAlertDialog(context, formData);
                   }
                 },
                 child: const Text('Register'),
