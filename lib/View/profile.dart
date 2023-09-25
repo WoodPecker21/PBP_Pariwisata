@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ugd1/config/theme.dart';
 
 void main() => runApp(const TabBarApp());
 
@@ -17,13 +18,15 @@ class TabBarApp extends StatelessWidget {
 class TabContentView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
+    return MaterialApp(
+      theme: isDarkMode ? ThemeData.dark() : ThemeData.light(),
+      home: DefaultTabController(
       initialIndex: 0,
       length: 4,
       child: Scaffold(
         appBar: AppBar(
           //title: Text('Go Trip'),
-          backgroundColor: Colors.blue,
+          // backgroundColor: Colors.blue,
           bottom: const TabBar(
             tabs: <Widget>[
               Tab(
@@ -67,6 +70,7 @@ class TabContentView extends StatelessWidget {
           ],
         ),
       ),
+    ),
     );
   }
 }

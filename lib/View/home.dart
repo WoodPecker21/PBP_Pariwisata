@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ugd1/View/profile.dart';
+import 'package:ugd1/config/theme.dart';
 
 class MyApp extends StatelessWidget {
   @override
@@ -49,7 +50,9 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return MaterialApp(
+      theme: isDarkMode ? ThemeData.dark() : ThemeData.light(),
+     home : Scaffold(
       //resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text('Go Trip'),
@@ -75,6 +78,7 @@ class _HomeViewState extends State<HomeView> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
       ),
+    ),
     );
   }
 
@@ -83,7 +87,7 @@ class _HomeViewState extends State<HomeView> {
       children: [
         // Your Home content goes here
         Container(
-          color: Colors.blue,
+          // color: const Color.fromARGB(255, 51, 55, 58),
           child: Wrap(
             spacing: 8.0,
             runSpacing: 8.0,

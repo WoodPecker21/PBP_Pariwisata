@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ugd1/View/home.dart';
 import 'package:ugd1/View/register.dart';
 import 'package:ugd1/component/form_component.dart';
+import 'package:ugd1/config/theme.dart';
 
 class LoginView extends StatefulWidget {
   final Map? data;
@@ -23,7 +24,10 @@ class _LoginViewState extends State<LoginView> {
     TextEditingController passwordController = TextEditingController();
 
     Map? dataForm = widget.data;
-    return Scaffold(
+    
+    return MaterialApp(
+      theme: isDarkMode ? ThemeData.dark() : ThemeData.light(),
+      home: Scaffold(
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -127,6 +131,15 @@ class _LoginViewState extends State<LoginView> {
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            setState(() {
+              isDarkMode = !isDarkMode;
+            });
+          },
+          child: Icon(isDarkMode ? Icons.light_mode : Icons.dark_mode),
+        ),
+    ),
     );
   }
 

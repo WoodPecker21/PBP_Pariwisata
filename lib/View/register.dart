@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ugd1/View/login.dart';
 import 'package:intl/intl.dart';
+import 'package:ugd1/config/theme.dart';
 import 'package:ugd1/component/form_component.dart';
 
 class RegisterView extends StatefulWidget {
@@ -79,7 +80,9 @@ class _RegisterViewState extends State<RegisterView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return MaterialApp(
+    theme: isDarkMode ? ThemeData.dark() : ThemeData.light(),
+     home: Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Form(
@@ -258,6 +261,7 @@ class _RegisterViewState extends State<RegisterView> {
           ),
         ),
       ),
+    ),
     );
   }
 }
