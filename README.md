@@ -1,6 +1,19 @@
-# ugd1
+# ugd1 dan 2
 
-A new Flutter project.
+A new Flutter project, bertemakan Pariwisata. 
+Kelompok 6 dari kelas PBP D:
+- Agustinus Evanre
+- Candra Dionisuis Sihotang
+- Idelia Jonathan
+- Joanna
+
+Fungsi yang ada:
+- login
+- register
+- home (grid picture tempat wisata, enlarging ontap)
+- dark mode
+- profile (tiap member)
+- dark mode
 
 ## Getting Started
 
