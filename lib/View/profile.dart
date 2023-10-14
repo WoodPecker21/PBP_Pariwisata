@@ -5,12 +5,6 @@ import 'package:ugd1/config/theme.dart';
 // void main() {
 //   runApp(Profile());
 // }
-import 'package:ugd1/config/theme.dart';
-
-// void main() {
-//   runApp(Profile());
-// }
-
 class ProfileData {
   final String username;
   final String email;
