@@ -9,6 +9,7 @@ import 'package:ugd1/repository/register_repository.dart';
 import 'package:ugd1/bloc/register_event.dart';
 import 'package:ugd1/View/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ugd1/config/theme.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -25,13 +26,17 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController birthdateController = TextEditingController();
   DateTime selectedDate = DateTime.now();
 
-  Future<bool> checkEmailUniqueness(String email) async {
+  bool checkEmailUniqueness(String email) {
+    print('Checking email uniqueness for: $email');
     for (int i = 0; i < RegisterRepository.userAccount.length; i++) {
+      print('Comparing with: ${RegisterRepository.userAccount[i].email}');
       if (RegisterRepository.userAccount[i].email == email) {
-        return false; //email sudah digunakan
+        //print('Email already exists!');
+        return false; // email sudah digunakan
       }
     }
-    return true; //email unik
+    //print('Email is unique!');
+    return true; // email unik
   }
 
   final formKey = GlobalKey<FormState>();
@@ -47,236 +52,206 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<RegisterBloc>(
-      create: (context) => RegisterBloc(),
-      child: BlocListener<RegisterBloc, RegisterState>(
-        listener: (context, state) {
-          if (state.formSubmissionState is SubmissionSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Register Success'),
-              ),
-            );
-            final user = User(
-              name: usernameController.text,
-              email: emailController.text,
-              phoneNumber: phoneNumberController.text,
-              birthDate: selectedDate,
-            );
-            saveUserToSharedPreferences(
-                user); // This is where you save the user's data.
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => Loginview(),
-              ),
-            );
-          }
-          if (state.formSubmissionState is SubmissionFailed) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  (state.formSubmissionState as SubmissionFailed)
-                      .exception
-                      .toString(),
-                ),
-              ),
-            );
-          }
-        },
-        child:
-            BlocBuilder<RegisterBloc, RegisterState>(builder: (context, state) {
-          return SafeArea(
-            child: Scaffold(
-              body: Form(
-                key: formKey,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20.0,
-                    vertical: 10.0,
+        create: (context) => RegisterBloc(),
+        child: Scaffold(
+          body: BlocListener<RegisterBloc, RegisterState>(
+            listener: (context, state) {
+              if (state.formSubmissionState is SubmissionSuccess) {
+                print('---sudah sukses---');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Register Success'),
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextFormField(
-                        controller: usernameController,
-                        decoration: const InputDecoration(
-                          prefixIcon: Icon(Icons.person),
-                          labelText: 'Username',
-                        ),
-                        validator: (value) =>
-                            value == '' ? 'Username harus terisi!!' : null,
-                      ),
-                      TextFormField(
-                        controller: emailController,
-                        decoration: const InputDecoration(
-                          prefixIcon: Icon(Icons.email),
-                          labelText: 'Email',
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Email harus terisi!!';
-                          } else if (!value.contains('@')) {
-                            return 'Email harus menggunakan @';
-                          }
-                          return null;
-                        },
-                      ),
-                      TextFormField(
-                        controller: passwordController,
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.lock),
-                          labelText: 'Password',
-                          suffixIcon: IconButton(
-                            onPressed: () {
-                              context.read<RegisterBloc>().add(
-                                    IsPasswordVisibleChanged(),
-                                  );
-                            },
-                            icon: Icon(
-                              state.isPasswordVisible
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
-                              color: state.isPasswordVisible
-                                  ? Colors.grey
-                                  : Colors.blue,
-                            ),
+                );
+                final user = User(
+                  name: usernameController.text,
+                  email: emailController.text,
+                  phoneNumber: phoneNumberController.text,
+                  birthDate: selectedDate,
+                );
+                saveUserToSharedPreferences(
+                    user); // This is where you save the user's data.
+
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => Loginview(),
+                  ),
+                );
+              }
+              if (state.formSubmissionState is SubmissionFailed) {
+                print('---sudah gagal---');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      (state.formSubmissionState as SubmissionFailed)
+                          .exception
+                          .toString(),
+                    ),
+                  ),
+                );
+              }
+            },
+            child: BlocBuilder<RegisterBloc, RegisterState>(
+                builder: (context, state) {
+              return MaterialApp(
+                  theme: isDarkMode ? ThemeData.dark() : ThemeData.light(),
+                  home: SafeArea(
+                    child: Scaffold(
+                      body: Form(
+                        key: formKey,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20.0,
+                            vertical: 10.0,
                           ),
-                        ),
-                        obscureText: state.isPasswordVisible,
-                        validator: (value) =>
-                            value == '' ? 'Password harus terisi!!' : null,
-                      ),
-                      TextFormField(
-                        controller: phoneNumberController,
-                        keyboardType: TextInputType.phone,
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.digitsOnly,
-                        ],
-                        decoration: const InputDecoration(
-                          prefixIcon: Icon(Icons.phone),
-                          labelText: 'Nomor Telepon',
-                        ),
-                        validator: (value) {
-                          if (value == '') {
-                            return 'Nomor telepon harus terisi!!';
-                          }
-                          return null;
-                        },
-                      ),
-                      GestureDetector(
-                        onTap: () async {
-                          final selectedDate = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(1900),
-                            lastDate: DateTime.now(),
-                          );
-                          if (selectedDate != null) {
-                            this.selectedDate = selectedDate;
-                            final formattedDate =
-                                "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
-                            birthdateController.text = formattedDate;
-                          }
-                        },
-                        child: AbsorbPointer(
-                          child: TextFormField(
-                            controller: birthdateController,
-                            decoration: const InputDecoration(
-                              prefixIcon: Icon(Icons.calendar_today),
-                              labelText: 'Tanggal Lahir',
-                            ),
-                            readOnly: true,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Tanggal lahir harus terisi!!';
-                              }
-                              if (selectedDate.year > 2023) {
-                                return 'Tahun lebih dari tahun ini!!';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 30),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            if (formKey.currentState!.validate()) {
-                              bool isEmailUnique = await checkEmailUniqueness(
-                                  emailController.text);
-                              if (isEmailUnique) {
-                                context.read<RegisterBloc>().add(
-                                      RegisterButtonPressed(
-                                        username: usernameController.text,
-                                        email: emailController.text,
-                                        password: passwordController.text,
-                                        phoneNumber: phoneNumberController.text,
-                                        birthDate: selectedDate,
-                                      ),
-                                    );
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    backgroundColor: Colors.red,
-                                    content: Center(
-                                      child: Text(
-                                        'Email is already in use. Please use a different email.',
-                                      ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              TextFormField(
+                                controller: usernameController,
+                                decoration: const InputDecoration(
+                                  prefixIcon: Icon(Icons.person),
+                                  labelText: 'Username',
+                                ),
+                                validator: (value) => value == ''
+                                    ? 'Username harus terisi!!'
+                                    : null,
+                              ),
+                              TextFormField(
+                                controller: emailController,
+                                decoration: const InputDecoration(
+                                  prefixIcon: Icon(Icons.email),
+                                  labelText: 'Email',
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Email harus terisi!!';
+                                  } else if (!value.contains('@')) {
+                                    return 'Email harus menggunakan @';
+                                  } else if (!checkEmailUniqueness(value)) {
+                                    return 'Email harus unik!';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              TextFormField(
+                                controller: passwordController,
+                                decoration: InputDecoration(
+                                  prefixIcon: const Icon(Icons.lock),
+                                  labelText: 'Password',
+                                  suffixIcon: IconButton(
+                                    onPressed: () {
+                                      context.read<RegisterBloc>().add(
+                                            IsPasswordVisibleChanged(),
+                                          );
+                                    },
+                                    icon: Icon(
+                                      state.isPasswordVisible
+                                          ? Icons.visibility_off
+                                          : Icons.visibility,
+                                      color: state.isPasswordVisible
+                                          ? Colors.grey
+                                          : Colors.blue,
                                     ),
                                   ),
-                                );
-                              }
-                            }
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 16.0,
-                              horizontal: 16.0,
-                            ),
-                            child: state.formSubmissionState is FormSubmitting
-                                ? const CircularProgressIndicator(
-                                    color: Colors.white)
-                                : const Text('Register'),
+                                ),
+                                obscureText: state.isPasswordVisible,
+                                validator: (value) => value == ''
+                                    ? 'Password harus terisi!!'
+                                    : null,
+                              ),
+                              TextFormField(
+                                controller: phoneNumberController,
+                                keyboardType: TextInputType.phone,
+                                inputFormatters: <TextInputFormatter>[
+                                  FilteringTextInputFormatter.digitsOnly,
+                                ],
+                                decoration: const InputDecoration(
+                                  prefixIcon: Icon(Icons.phone),
+                                  labelText: 'Nomor Telepon',
+                                ),
+                                validator: (value) {
+                                  if (value == '') {
+                                    return 'Nomor telepon harus terisi!!';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              GestureDetector(
+                                onTap: () async {
+                                  final selectedDate = await showDatePicker(
+                                    context: context,
+                                    initialDate: DateTime.now(),
+                                    firstDate: DateTime(1900),
+                                    lastDate: DateTime.now(),
+                                  );
+                                  if (selectedDate != null) {
+                                    this.selectedDate = selectedDate;
+                                    final formattedDate =
+                                        "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
+                                    birthdateController.text = formattedDate;
+                                  }
+                                },
+                                child: AbsorbPointer(
+                                  child: TextFormField(
+                                    controller: birthdateController,
+                                    decoration: const InputDecoration(
+                                      prefixIcon: Icon(Icons.calendar_today),
+                                      labelText: 'Tanggal Lahir',
+                                    ),
+                                    readOnly: true,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Tanggal lahir harus terisi!!';
+                                      }
+                                      if (selectedDate.year > 2023) {
+                                        return 'Tahun lebih dari tahun ini!!';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 30),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    if (formKey.currentState!.validate()) {
+                                      context.read<RegisterBloc>().add(
+                                            RegisterButtonPressed(
+                                              username: usernameController.text,
+                                              email: emailController.text,
+                                              password: passwordController.text,
+                                              phoneNumber:
+                                                  phoneNumberController.text,
+                                              birthDate: selectedDate,
+                                            ),
+                                          );
+                                      print('--- sudah validasi---');
+                                    }
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16.0,
+                                      horizontal: 16.0,
+                                    ),
+                                    child: state.formSubmissionState
+                                            is FormSubmitting
+                                        ? const CircularProgressIndicator(
+                                            color: Colors.white)
+                                        : const Text('Register'),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      const SizedBox(height: 25),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            'Sudah mempunyai akun?   ',
-                            style: TextStyle(
-                              color: Colors.black,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => const Loginview(),
-                                ),
-                              );
-                            },
-                            child: const Text(
-                              'LogIn',
-                              style: TextStyle(
-                                color: Colors.blue,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          );
-        }),
-      ),
-    );
+                    ),
+                  ));
+            }),
+          ),
+        ));
   }
 }

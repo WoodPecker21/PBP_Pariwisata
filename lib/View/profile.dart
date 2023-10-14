@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ugd1/config/theme.dart';
 
-void main() {
-  runApp(Profile());
-}
+// void main() {
+//   runApp(Profile());
+// }
+import 'package:ugd1/config/theme.dart';
+
+// void main() {
+//   runApp(Profile());
+// }
 
 class ProfileData {
   final String username;
@@ -51,6 +57,7 @@ class _ProfileState extends State<Profile> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Profile',
+      theme: isDarkMode ? ThemeData.dark() : ThemeData.light(),
       home: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.blue,
@@ -98,7 +105,7 @@ class _ProfileState extends State<Profile> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Row(
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
                       CircleAvatar(
@@ -106,8 +113,7 @@ class _ProfileState extends State<Profile> {
                         minRadius: 60.0,
                         child: CircleAvatar(
                           radius: 50.0,
-                          backgroundImage:
-                              AssetImage('assets/image/kuliner.jpg'),
+                          backgroundImage: AssetImage('image/kuliner.jpg'),
                         ),
                       ),
                     ],
@@ -131,7 +137,7 @@ class _ProfileState extends State<Profile> {
                 children: <Widget>[
                   Divider(),
                   ListTile(
-                    title: Text(
+                    title: const Text(
                       'Email',
                       style: TextStyle(
                         color: Colors.blue,
@@ -148,7 +154,7 @@ class _ProfileState extends State<Profile> {
                   ),
                   Divider(),
                   ListTile(
-                    title: Text(
+                    title: const Text(
                       'Nomor Telepon',
                       style: TextStyle(
                         fontSize: 20,
@@ -165,7 +171,7 @@ class _ProfileState extends State<Profile> {
                   ),
                   Divider(),
                   ListTile(
-                    title: Text(
+                    title: const Text(
                       'Tanggal Lahir',
                       style: TextStyle(
                         color: Colors.blue,

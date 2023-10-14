@@ -12,7 +12,7 @@ class RegisterRepository {
   Future<List<User>> register(String username, String email, String password,
       String phoneNumber, DateTime birthDate) async {
     User userRegist = User();
-    await Future.delayed(const Duration(seconds: 3), () {
+    await Future.delayed(const Duration(seconds: 2), () {
       if (username.isNotEmpty &&
               email.isNotEmpty &&
               password.isNotEmpty &&

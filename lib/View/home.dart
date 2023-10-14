@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ugd1/View/profile.dart';
 import 'package:ugd1/config/theme.dart';
+import 'package:ugd1/View/inputPage.dart';
+import 'package:ugd1/database/sql_helper.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,6 +28,7 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  //-------------------------INI YG HOME GRID LAMA-----------------------
   int _selectedGridIndex = -1;
   bool _isGridEnlarged = false;
 
@@ -50,11 +53,48 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
+  //-----------------------------INI COBA2 UTK MENUJU INPUT PAGE ---------------
+  List<Map<String, dynamic>> objekwisata = [];
+
+  void refresh() async {
+    final data = await SQLHelper.getObjekWisata();
+    setState(() {
+      objekwisata = data;
+    });
+  }
+
+  @override
+  void initState() {
+    refresh();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Go Trip'),
+        title: Text("Go Trip"),
+        actions: [
+          IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () async {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const InputPage(
+                            title: 'INPUT OBJEK WISATA',
+                            id: null,
+                            nama: null,
+                            deskripsi: null,
+                            kategori: null,
+                            gambar: null,
+                            rating: null,
+                            harga: null,
+                          )),
+                ).then((_) => refresh());
+              }),
+          IconButton(onPressed: () async {}, icon: Icon(Icons.clear))
+        ],
       ),
       body: _selectedIndex == 0
           ? buildHomeContent() // Display Home content if selected index is 0
