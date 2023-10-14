@@ -10,7 +10,7 @@ class SQLHelper {
         deskripsi TEXT,
         kategori TEXT,
         gambar TEXT,
-        rating INTEGER,
+        rating DOUBLE,
         harga DOUBLE
       )
     """);
@@ -26,7 +26,7 @@ class SQLHelper {
 
   //insert employee
   static Future<int> addObjekWisata(String nama, String deskripsi,
-      String kategori, String gambar, int rating, double harga) async {
+      String kategori, String gambar, double rating, double harga) async {
     final db = await SQLHelper.db();
     final data = {
       'nama': nama,
@@ -47,7 +47,7 @@ class SQLHelper {
 
   //update employee
   static Future<int> editObjekWisata(int id, String nama, String deskripsi,
-      String kategori, String gambar, int rating, double harga) async {
+      String kategori, String gambar, double rating, double harga) async {
     final db = await SQLHelper.db();
     final data = {
       'nama': nama,

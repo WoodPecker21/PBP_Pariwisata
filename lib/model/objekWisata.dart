@@ -1,8 +1,7 @@
 class ObjekWisata {
   final int? id;
   String? nama, deskripsi, kategori, gambar;
-  int? rating;
-  double? harga;
+  double? rating, harga;
 
   ObjekWisata(
       {this.id,
