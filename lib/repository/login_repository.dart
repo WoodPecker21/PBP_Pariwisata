@@ -12,7 +12,7 @@ class LoginRepository {
   Future<User> login(String username, String password) async {
     bool isUserRegistered = false;
     User? user; // Ini akan menyimpan data pengguna jika ditemukan.
-    
+
     // Cari pengguna dalam data register.
     for (int i = 0; i < RegisterRepository.userAccount.length; i++) {
       if (RegisterRepository.userAccount[i].name == username &&
