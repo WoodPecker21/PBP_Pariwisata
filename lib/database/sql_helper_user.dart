@@ -63,4 +63,37 @@ class SQLHelper {
     final db = await SQLHelper.db();
     return await db.delete('user', where: "id = $id");
   }
+
+  static Future<int?> searchUser(String nameInput, String passwordInput) async {
+    final db = await SQLHelper.db();
+
+    List<Map<String, dynamic>> result = await db.query(
+      'user',
+      columns: ['id'],
+      where: 'name = ? AND password = ?',
+      whereArgs: [nameInput, passwordInput],
+    );
+
+    if (result.isNotEmpty) {
+      return result.first['id'] as int; // Return the user ID as an int
+    }
+
+    return -1; // No user found with the provided name and password
+  }
+
+  static Future<Map<String, dynamic>?> getUserById(int userId) async {
+    final db = await SQLHelper.db();
+
+    List<Map<String, dynamic>> result = await db.query(
+      'user',
+      where: 'id = ?',
+      whereArgs: [userId],
+    );
+
+    if (result.isNotEmpty) {
+      return result.first; // Return the user as a Map<String, dynamic>
+    }
+
+    return null; // No user found with the provided ID
+  }
 }

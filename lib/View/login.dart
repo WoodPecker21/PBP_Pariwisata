@@ -11,6 +11,7 @@ import 'package:ugd1/bloc/login_state.dart';
 import 'package:ugd1/View/register.dart';
 import 'package:ugd1/config/theme.dart';
 import 'package:ugd1/database/sql_helper_user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Loginview extends StatefulWidget {
   const Loginview({super.key});
@@ -23,7 +24,7 @@ class _LoginviewState extends State<Loginview> {
   final formKey = GlobalKey<FormState>();
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-
+  int userLogin = -1;
   List<Map<String, dynamic>> users = [];
 
   void refresh() async {
@@ -39,19 +40,31 @@ class _LoginviewState extends State<Loginview> {
     super.initState();
   }
 
-  bool checkUserExist(String usernameInput, String passwordInput) {
-    for (Map<String, dynamic> user in users) {
-      String username = user['name'];
-      String password = user['password'];
+  Future<bool> checkUserExist(
+      String usernameInput, String passwordInput) async {
+    final userId = await SQLHelper.searchUser(usernameInput, passwordInput);
 
-      if (username == usernameInput && password == passwordInput) {
-        return true;
-      }
-      print(username);
-      print(password);
+    if (userId != null) {
+      userLogin = userId;
+      return true;
+    } else {
+      return false;
     }
+  }
 
-    return false;
+  Future<void> getUserByIdAndProcess(int userId) async {
+    final user = await SQLHelper.getUserById(userId);
+
+    if (user != null) {
+      final prefs = await SharedPreferences
+          .getInstance(); // This is where you save the user's data.
+      prefs.setString('username', user['name']);
+      prefs.setString('email', user['email']);
+      prefs.setString('phoneNumber', user['phoneNumber']);
+      prefs.setString('birthdate', user['birthDate']);
+    } else {
+      print('User not found');
+    }
   }
 
   @override
@@ -139,9 +152,9 @@ class _LoginviewState extends State<Loginview> {
                               SizedBox(
                                 width: double.infinity,
                                 child: ElevatedButton(
-                                  onPressed: () {
+                                  onPressed: () async {
                                     if (formKey.currentState!.validate()) {
-                                      if (checkUserExist(
+                                      if (await checkUserExist(
                                           usernameController.text,
                                           passwordController.text)) {
                                         ScaffoldMessenger.of(context)
@@ -150,6 +163,9 @@ class _LoginviewState extends State<Loginview> {
                                             content: Text('Login Success'),
                                           ),
                                         );
+
+                                        await getUserByIdAndProcess(
+                                            userLogin); //untuk profil
 
                                         Navigator.of(context).pushReplacement(
                                           MaterialPageRoute(

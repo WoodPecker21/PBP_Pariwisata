@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ugd1/config/theme.dart';
+import 'package:ugd1/database/sql_helper_user.dart';
 
 // void main() {
 //   runApp(Profile());
@@ -214,6 +215,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late TextEditingController emailController;
   late TextEditingController phoneNumberController;
   late TextEditingController birthdateController;
+  String? usernameLama, passwordLama;
 
   @override
   void initState() {
