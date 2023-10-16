@@ -10,7 +10,7 @@ class SQLHelper {
         password TEXT,
         email TEXT,
         phoneNumber TEXT,
-        birthDate DATETIME
+        birthDate TEXT
       )
     """);
   }
@@ -25,8 +25,9 @@ class SQLHelper {
 
   //insert
   static Future<int> addUser(String name, String password, String email,
-      String phoneNumber, DateTime birthDate) async {
+      String phoneNumber, String birthDate) async {
     final db = await SQLHelper.db();
+
     final data = {
       'name': name,
       'password': password,
@@ -45,7 +46,7 @@ class SQLHelper {
 
   //update
   static Future<int> editUser(int id, String name, String password,
-      String email, String phoneNumber, DateTime birthDate) async {
+      String email, String phoneNumber, String birthDate) async {
     final db = await SQLHelper.db();
     final data = {
       'name': name,

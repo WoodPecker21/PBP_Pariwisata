@@ -5,11 +5,12 @@ import 'package:ugd1/bloc/form_submission_state.dart';
 import 'package:ugd1/bloc/register_state.dart';
 import 'package:ugd1/bloc/register_bloc.dart';
 import 'package:ugd1/model/user.dart';
-import 'package:ugd1/repository/register_repository.dart';
+//import 'package:ugd1/repository/register_repository.dart';
 import 'package:ugd1/bloc/register_event.dart';
 import 'package:ugd1/View/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ugd1/config/theme.dart';
+import 'package:ugd1/database/sql_helper_user.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -26,17 +27,29 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController birthdateController = TextEditingController();
   DateTime selectedDate = DateTime.now();
 
-  bool checkEmailUniqueness(String email) {
-    print('Checking email uniqueness for: $email');
-    for (int i = 0; i < RegisterRepository.userAccount.length; i++) {
-      print('Comparing with: ${RegisterRepository.userAccount[i].email}');
-      if (RegisterRepository.userAccount[i].email == email) {
-        //print('Email already exists!');
-        return false; // email sudah digunakan
+  List<Map<String, dynamic>> users = [];
+
+  void refresh() async {
+    final data = await SQLHelper.getUser();
+    setState(() {
+      users = data;
+    });
+  }
+
+  @override
+  void initState() {
+    refresh();
+    super.initState();
+  }
+
+  bool cekEmailUnik(String emailInput, List<Map<String, dynamic>> users) {
+    for (Map<String, dynamic> user in users) {
+      String userEmail = user['email'];
+      if (userEmail == emailInput) {
+        return false;
       }
     }
-    //print('Email is unique!');
-    return true; // email unik
+    return true;
   }
 
   final formKey = GlobalKey<FormState>();
@@ -56,40 +69,40 @@ class _RegisterPageState extends State<RegisterPage> {
         child: Scaffold(
           body: BlocListener<RegisterBloc, RegisterState>(
             listener: (context, state) {
-              if (state.formSubmissionState is SubmissionSuccess) {
-                print('---sudah sukses---');
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Register Success'),
-                  ),
-                );
-                final user = User(
-                  name: usernameController.text,
-                  email: emailController.text,
-                  phoneNumber: phoneNumberController.text,
-                  birthDate: selectedDate,
-                );
-                saveUserToSharedPreferences(
-                    user); // This is where you save the user's data.
+              // if (state.formSubmissionState is SubmissionSuccess) {
+              //   print('---sudah sukses---');
+              //   ScaffoldMessenger.of(context).showSnackBar(
+              //     const SnackBar(
+              //       content: Text('Register Success'),
+              //     ),
+              //   );
+              //   final user = User(
+              //     name: usernameController.text,
+              //     email: emailController.text,
+              //     phoneNumber: phoneNumberController.text,
+              //     birthDate: selectedDate,
+              //   );
+              //   saveUserToSharedPreferences(
+              //       user); // This is where you save the user's data.
 
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => Loginview(),
-                  ),
-                );
-              }
-              if (state.formSubmissionState is SubmissionFailed) {
-                print('---sudah gagal---');
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      (state.formSubmissionState as SubmissionFailed)
-                          .exception
-                          .toString(),
-                    ),
-                  ),
-                );
-              }
+              //   Navigator.of(context).pushReplacement(
+              //     MaterialPageRoute(
+              //       builder: (context) => Loginview(),
+              //     ),
+              //   );
+              // }
+              // if (state.formSubmissionState is SubmissionFailed) {
+              //   print('---sudah gagal---');
+              //   ScaffoldMessenger.of(context).showSnackBar(
+              //     SnackBar(
+              //       content: Text(
+              //         (state.formSubmissionState as SubmissionFailed)
+              //             .exception
+              //             .toString(),
+              //       ),
+              //     ),
+              //   );
+              // }
             },
             child: BlocBuilder<RegisterBloc, RegisterState>(
                 builder: (context, state) {
@@ -133,7 +146,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     return 'Email harus terisi!!';
                                   } else if (!value.contains('@')) {
                                     return 'Email harus menggunakan @';
-                                  } else if (!checkEmailUniqueness(value)) {
+                                  } else if (!cekEmailUnik(value, users)) {
                                     return 'Email harus unik!';
                                   }
                                   return null;
@@ -230,17 +243,28 @@ class _RegisterPageState extends State<RegisterPage> {
                                 child: ElevatedButton(
                                   onPressed: () {
                                     if (formKey.currentState!.validate()) {
-                                      context.read<RegisterBloc>().add(
-                                            RegisterButtonPressed(
-                                              username: usernameController.text,
-                                              email: emailController.text,
-                                              password: passwordController.text,
-                                              phoneNumber:
-                                                  phoneNumberController.text,
-                                              birthDate: selectedDate,
-                                            ),
-                                          );
-                                      print('--- sudah validasi---');
+                                      print('masuk validasi---------');
+                                      addUser();
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Register Success'),
+                                        ),
+                                      );
+                                      final user = User(
+                                        name: usernameController.text,
+                                        email: emailController.text,
+                                        phoneNumber: phoneNumberController.text,
+                                        birthDate: birthdateController.text,
+                                      );
+                                      saveUserToSharedPreferences(
+                                          user); // This is where you save the user's data.
+
+                                      Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(
+                                          builder: (context) => Loginview(),
+                                        ),
+                                      );
                                     }
                                   },
                                   child: Padding(
@@ -248,11 +272,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                       vertical: 16.0,
                                       horizontal: 16.0,
                                     ),
-                                    child: state.formSubmissionState
-                                            is FormSubmitting
-                                        ? const CircularProgressIndicator(
-                                            color: Colors.white)
-                                        : const Text('Register'),
+                                    child: const Text('Register'),
                                   ),
                                 ),
                               ),
@@ -265,5 +285,22 @@ class _RegisterPageState extends State<RegisterPage> {
             }),
           ),
         ));
+  }
+
+  void addUser() {
+    try {
+      SQLHelper.addUser(
+        usernameController.text,
+        passwordController.text,
+        emailController.text,
+        phoneNumberController.text,
+        birthdateController.text,
+      );
+      print('masuk add---------');
+      // User added successfully
+    } catch (e) {
+      // Handle database insertion error here
+      print('Error adding user: $e');
+    }
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ugd1/View/home.dart';
@@ -22,6 +24,36 @@ class _LoginviewState extends State<Loginview> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
+  List<Map<String, dynamic>> users = [];
+
+  void refresh() async {
+    final data = await SQLHelper.getUser();
+    setState(() {
+      users = data;
+    });
+  }
+
+  @override
+  void initState() {
+    refresh();
+    super.initState();
+  }
+
+  bool checkUserExist(String usernameInput, String passwordInput) {
+    for (Map<String, dynamic> user in users) {
+      String username = user['name'];
+      String password = user['password'];
+
+      if (username == usernameInput && password == passwordInput) {
+        return true;
+      }
+      print(username);
+      print(password);
+    }
+
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider<LoginBloc>(
@@ -29,29 +61,29 @@ class _LoginviewState extends State<Loginview> {
         child: Scaffold(
           body: BlocListener<LoginBloc, LoginState>(
             listener: (context, state) {
-              if (state.formSubmissionState is SubmissionSuccess) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Login Success'),
-                  ),
-                );
+              // if (state.formSubmissionState is SubmissionSuccess) {
+              //   ScaffoldMessenger.of(context).showSnackBar(
+              //     const SnackBar(
+              //       content: Text('Login Success'),
+              //     ),
+              //   );
 
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => HomeView(),
-                  ),
-                );
-              }
-              if (state.formSubmissionState is SubmissionFailed) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                        (state.formSubmissionState as SubmissionFailed)
-                            .exception
-                            .toString()),
-                  ),
-                );
-              }
+              //   Navigator.of(context).pushReplacement(
+              //     MaterialPageRoute(
+              //       builder: (context) => HomeView(),
+              //     ),
+              //   );
+              // }
+              // if (state.formSubmissionState is SubmissionFailed) {
+              //   ScaffoldMessenger.of(context).showSnackBar(
+              //     SnackBar(
+              //       content: Text(
+              //           (state.formSubmissionState as SubmissionFailed)
+              //               .exception
+              //               .toString()),
+              //     ),
+              //   );
+              // }
             },
             child:
                 BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
@@ -109,12 +141,29 @@ class _LoginviewState extends State<Loginview> {
                                 child: ElevatedButton(
                                   onPressed: () {
                                     if (formKey.currentState!.validate()) {
-                                      context.read<LoginBloc>().add(
-                                            FormSubmitted(
-                                              username: usernameController.text,
-                                              password: passwordController.text,
-                                            ),
-                                          );
+                                      if (checkUserExist(
+                                          usernameController.text,
+                                          passwordController.text)) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                            content: Text('Login Success'),
+                                          ),
+                                        );
+
+                                        Navigator.of(context).pushReplacement(
+                                          MaterialPageRoute(
+                                            builder: (context) => HomeView(),
+                                          ),
+                                        );
+                                      } else {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text('Login Failed'),
+                                          ),
+                                        );
+                                      }
                                     }
                                   },
                                   child: Padding(
@@ -122,12 +171,7 @@ class _LoginviewState extends State<Loginview> {
                                       vertical: 16.0,
                                       horizontal: 16.0,
                                     ),
-                                    child: state.formSubmissionState
-                                            is FormSubmitting
-                                        ? const CircularProgressIndicator(
-                                            color: Colors.white,
-                                          )
-                                        : const Text("Login"),
+                                    child: const Text("Login"),
                                   ),
                                 ),
                               ),

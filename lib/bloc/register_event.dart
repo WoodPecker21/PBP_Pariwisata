@@ -5,7 +5,7 @@ class RegisterButtonPressed extends RegisterEvent {
   final String email;
   final String password;
   final String phoneNumber;
-  final DateTime birthDate;
+  final String birthDate;
 
   RegisterButtonPressed({
     required this.username,
