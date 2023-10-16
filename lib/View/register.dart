@@ -113,9 +113,14 @@ class _RegisterPageState extends State<RegisterPage> {
                                   prefixIcon: Icon(Icons.person),
                                   labelText: 'Username',
                                 ),
-                                validator: (value) => value == ''
-                                    ? 'Username harus terisi!!'
-                                    : null,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Username harus terisi!!';
+                                  } else if (value.length <= 5) {
+                                    return 'Username minimal memiliki 5 karakter!';
+                                  }
+                                  return null;
+                                },
                               ),
                               TextFormField(
                                 controller: emailController,
@@ -135,31 +140,35 @@ class _RegisterPageState extends State<RegisterPage> {
                                 },
                               ),
                               TextFormField(
-                                controller: passwordController,
-                                decoration: InputDecoration(
-                                  prefixIcon: const Icon(Icons.lock),
-                                  labelText: 'Password',
-                                  suffixIcon: IconButton(
-                                    onPressed: () {
-                                      context.read<RegisterBloc>().add(
-                                            IsPasswordVisibleChanged(),
-                                          );
-                                    },
-                                    icon: Icon(
-                                      state.isPasswordVisible
-                                          ? Icons.visibility_off
-                                          : Icons.visibility,
-                                      color: state.isPasswordVisible
-                                          ? Colors.grey
-                                          : Colors.blue,
+                                  controller: passwordController,
+                                  decoration: InputDecoration(
+                                    prefixIcon: const Icon(Icons.lock),
+                                    labelText: 'Password',
+                                    suffixIcon: IconButton(
+                                      onPressed: () {
+                                        context.read<RegisterBloc>().add(
+                                              IsPasswordVisibleChanged(),
+                                            );
+                                      },
+                                      icon: Icon(
+                                        state.isPasswordVisible
+                                            ? Icons.visibility_off
+                                            : Icons.visibility,
+                                        color: state.isPasswordVisible
+                                            ? Colors.grey
+                                            : Colors.blue,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                obscureText: state.isPasswordVisible,
-                                validator: (value) => value == ''
-                                    ? 'Password harus terisi!!'
-                                    : null,
-                              ),
+                                  obscureText: state.isPasswordVisible,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Password harus terisi!!';
+                                    } else if (value.length < 5) {
+                                      return 'Password minimal memiliki 5 karakter!';
+                                    }
+                                    return null;
+                                  }),
                               TextFormField(
                                 controller: phoneNumberController,
                                 keyboardType: TextInputType.phone,
@@ -173,6 +182,9 @@ class _RegisterPageState extends State<RegisterPage> {
                                 validator: (value) {
                                   if (value == '') {
                                     return 'Nomor telepon harus terisi!!';
+                                  }
+                                  if (value!.length < 5) {
+                                    return 'Nomor Telepon harus 5 digit';
                                   }
                                   return null;
                                 },
@@ -204,8 +216,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                       if (value == null || value.isEmpty) {
                                         return 'Tanggal lahir harus terisi!!';
                                       }
-                                      if (selectedDate.year > 2023) {
-                                        return 'Tahun lebih dari tahun ini!!';
+                                      if (selectedDate.year > 2005) {
+                                        return 'Anda Harus Berumur 18 Tahun!!';
                                       }
                                       return null;
                                     },

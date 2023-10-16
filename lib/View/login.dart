@@ -8,6 +8,7 @@ import 'package:ugd1/bloc/login_event.dart';
 import 'package:ugd1/bloc/login_state.dart';
 import 'package:ugd1/View/register.dart';
 import 'package:ugd1/config/theme.dart';
+import 'package:ugd1/database/sql_helper_user.dart';
 
 class Loginview extends StatefulWidget {
   const Loginview({super.key});
