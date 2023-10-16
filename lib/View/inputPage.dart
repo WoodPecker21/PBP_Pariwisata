@@ -17,7 +17,7 @@ class InputPage extends StatefulWidget {
 
   final String? title, nama, deskripsi, kategori, gambar;
   final int? id;
-  final double? rating,harga;
+  final double? rating, harga;
 
   @override
   State<InputPage> createState() => _InputPageState();
@@ -35,7 +35,8 @@ class _InputPageState extends State<InputPage> {
   @override
   Widget build(BuildContext context) {
     if (widget.id != null) {
-      //isi juga dropdown + rating nanti
+      _selectedValue = widget.kategori ?? 'Alam';
+      _rating = widget.rating ?? 0.0;
       controllerNama.text = widget.nama!;
       controllerDeskripsi.text = widget.deskripsi!;
       controllerHarga.text = widget.harga.toString();
@@ -56,7 +57,7 @@ class _InputPageState extends State<InputPage> {
             ),
             SizedBox(height: 24),
             Container(
-              height: 150, // Set a specific height for the TextField
+              height: 150,
               child: TextField(
                 controller: controllerDeskripsi,
                 maxLines: null,
@@ -123,7 +124,7 @@ class _InputPageState extends State<InputPage> {
               itemSize: 48,
               itemBuilder: (context, _) => Icon(
                 Icons.star,
-                color: Colors.amber, // Set star color to gold
+                color: Colors.amber,
               ),
               onRatingUpdate: (rating) {
                 setState(() {
@@ -214,8 +215,7 @@ class _InputPageState extends State<InputPage> {
     try {
       hargaInput = double.parse(text);
     } catch (e) {
-      // Handle the case where the input cannot be converted to a double
-      hargaInput = 0.0; // Set a default value to handle the error
+      hargaInput = 0.0;
     }
 
     switch (_selectedValue) {

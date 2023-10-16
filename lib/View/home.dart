@@ -29,7 +29,6 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  //-------------------------INI YG HOME GRID LAMA-----------------------
   int _selectedGridIndex = -1;
   bool _isGridEnlarged = false;
 
@@ -44,17 +43,14 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
-  // untuk pilih menu bottom navigation
   int _selectedIndex = 0;
 
-  // fungsi yg akan dijalankan tiap tekan menu di task bar
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
-  //-----------------------------INI COBA2 UTK MENUJU INPUT PAGE ---------------
   List<Map<String, dynamic>> objekwisata = [];
 
   void refresh() async {
@@ -77,29 +73,29 @@ class _HomeViewState extends State<HomeView> {
         title: Text("Go Trip"),
         actions: [
           IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () async {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const InputPage(
-                            title: 'INPUT OBJEK WISATA',
-                            id: null,
-                            nama: null,
-                            deskripsi: null,
-                            kategori: null,
-                            gambar: null,
-                            rating: null,
-                            harga: null,
-                          )),
-                ).then((_) => refresh());
-              }),
+            icon: Icon(Icons.add),
+            onPressed: () async {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const InputPage(
+                    title: 'INPUT OBJEK WISATA',
+                    id: null,
+                    nama: null,
+                    deskripsi: null,
+                    kategori: null,
+                    gambar: null,
+                    rating: null,
+                    harga: null,
+                  ),
+                ),
+              ).then((_) => refresh());
+            },
+          ),
           IconButton(onPressed: () async {}, icon: Icon(Icons.clear))
         ],
       ),
-      body: _selectedIndex == 0
-          ? buildHomeContent() // Display Home content if selected index is 0
-          : Profile(), // Display ProfileView if selected index is 1
+      body: _selectedIndex == 0 ? buildHomeContent() : Profile(),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
@@ -144,11 +140,14 @@ class _HomeViewState extends State<HomeView> {
                       height: 200,
                       child: Center(
                         child: Image(
-                          image: AssetImage(setImage(objekwisata[index]['kategori'])),
+                          image: AssetImage(
+                              setImage(objekwisata[index]['kategori'])),
                         ),
                       ),
                     ),
-                    SizedBox(width: 10,),
+                    SizedBox(
+                      width: 10,
+                    ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -168,20 +167,30 @@ class _HomeViewState extends State<HomeView> {
                           height: 20,
                         ),
                         Container(
-                          child: Text("Kategori: " + objekwisata[index]['kategori'],
-                          style: TextStyle(fontSize: 16),),
+                          child: Text(
+                            "Kategori: " + objekwisata[index]['kategori'],
+                            style: TextStyle(fontSize: 16),
+                          ),
                         ),
                         Container(
-                          child: Text("Harga: RP " + objekwisata[index]['harga'].toString(),
-                          style: TextStyle(fontSize: 16),),
+                          child: Text(
+                            "Harga: RP " +
+                                objekwisata[index]['harga'].toString(),
+                            style: TextStyle(fontSize: 16),
+                          ),
                         ),
                         Container(
-                          child: Text("Rating: " + objekwisata[index]['rating'].toString(),
-                          style: TextStyle(fontSize: 16),),
+                          child: Text(
+                            "Rating: " +
+                                objekwisata[index]['rating'].toString(),
+                            style: TextStyle(fontSize: 16),
+                          ),
                         ),
                         Container(
-                          child: Text("Deskripsi: " + objekwisata[index]['deskripsi'],
-                          style: TextStyle(fontSize: 16),),
+                          child: Text(
+                            "Deskripsi: " + objekwisata[index]['deskripsi'],
+                            style: TextStyle(fontSize: 16),
+                          ),
                         ),
                       ],
                     ),
@@ -196,17 +205,22 @@ class _HomeViewState extends State<HomeView> {
                 color: Colors.blue,
                 icon: Icons.update,
                 onTap: () async {
-                  Navigator.push(context, 
-                    MaterialPageRoute(
-                      builder: (context) => InputPage(
-                      title: 'input objek wisata', 
-                      id: objekwisata[index]['id'], 
-                      nama: objekwisata[index]['nama'], 
-                      deskripsi: objekwisata[index]['deskripsi'], 
-                      kategori: objekwisata[index]['kategori'], 
-                      gambar: objekwisata[index]['gambar'], 
-                      rating: objekwisata[index]['rating'], 
-                      harga: objekwisata[index]['harga']))).then((_) => refresh());
+                  final updatedData = objekwisata[index];
+                  await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => InputPage(
+                          title: 'Update Objek Wisata',
+                          id: updatedData['id'],
+                          nama: updatedData['nama'],
+                          deskripsi: updatedData['deskripsi'],
+                          kategori: updatedData['kategori'],
+                          gambar: updatedData['gambar'],
+                          rating: updatedData['rating'],
+                          harga: updatedData['harga'],
+                        ),
+                      ));
+                  refresh();
                 },
               ),
               IconSlideAction(
@@ -222,27 +236,27 @@ class _HomeViewState extends State<HomeView> {
         );
       },
     );
-    
   }
+
   Future<void> deleteObjekWisata(int id) async {
     await SQLHelper.deleteObjekWisata(id);
     refresh();
   }
 
-  String setImage(String kategori){
-   if(kategori == 'Alam'){
+  String setImage(String kategori) {
+    if (kategori == 'Alam') {
       return ('image/alam.jpg');
-   }else if(kategori == 'Budaya'){
-      return('image/budaya.jpeg');
-   }else if(kategori == 'Komersial'){
-      return('image/komersial.jpg');
-   }else if(kategori == 'Kuliner'){
-      return('image/kuliner.jpg');
-   }else if(kategori == 'Maritim'){
-      return('image/maritim.jpg');
-   }else if(kategori == 'Religius'){
+    } else if (kategori == 'Budaya') {
+      return ('image/budaya.jpeg');
+    } else if (kategori == 'Komersial') {
+      return ('image/komersial.jpg');
+    } else if (kategori == 'Kuliner') {
+      return ('image/kuliner.jpg');
+    } else if (kategori == 'Maritim') {
+      return ('image/maritim.jpg');
+    } else if (kategori == 'Religius') {
       return ('image/religius.jpg');
-   }
-   return '';
+    }
+    return '';
   }
 }
