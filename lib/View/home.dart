@@ -3,6 +3,7 @@ import 'package:ugd1/View/profile.dart';
 import 'package:ugd1/config/theme.dart';
 import 'package:ugd1/View/inputPage.dart';
 import 'package:ugd1/database/sql_helper.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 void main() {
   runApp(const MyApp());
@@ -121,49 +122,127 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget buildHomeContent() {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          // Your Home content goes here
-          Container(
-            child: Wrap(
-              spacing: 8.0,
-              runSpacing: 8.0,
-              children: List.generate(8, (index) {
-                return GestureDetector(
-                  onTap: () {
-                    _onGridTapped(index);
-                  },
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    width: _isGridEnlarged && _selectedGridIndex == index
-                        ? 400.0
-                        : 200.0,
-                    height: _isGridEnlarged && _selectedGridIndex == index
-                        ? 400.0
-                        : 200.0,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(0.7 * 8),
-                        color: Colors.blue),
-                    child: Card(
-                      color: Colors.blue,
+    return ListView.builder(
+      itemCount: objekwisata.length,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: EdgeInsets.all(10),
+          child: Slidable(
+            actionPane: const SlidableDrawerActionPane(),
+            actionExtentRatio: 0.25,
+            child: Container(
+              height: 250,
+              child: Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 100,
+                      height: 200,
                       child: Center(
-                        child: Text(
-                          'Grid Ke ${index + 1}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        child: Image(
+                          image: AssetImage(setImage(objekwisata[index]['kategori'])),
                         ),
                       ),
                     ),
-                  ),
-                );
-              }),
+                    SizedBox(width: 10,),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(top: 20),
+                          height: 20,
+                          child: Text(
+                            "Nama wisata: " + objekwisata[index]['nama'],
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                        Divider(
+                          color: Colors.grey,
+                          height: 20,
+                        ),
+                        Container(
+                          child: Text("Kategori: " + objekwisata[index]['kategori'],
+                          style: TextStyle(fontSize: 16),),
+                        ),
+                        Container(
+                          child: Text("Harga: RP " + objekwisata[index]['harga'].toString(),
+                          style: TextStyle(fontSize: 16),),
+                        ),
+                        Container(
+                          child: Text("Rating: " + objekwisata[index]['rating'].toString(),
+                          style: TextStyle(fontSize: 16),),
+                        ),
+                        Container(
+                          child: Text("Deskripsi: " + objekwisata[index]['deskripsi'],
+                          style: TextStyle(fontSize: 16),),
+                        ),
+                      ],
+                    ),
+                    Spacer(),
+                  ],
+                ),
+              ),
             ),
+            secondaryActions: <Widget>[
+              IconSlideAction(
+                caption: 'Update',
+                color: Colors.blue,
+                icon: Icons.update,
+                onTap: () async {
+                  Navigator.push(context, 
+                    MaterialPageRoute(
+                      builder: (context) => InputPage(
+                      title: 'input objek wisata', 
+                      id: objekwisata[index]['id'], 
+                      nama: objekwisata[index]['nama'], 
+                      deskripsi: objekwisata[index]['deskripsi'], 
+                      kategori: objekwisata[index]['kategori'], 
+                      gambar: objekwisata[index]['gambar'], 
+                      rating: objekwisata[index]['rating'], 
+                      harga: objekwisata[index]['harga']))).then((_) => refresh());
+                },
+              ),
+              IconSlideAction(
+                caption: 'Delete',
+                color: Colors.red,
+                icon: Icons.delete,
+                onTap: () async {
+                  await deleteObjekWisata(objekwisata[index]['id']);
+                },
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
+    
+  }
+  Future<void> deleteObjekWisata(int id) async {
+    await SQLHelper.deleteObjekWisata(id);
+    refresh();
+  }
+
+  String setImage(String kategori){
+   if(kategori == 'Alam'){
+      return ('image/alam.jpg');
+   }else if(kategori == 'Budaya'){
+      return('image/budaya.jpeg');
+   }else if(kategori == 'Komersial'){
+      return('image/komersial.jpg');
+   }else if(kategori == 'Kuliner'){
+      return('image/kuliner.jpg');
+   }else if(kategori == 'Maritim'){
+      return('image/maritim.jpg');
+   }else if(kategori == 'Religius'){
+      return ('image/religius.jpg');
+   }
+   return '';
   }
 }

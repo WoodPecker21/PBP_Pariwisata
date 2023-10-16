@@ -16,8 +16,8 @@ class InputPage extends StatefulWidget {
       required this.harga});
 
   final String? title, nama, deskripsi, kategori, gambar;
-  final int? id, rating;
-  final double? harga;
+  final int? id;
+  final double? rating,harga;
 
   @override
   State<InputPage> createState() => _InputPageState();
