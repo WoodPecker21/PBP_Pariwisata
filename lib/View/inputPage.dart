@@ -70,7 +70,8 @@ class _InputPageState extends State<InputPage> {
             SizedBox(height: 24),
             TextField(
               controller: controllerHarga,
-              decoration: const InputDecoration(
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: 'Harga',
               ),
@@ -134,6 +135,66 @@ class _InputPageState extends State<InputPage> {
             ElevatedButton(
               child: Text('Save'),
               onPressed: () async {
+                // Validasi Nama
+                if (controllerNama.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Nama tidak boleh kosong'),
+                    ),
+                  );
+                  return;
+                }
+
+                // Validasi Deskripsi
+                if (controllerDeskripsi.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Deskripsi tidak boleh kosong'),
+                    ),
+                  );
+                  return;
+                }
+
+                // Validasi Harga
+                double hargaInput = 0.0;
+                if (controllerHarga.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Harga tidak boleh kosong'),
+                    ),
+                  );
+                  return;
+                } else {
+                  try {
+                    hargaInput = double.parse(controllerHarga.text);
+                    if (hargaInput <= 0) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Harga harus lebih dari 0'),
+                        ),
+                      );
+                      return;
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Harga harus dalam format angka'),
+                      ),
+                    );
+                    return;
+                  }
+                }
+
+                // Validasi Rating
+                if (_rating < 0 || _rating > 5) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Rating harus dalam rentang 0 hingga 5'),
+                    ),
+                  );
+                  return;
+                }
+
                 if (widget.id == null) {
                   initData();
                   await addObjectWisata();
