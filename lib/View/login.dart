@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ugd1/View/home.dart';
@@ -44,7 +42,7 @@ class _LoginviewState extends State<Loginview> {
       String usernameInput, String passwordInput) async {
     final userId = await SQLHelper.searchUser(usernameInput, passwordInput);
 
-    if (userId != null) {
+    if (userId != -1) {
       userLogin = userId;
       return true;
     } else {
@@ -62,6 +60,7 @@ class _LoginviewState extends State<Loginview> {
       prefs.setString('email', user['email']);
       prefs.setString('phoneNumber', user['phoneNumber']);
       prefs.setString('birthdate', user['birthDate']);
+      prefs.setInt('id', user['id']);
     } else {
       print('User not found');
     }

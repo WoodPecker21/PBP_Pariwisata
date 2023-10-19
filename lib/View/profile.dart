@@ -30,6 +30,7 @@ class _ProfileState extends State<Profile> {
   String email = "";
   String phoneNumber = "";
   String birthdate = "";
+  int idUser = 0;
 
   @override
   void initState() {
@@ -45,6 +46,7 @@ class _ProfileState extends State<Profile> {
       email = prefs.getString('email') ?? "";
       phoneNumber = prefs.getString('phoneNumber') ?? "";
       birthdate = prefs.getString('birthdate') ?? "";
+      idUser = prefs.getInt('id') ?? 0;
     });
   }
 
@@ -72,6 +74,7 @@ class _ProfileState extends State<Profile> {
                       email: email,
                       phoneNumber: phoneNumber,
                       birthdate: birthdate,
+                      id: idUser,
                     ),
                   ),
                 );
@@ -198,12 +201,14 @@ class EditProfilePage extends StatefulWidget {
   final String email;
   final String phoneNumber;
   final String birthdate;
+  final int id;
 
   EditProfilePage({
     required this.username,
     required this.email,
     required this.phoneNumber,
     required this.birthdate,
+    required this.id,
   });
 
   @override
@@ -215,7 +220,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late TextEditingController emailController;
   late TextEditingController phoneNumberController;
   late TextEditingController birthdateController;
-  String? usernameLama, passwordLama;
+  late int idUser;
 
   @override
   void initState() {
@@ -225,6 +230,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     emailController = TextEditingController(text: widget.email);
     phoneNumberController = TextEditingController(text: widget.phoneNumber);
     birthdateController = TextEditingController(text: widget.birthdate);
+    idUser = widget.id;
   }
 
   @override
@@ -274,6 +280,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 phoneNumber: phoneNumberController.text,
                 birthdate: birthdateController.text,
               );
+              //save ke sql
+              SQLHelper.editUser(
+                  idUser,
+                  usernameController.text,
+                  emailController.text,
+                  phoneNumberController.text,
+                  birthdateController.text);
 
               // Kirim data yang diperbarui ke halaman Profile
               Navigator.of(context).pop(updatedProfile);

@@ -241,24 +241,24 @@ class _RegisterPageState extends State<RegisterPage> {
                               SizedBox(
                                 width: double.infinity,
                                 child: ElevatedButton(
-                                  onPressed: () {
+                                  onPressed: () async {
                                     if (formKey.currentState!.validate()) {
                                       print('masuk validasi---------');
-                                      addUser();
+                                      await addUser();
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
                                         const SnackBar(
                                           content: Text('Register Success'),
                                         ),
                                       );
-                                      final user = User(
-                                        name: usernameController.text,
-                                        email: emailController.text,
-                                        phoneNumber: phoneNumberController.text,
-                                        birthDate: birthdateController.text,
-                                      );
-                                      saveUserToSharedPreferences(
-                                          user); // This is where you save the user's data.
+                                      // final user = User(
+                                      //   name: usernameController.text,
+                                      //   email: emailController.text,
+                                      //   phoneNumber: phoneNumberController.text,
+                                      //   birthDate: birthdateController.text,
+                                      // );
+                                      // saveUserToSharedPreferences(
+                                      //     user); // This is where you save the user's data.
 
                                       Navigator.of(context).pushReplacement(
                                         MaterialPageRoute(
@@ -287,9 +287,9 @@ class _RegisterPageState extends State<RegisterPage> {
         ));
   }
 
-  void addUser() {
+  Future<void> addUser() async {
     try {
-      SQLHelper.addUser(
+      await SQLHelper.addUser(
         usernameController.text,
         passwordController.text,
         emailController.text,

@@ -45,12 +45,11 @@ class SQLHelper {
   }
 
   //update
-  static Future<int> editUser(int id, String name, String password,
-      String email, String phoneNumber, String birthDate) async {
+  static Future<int> editUser(int id, String name, String email,
+      String phoneNumber, String birthDate) async {
     final db = await SQLHelper.db();
     final data = {
       'name': name,
-      'password': password,
       'email': email,
       'phoneNumber': phoneNumber,
       'birthDate': birthDate
@@ -64,7 +63,8 @@ class SQLHelper {
     return await db.delete('user', where: "id = $id");
   }
 
-  static Future<int?> searchUser(String nameInput, String passwordInput) async {
+  //cari user berdasarkan username dan password
+  static Future<int> searchUser(String nameInput, String passwordInput) async {
     final db = await SQLHelper.db();
 
     List<Map<String, dynamic>> result = await db.query(
