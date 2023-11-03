@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:ugd1/View/profile.dart';
+import 'package:ugd1/View/UGDView.dart';
 import 'package:ugd1/config/theme.dart';
 import 'package:ugd1/View/inputPage.dart';
 import 'package:ugd1/database/sql_helper.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:ugd1/View/UGDView.dart';
 
 void main() {
   runApp(const MyApp());
@@ -66,6 +68,11 @@ class _HomeViewState extends State<HomeView> {
     super.initState();
   }
 
+  Widget _buildUGDContent() {
+  return UGD(); //
+}
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,7 +102,7 @@ class _HomeViewState extends State<HomeView> {
           IconButton(onPressed: () async {}, icon: Icon(Icons.clear))
         ],
       ),
-      body: _selectedIndex == 0 ? buildHomeContent() : Profile(),
+      body: _selectedIndex == 0 ? buildHomeContent() : _selectedIndex == 1 ? Profile() : UGD(),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
@@ -109,6 +116,12 @@ class _HomeViewState extends State<HomeView> {
               Icons.person,
             ),
             label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.work,
+            ),
+            label: 'UGD',
           ),
         ],
         currentIndex: _selectedIndex,
