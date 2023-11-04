@@ -45,5 +45,13 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>io.flutter.embedded_views_preview</key>
+	<string>YES</string>
+	<key>io.flutter.gcmSandbox</key>
+	<true/>
+	<key>io.flutter.gcmSenderId</key>
+	<string>YOUR_SENDER_ID_HERE</string>
+	<key>io.flutter.embedded_views_preview</key>
+	<string>YES</string>
 </dict>
 </plist>

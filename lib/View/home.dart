@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ugd1/View/gpsPage.dart';
 import 'package:ugd1/View/profile.dart';
 import 'package:ugd1/View/UGDView.dart';
 import 'package:ugd1/config/theme.dart';
@@ -69,9 +70,8 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget _buildUGDContent() {
-  return UGD(); //
-}
-
+    return UGD(); //
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +79,18 @@ class _HomeViewState extends State<HomeView> {
       appBar: AppBar(
         title: Text("Go Trip"),
         actions: [
+          IconButton(
+            icon: Icon(Icons.my_location), // Ikon lokasi saat ini
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      GpsPage(), // Gunakan GpsPage untuk halaman GPS
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () async {
@@ -99,10 +111,13 @@ class _HomeViewState extends State<HomeView> {
               ).then((_) => refresh());
             },
           ),
-          IconButton(onPressed: () async {}, icon: Icon(Icons.clear))
         ],
       ),
-      body: _selectedIndex == 0 ? buildHomeContent() : _selectedIndex == 1 ? Profile() : UGD(),
+      body: _selectedIndex == 0
+          ? buildHomeContent()
+          : _selectedIndex == 1
+              ? Profile()
+              : _buildUGDContent(),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
@@ -220,19 +235,20 @@ class _HomeViewState extends State<HomeView> {
                 onTap: () async {
                   final updatedData = objekwisata[index];
                   await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => InputPage(
-                          title: 'Update Objek Wisata',
-                          id: updatedData['id'],
-                          nama: updatedData['nama'],
-                          deskripsi: updatedData['deskripsi'],
-                          kategori: updatedData['kategori'],
-                          gambar: updatedData['gambar'],
-                          rating: updatedData['rating'],
-                          harga: updatedData['harga'],
-                        ),
-                      ));
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => InputPage(
+                        title: 'Update Objek Wisata',
+                        id: updatedData['id'],
+                        nama: updatedData['nama'],
+                        deskripsi: updatedData['deskripsi'],
+                        kategori: updatedData['kategori'],
+                        gambar: updatedData['gambar'],
+                        rating: updatedData['rating'],
+                        harga: updatedData['harga'],
+                      ),
+                    ),
+                  );
                   refresh();
                 },
               ),
