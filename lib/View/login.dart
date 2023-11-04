@@ -30,6 +30,11 @@ class _LoginviewState extends State<Loginview> {
     setState(() {
       users = data;
     });
+    for (var user in users) {
+      print('ID: ${user['id']}');
+      print('Name: ${user['name']}');
+      print('Password: ${user['password']}');
+    }
   }
 
   @override

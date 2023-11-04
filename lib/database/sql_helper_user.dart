@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:sqflite/sqflite.dart' as sql;
 
 class SQLHelper {
@@ -10,7 +11,8 @@ class SQLHelper {
         password TEXT,
         email TEXT,
         phoneNumber TEXT,
-        birthDate TEXT
+        birthDate TEXT,
+        imageProfile BLOB
       )
     """);
   }
@@ -33,7 +35,7 @@ class SQLHelper {
       'password': password,
       'email': email,
       'phoneNumber': phoneNumber,
-      'birthDate': birthDate
+      'birthDate': birthDate,
     };
     return await db.insert('user', data);
   }
@@ -46,13 +48,14 @@ class SQLHelper {
 
   //update
   static Future<int> editUser(int id, String name, String email,
-      String phoneNumber, String birthDate) async {
+      String phoneNumber, String birthDate, Uint8List imageProfil) async {
     final db = await SQLHelper.db();
     final data = {
       'name': name,
       'email': email,
       'phoneNumber': phoneNumber,
-      'birthDate': birthDate
+      'birthDate': birthDate,
+      'imageProfile': imageProfil,
     };
     return await db.update('user', data, where: "id = $id");
   }
@@ -95,5 +98,34 @@ class SQLHelper {
     }
 
     return null; // No user found with the provided ID
+  }
+
+  static Future<int> insertImage(int userId, Uint8List image) async {
+    final db = await SQLHelper.db();
+
+    return await db.update(
+      'user',
+      {'imageProfile': image},
+      where: 'id = ?',
+      whereArgs: [userId],
+    );
+  }
+
+  static Future<Uint8List?> getImageProfile(int userId) async {
+    final db = await SQLHelper.db();
+    List<Map<String, dynamic>> result = await db.query(
+      'user',
+      columns: ['imageProfile'],
+      where: 'id = ?',
+      whereArgs: [userId],
+    );
+
+    if (result.isNotEmpty && result.first['imageProfile'] != null) {
+      return result.first['imageProfile'] as Uint8List;
+    } else if (result.first['imageProfile'] == null) {
+      return null;
+    } else {
+      return null;
+    }
   }
 }

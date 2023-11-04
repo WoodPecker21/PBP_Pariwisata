@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ugd1/View/gpsPage.dart';
-import 'package:ugd1/View/profile.dart';
+import 'package:ugd1/View/profil.dart';
 import 'package:ugd1/View/UGDView.dart';
 import 'package:ugd1/config/theme.dart';
 import 'package:ugd1/View/inputPage.dart';
@@ -32,19 +32,19 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  int _selectedGridIndex = -1;
-  bool _isGridEnlarged = false;
+  // int _selectedGridIndex = -1;
+  // bool _isGridEnlarged = false;
 
-  void _onGridTapped(int index) {
-    setState(() {
-      if (_selectedGridIndex == index) {
-        _isGridEnlarged = !_isGridEnlarged;
-      } else {
-        _selectedGridIndex = index;
-        _isGridEnlarged = true;
-      }
-    });
-  }
+  // void _onGridTapped(int index) {
+  //   setState(() {
+  //     if (_selectedGridIndex == index) {
+  //       _isGridEnlarged = !_isGridEnlarged;
+  //     } else {
+  //       _selectedGridIndex = index;
+  //       _isGridEnlarged = true;
+  //     }
+  //   });
+  // }
 
   int _selectedIndex = 0;
 

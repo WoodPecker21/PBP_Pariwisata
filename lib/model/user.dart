@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 class User {
   final int? id;
   final String? name;
@@ -5,6 +7,7 @@ class User {
   final String? email;
   final String? phoneNumber;
   final String? birthDate;
+  final Uint8List? imageProfile;
 
   User(
       {this.id,
@@ -12,10 +15,11 @@ class User {
       this.password,
       this.email,
       this.phoneNumber,
-      this.birthDate});
+      this.birthDate,
+      this.imageProfile});
 
   @override
   String toString() {
-    return 'User[id: $id, name: $name, password: $password, email: $email, phoneNumber: $phoneNumber, birthDate: $birthDate]';
+    return 'User[id: $id, name: $name, password: $password, email: $email, phoneNumber: $phoneNumber, birthDate: $birthDate, imageProfile: $imageProfile]';
   }
 }

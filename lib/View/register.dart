@@ -44,9 +44,12 @@ class _RegisterPageState extends State<RegisterPage> {
 
   bool cekEmailUnik(String emailInput, List<Map<String, dynamic>> users) {
     for (Map<String, dynamic> user in users) {
-      String userEmail = user['email'];
+      String? userEmail = user['email'];
       if (userEmail == emailInput) {
         return false;
+      }
+      if (userEmail == null) {
+        return true;
       }
     }
     return true;
