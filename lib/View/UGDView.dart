@@ -63,8 +63,12 @@ class _UGDState extends State<UGD> {
     );
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
-    return const Scaffold();
+    return Scaffold(
+      body: Center(
+        child: Text("Harga Awal: \$${initialPrice.toStringAsFixed(2)}"),
+      ),
+    );
   }
 }
