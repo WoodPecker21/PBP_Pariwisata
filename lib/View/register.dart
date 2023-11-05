@@ -132,7 +132,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Username harus terisi!!';
-                                  } else if (value.length <= 5) {
+                                  } else if (value.length < 5) {
                                     return 'Username minimal memiliki 5 karakter!';
                                   }
                                   return null;
