@@ -51,54 +51,99 @@ class _GpsPageState extends State<GpsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Lokasi Anda'),
+        backgroundColor: Colors.lightBlue,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            if (_currentPosition != null) Text("Lokasi Anda saat ini:"),
-            if (_currentPosition != null)
-              Text("Latitude: ${_currentPosition?.latitude}"),
-            if (_currentPosition != null)
-              Text("Longitude: ${_currentPosition?.longitude}"),
-            if (_currentPosition != null)
-              Container(
-                height: 300,
-                width: 300,
-                child: GoogleMap(
-                  onMapCreated: _onMapCreated,
-                  initialCameraPosition: CameraPosition(
-                    target: LatLng(
-                      _currentPosition!.latitude,
-                      _currentPosition!.longitude,
-                    ),
-                    zoom: 15,
-                  ),
-                  markers: Set<Marker>.from([
-                    Marker(
-                      markerId: MarkerId('Your_Location'),
-                      position: LatLng(
-                        _currentPosition!.latitude,
-                        _currentPosition!.longitude,
+      body: Container(
+        decoration: BoxDecoration(
+          color: Colors.white, // Ganti latar belakang putih
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              if (_currentPosition != null)
+                Column(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(20),
+                      margin: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Color(
+                            0xFFEDFAFD), // Gunakan warna heksadesimal #EDFAFD
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 5,
+                            blurRadius: 7,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
                       ),
-                      infoWindow: InfoWindow(title: 'Your Location'),
+                      child: Column(
+                        children: [
+                          Text(
+                            "Lokasi Anda saat ini",
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors
+                                  .black, // Ganti warna teks menjadi hitam
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            "Latitude: ${_currentPosition?.latitude}",
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors
+                                  .black, // Ganti warna teks menjadi hitam
+                            ),
+                          ),
+                          Text(
+                            "Longitude: ${_currentPosition?.longitude}",
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors
+                                  .black, // Ganti warna teks menjadi hitam
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ]),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        _getCurrentLocation();
+                        if (_currentPosition != null) {
+                          _openGoogleMaps(
+                            _currentPosition!.latitude,
+                            _currentPosition!.longitude,
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.lightBlue, // Ganti warna tombol
+                        onPrimary: Colors.white, // Ganti warna teks tombol
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.map),
+                          SizedBox(width: 10),
+                          Text('Buka Google Maps'),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ElevatedButton(
-              onPressed: () {
-                _getCurrentLocation();
-                if (_currentPosition != null) {
-                  _openGoogleMaps(
-                    _currentPosition!.latitude,
-                    _currentPosition!.longitude,
-                  );
-                }
-              },
-              child: Text('Buka Google Maps'),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
