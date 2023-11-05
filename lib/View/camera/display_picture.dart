@@ -62,6 +62,9 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.file(fileResult!),
+              const SizedBox(
+                height: 20,
+              ),
               ElevatedButton(
                 onPressed: () {
                   _saveImageToDatabase(fileResult, widget.id);
@@ -72,7 +75,7 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
                         );
                   }
                 },
-                child: Text('Save Image'),
+                child: Text('Save Image', style: TextStyle(fontSize: 20)),
               ),
             ],
           ),

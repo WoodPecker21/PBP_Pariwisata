@@ -157,6 +157,7 @@ class _ProfileState extends State<Profile> {
                 setState(() {
                   _isEditing = !_isEditing;
                 });
+                loadUserData();
               },
               color: Colors.black,
             ),
