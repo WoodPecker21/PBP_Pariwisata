@@ -156,119 +156,126 @@ class _HomeViewState extends State<HomeView> {
             );
           },
           child: Padding(
-            padding: EdgeInsets.all(10),
-            child: Slidable(
-              actionPane: const SlidableDrawerActionPane(),
-              actionExtentRatio: 0.25,
-              child: Container(
-                height: 220,
-                child: Card(
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 100,
-                        height: 200,
-                        child: Center(
-                          child: Image(
-                            image: AssetImage(
-                                setImage(objekwisata[index]['kategori'])),
-                          ),
-                        ),
+              padding: EdgeInsets.all(10),
+              child: Expanded(
+                child: Slidable(
+                  actionPane: const SlidableDrawerActionPane(),
+                  actionExtentRatio: 0.25,
+                  child: Container(
+                    child: Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
+                          // Objekwisata Name (placed at the top)
                           Container(
-                            margin: EdgeInsets.only(top: 20),
-                            height: 25,
+                            margin: EdgeInsets.only(bottom: 10),
                             child: Text(
                               objekwisata[index]['nama'],
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
                               ),
                             ),
                           ),
-                          Divider(
+
+                          // Image (takes 80% width of the card)
+                          Container(
+                            width: MediaQuery.of(context).size.width *
+                                0.8, // 80% of the screen width
+                            height: 150, // Set the desired height of the image
+                            child: Center(
+                              child: Image(
+                                image: AssetImage(
+                                    setImage(objekwisata[index]['kategori'])),
+                                fit: BoxFit
+                                    .cover, // Ensure the image covers the entire container
+                              ),
+                            ),
+                          ),
+
+                          // Rest of the data (placed under the image)
+                          const Divider(
                             color: Colors.grey,
                             height: 20,
+                            indent: 10,
+                            endIndent: 10,
                           ),
-                          Container(
-                            child: Text(
-                              "Kategori  : " + objekwisata[index]['kategori'],
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ),
-                          Container(
-                            child: Text(
-                              "Harga      : RP " +
-                                  objekwisata[index]['harga'].toString(),
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ),
-                          Container(
-                            child: Text(
-                              "Rating      : " +
-                                  objekwisata[index]['rating'].toString(),
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ),
-                          Container(
-                            child: Text(
-                              "Deskripsi : " + objekwisata[index]['deskripsi'],
-                              style: TextStyle(fontSize: 16),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                bottom: 10,
+                                left: 10,
+                                right:
+                                    10), // Set padding for the start of the card
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Kategori  : " +
+                                      objekwisata[index]['kategori'],
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                Text(
+                                  "Harga      : RP " +
+                                      objekwisata[index]['harga'].toString(),
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                Text(
+                                  "Rating      : " +
+                                      objekwisata[index]['rating'].toString(),
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                Text(
+                                  "Deskripsi : " +
+                                      objekwisata[index]['deskripsi'],
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
-                      Spacer(),
-                    ],
+                    ),
                   ),
+                  secondaryActions: <Widget>[
+                    IconSlideAction(
+                      caption: 'Update',
+                      color: Colors.blue,
+                      icon: Icons.update,
+                      onTap: () async {
+                        final updatedData = objekwisata[index];
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => InputPage(
+                              title: 'Update Objek Wisata',
+                              id: updatedData['id'],
+                              nama: updatedData['nama'],
+                              deskripsi: updatedData['deskripsi'],
+                              kategori: updatedData['kategori'],
+                              gambar: updatedData['gambar'],
+                              rating: updatedData['rating'],
+                              harga: updatedData['harga'],
+                            ),
+                          ),
+                        );
+                        refresh();
+                      },
+                    ),
+                    IconSlideAction(
+                      caption: 'Delete',
+                      color: Colors.red,
+                      icon: Icons.delete,
+                      onTap: () async {
+                        await deleteObjekWisata(objekwisata[index]['id']);
+                      },
+                    ),
+                  ],
                 ),
-              ),
-              secondaryActions: <Widget>[
-                IconSlideAction(
-                  caption: 'Update',
-                  color: Colors.blue,
-                  icon: Icons.update,
-                  onTap: () async {
-                    final updatedData = objekwisata[index];
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => InputPage(
-                          title: 'Update Objek Wisata',
-                          id: updatedData['id'],
-                          nama: updatedData['nama'],
-                          deskripsi: updatedData['deskripsi'],
-                          kategori: updatedData['kategori'],
-                          gambar: updatedData['gambar'],
-                          rating: updatedData['rating'],
-                          harga: updatedData['harga'],
-                        ),
-                      ),
-                    );
-                    refresh();
-                  },
-                ),
-                IconSlideAction(
-                  caption: 'Delete',
-                  color: Colors.red,
-                  icon: Icons.delete,
-                  onTap: () async {
-                    await deleteObjekWisata(objekwisata[index]['id']);
-                  },
-                ),
-              ],
-            ),
-          ),
+              )),
         );
       },
     );
