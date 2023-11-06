@@ -52,7 +52,7 @@ class PaymentMethodItem extends StatelessWidget {
         title: Text(title),
         onTap: () {
           if (title == "Dana") {
-            final harga = 100.0; // Ganti dengan harga yang sesuai
+            final harga = 100000.0; // Ganti dengan harga yang sesuai
             Navigator.push(
               context,
               MaterialPageRoute(

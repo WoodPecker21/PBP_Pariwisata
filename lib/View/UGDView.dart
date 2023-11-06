@@ -43,6 +43,11 @@ class _UGDState extends State<UGD> {
     String message = isPromoReceived
         ? "Selamat! Anda mendapatkan potongan harga. Harga awal: \$${initialPrice.toStringAsFixed(2)}, Harga setelah diskon: \$${(initialPrice / 2).toStringAsFixed(2)}"
         : "Maaf, Anda tidak mendapatkan promo.";
+    setState(() {
+      isPromoReceived
+          ? initialPrice = initialPrice / 2
+          : initialPrice = initialPrice;
+    });
 
     showDialog(
       context: context,
@@ -55,6 +60,7 @@ class _UGDState extends State<UGD> {
               child: Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop();
+                setState(() {});
               },
             ),
           ],
@@ -63,7 +69,7 @@ class _UGDState extends State<UGD> {
     );
   }
 
-@override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(

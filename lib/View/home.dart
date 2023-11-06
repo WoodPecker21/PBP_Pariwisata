@@ -161,7 +161,7 @@ class _HomeViewState extends State<HomeView> {
               actionPane: const SlidableDrawerActionPane(),
               actionExtentRatio: 0.25,
               child: Container(
-                height: 250,
+                height: 220,
                 child: Card(
                   elevation: 4,
                   shape: RoundedRectangleBorder(
@@ -187,9 +187,9 @@ class _HomeViewState extends State<HomeView> {
                         children: [
                           Container(
                             margin: EdgeInsets.only(top: 20),
-                            height: 20,
+                            height: 25,
                             child: Text(
-                              "Nama wisata: " + objekwisata[index]['nama'],
+                              objekwisata[index]['nama'],
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
@@ -202,27 +202,27 @@ class _HomeViewState extends State<HomeView> {
                           ),
                           Container(
                             child: Text(
-                              "Kategori: " + objekwisata[index]['kategori'],
+                              "Kategori  : " + objekwisata[index]['kategori'],
                               style: TextStyle(fontSize: 16),
                             ),
                           ),
                           Container(
                             child: Text(
-                              "Harga: RP " +
+                              "Harga      : RP " +
                                   objekwisata[index]['harga'].toString(),
                               style: TextStyle(fontSize: 16),
                             ),
                           ),
                           Container(
                             child: Text(
-                              "Rating: " +
+                              "Rating      : " +
                                   objekwisata[index]['rating'].toString(),
                               style: TextStyle(fontSize: 16),
                             ),
                           ),
                           Container(
                             child: Text(
-                              "Deskripsi: " + objekwisata[index]['deskripsi'],
+                              "Deskripsi : " + objekwisata[index]['deskripsi'],
                               style: TextStyle(fontSize: 16),
                             ),
                           ),

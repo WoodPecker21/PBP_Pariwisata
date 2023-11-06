@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:ugd1/View/BayarPage.dart';
+//import '../database/sql_helper_qr.dart';
 
 class DanaPaymentPage extends StatefulWidget {
   final double harga; // Price parameter
@@ -47,9 +48,11 @@ class _DanaPaymentPageState extends State<DanaPaymentPage> {
                 setState(() {
                   showPaymentForm = !showPaymentForm; // Toggle form visibility
                 });
+                //               SQLHelper.addQR('Dana:$harga'); // Add QR to database
               },
               child: Text("Scan QR Code"),
             ),
+            SizedBox(height: 20),
             if (showPaymentForm)
               PaymentForm(
                 harga: harga,
