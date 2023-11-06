@@ -7,6 +7,7 @@ import 'package:ugd1/View/inputPage.dart';
 import 'package:ugd1/database/sql_helper.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:ugd1/View/UGDView.dart';
+import 'package:ugd1/View/paymentPage.dart'; // Import PaymentPage
 
 void main() {
   runApp(const MyApp());
@@ -32,25 +33,19 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  // int _selectedGridIndex = -1;
-  // bool _isGridEnlarged = false;
-
-  // void _onGridTapped(int index) {
-  //   setState(() {
-  //     if (_selectedGridIndex == index) {
-  //       _isGridEnlarged = !_isGridEnlarged;
-  //     } else {
-  //       _selectedGridIndex = index;
-  //       _isGridEnlarged = true;
-  //     }
-  //   });
-  // }
-
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      if (index == 3) {
+        // Jika menu "Pembayaran" (index 3) diklik, arahkan ke PaymentPage
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const PaymentPage()),
+        );
+      } else {
+        _selectedIndex = index;
+      }
     });
   }
 
@@ -70,7 +65,7 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget _buildUGDContent() {
-    return UGD(); //
+    return UGD();
   }
 
   @override
@@ -80,13 +75,12 @@ class _HomeViewState extends State<HomeView> {
         title: Text("Go Trip"),
         actions: [
           IconButton(
-            icon: Icon(Icons.my_location), // Ikon lokasi saat ini
+            icon: Icon(Icons.my_location),
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      GpsPage(), // Gunakan GpsPage untuk halaman GPS
+                  builder: (context) => GpsPage(),
                 ),
               );
             },
@@ -123,24 +117,28 @@ class _HomeViewState extends State<HomeView> {
           BottomNavigationBarItem(
             icon: Icon(
               Icons.home,
+              color: Colors.black, // Mengatur warna ikon terpilih
             ),
             label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.person,
+              color: Colors.black,
             ),
             label: 'Profile',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.work,
+              color: Colors.black,
             ),
             label: 'UGD',
           ),
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
+        selectedItemColor: Colors.blue, // Mengatur warna ikon terpilih
       ),
     );
   }
@@ -149,118 +147,127 @@ class _HomeViewState extends State<HomeView> {
     return ListView.builder(
       itemCount: objekwisata.length,
       itemBuilder: (context, index) {
-        return Padding(
-          padding: EdgeInsets.all(10),
-          child: Slidable(
-            actionPane: const SlidableDrawerActionPane(),
-            actionExtentRatio: 0.25,
-            child: Container(
-              height: 250,
-              child: Card(
-                elevation: 4,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 100,
-                      height: 200,
-                      child: Center(
-                        child: Image(
-                          image: AssetImage(
-                              setImage(objekwisata[index]['kategori'])),
+        return GestureDetector(
+          onTap: () {
+            // Ketika container diklik, arahkan ke halaman PaymentPage
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const PaymentPage()),
+            );
+          },
+          child: Padding(
+            padding: EdgeInsets.all(10),
+            child: Slidable(
+              actionPane: const SlidableDrawerActionPane(),
+              actionExtentRatio: 0.25,
+              child: Container(
+                height: 250,
+                child: Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 100,
+                        height: 200,
+                        child: Center(
+                          child: Image(
+                            image: AssetImage(
+                                setImage(objekwisata[index]['kategori'])),
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(top: 20),
-                          height: 20,
-                          child: Text(
-                            "Nama wisata: " + objekwisata[index]['nama'],
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(top: 20),
+                            height: 20,
+                            child: Text(
+                              "Nama wisata: " + objekwisata[index]['nama'],
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
                             ),
                           ),
-                        ),
-                        Divider(
-                          color: Colors.grey,
-                          height: 20,
-                        ),
-                        Container(
-                          child: Text(
-                            "Kategori: " + objekwisata[index]['kategori'],
-                            style: TextStyle(fontSize: 16),
+                          Divider(
+                            color: Colors.grey,
+                            height: 20,
                           ),
-                        ),
-                        Container(
-                          child: Text(
-                            "Harga: RP " +
-                                objekwisata[index]['harga'].toString(),
-                            style: TextStyle(fontSize: 16),
+                          Container(
+                            child: Text(
+                              "Kategori: " + objekwisata[index]['kategori'],
+                              style: TextStyle(fontSize: 16),
+                            ),
                           ),
-                        ),
-                        Container(
-                          child: Text(
-                            "Rating: " +
-                                objekwisata[index]['rating'].toString(),
-                            style: TextStyle(fontSize: 16),
+                          Container(
+                            child: Text(
+                              "Harga: RP " +
+                                  objekwisata[index]['harga'].toString(),
+                              style: TextStyle(fontSize: 16),
+                            ),
                           ),
-                        ),
-                        Container(
-                          child: Text(
-                            "Deskripsi: " + objekwisata[index]['deskripsi'],
-                            style: TextStyle(fontSize: 16),
+                          Container(
+                            child: Text(
+                              "Rating: " +
+                                  objekwisata[index]['rating'].toString(),
+                              style: TextStyle(fontSize: 16),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Spacer(),
-                  ],
+                          Container(
+                            child: Text(
+                              "Deskripsi: " + objekwisata[index]['deskripsi'],
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Spacer(),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            secondaryActions: <Widget>[
-              IconSlideAction(
-                caption: 'Update',
-                color: Colors.blue,
-                icon: Icons.update,
-                onTap: () async {
-                  final updatedData = objekwisata[index];
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => InputPage(
-                        title: 'Update Objek Wisata',
-                        id: updatedData['id'],
-                        nama: updatedData['nama'],
-                        deskripsi: updatedData['deskripsi'],
-                        kategori: updatedData['kategori'],
-                        gambar: updatedData['gambar'],
-                        rating: updatedData['rating'],
-                        harga: updatedData['harga'],
+              secondaryActions: <Widget>[
+                IconSlideAction(
+                  caption: 'Update',
+                  color: Colors.blue,
+                  icon: Icons.update,
+                  onTap: () async {
+                    final updatedData = objekwisata[index];
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => InputPage(
+                          title: 'Update Objek Wisata',
+                          id: updatedData['id'],
+                          nama: updatedData['nama'],
+                          deskripsi: updatedData['deskripsi'],
+                          kategori: updatedData['kategori'],
+                          gambar: updatedData['gambar'],
+                          rating: updatedData['rating'],
+                          harga: updatedData['harga'],
+                        ),
                       ),
-                    ),
-                  );
-                  refresh();
-                },
-              ),
-              IconSlideAction(
-                caption: 'Delete',
-                color: Colors.red,
-                icon: Icons.delete,
-                onTap: () async {
-                  await deleteObjekWisata(objekwisata[index]['id']);
-                },
-              ),
-            ],
+                    );
+                    refresh();
+                  },
+                ),
+                IconSlideAction(
+                  caption: 'Delete',
+                  color: Colors.red,
+                  icon: Icons.delete,
+                  onTap: () async {
+                    await deleteObjekWisata(objekwisata[index]['id']);
+                  },
+                ),
+              ],
+            ),
           ),
         );
       },
