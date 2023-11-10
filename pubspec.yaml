@@ -46,9 +46,6 @@ dependencies:
   qr_flutter: ^4.1.0
   path: ^1.8.0
   # qr_code_scanner: ^0.4.0
-  cached_network_image: ^3.2.1
-  flutter_svg: ^1.1.6
-  country_pickers: ^2.0.0
   pdf: ^3.6.4
   printing: ^5.9.1
   image_picker: ^1.0.4
@@ -92,8 +89,6 @@ flutter:
     - image/Agustinus.jpeg
     - image/Candra.jpeg
     - image/profilCat.jpg
-    - assets/
-    - assets/images/
   fonts:
     - family: Anton
       fonts:

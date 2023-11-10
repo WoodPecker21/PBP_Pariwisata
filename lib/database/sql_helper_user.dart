@@ -12,9 +12,18 @@ class SQLHelper {
         email TEXT,
         phoneNumber TEXT,
         birthDate TEXT,
-        imageProfile BLOB
+        profileImage BLOB
       )
     """);
+  }
+
+  static Future<int> updateProfileImages(
+    String name, Uint8List profileImage) async {
+    final db = await SQLHelper.db();
+    final data = {
+      'imageProfile': profileImage
+    };
+    return db.update('user', data, where: 'name = ?', whereArgs: [name]);
   }
 
   //call db
