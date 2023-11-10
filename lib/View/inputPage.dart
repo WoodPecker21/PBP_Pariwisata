@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../database/sql_helper.dart';
 import '../model/objekWisata.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:ugd1/View/pdf_view.dart';
+import 'package:uuid/uuid.dart';
 
 class InputPage extends StatefulWidget {
   const InputPage(
@@ -31,6 +33,7 @@ class _InputPageState extends State<InputPage> {
   double hargaInput = 0;
   String _selectedValue = 'Alam';
   String gambarPath = 'image/alam.jpg'; //defaultnya path ke gambar alam
+  String id = const Uuid().v1();
 
   @override
   Widget build(BuildContext context) {
@@ -206,7 +209,8 @@ class _InputPageState extends State<InputPage> {
                 }
                 Navigator.pop(context);
               },
-            )
+            ),
+            buttonCreatePDF(context),
           ],
         ));
   }
@@ -266,5 +270,49 @@ class _InputPageState extends State<InputPage> {
         gambarPath,
         _rating,
         hargaInput);
+  }
+
+  Container buttonCreatePDF(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 2),
+      child: ElevatedButton(
+        onPressed: () {
+          if (_selectedValue.isEmpty ||
+              controllerNama.text.isEmpty ||
+              controllerDeskripsi.text.isEmpty ||
+              controllerHarga.text.isEmpty) {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text('Warning'),
+                content: Text('Please fill all the fields.'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text('OK'),
+                  ),
+                ],
+              ),
+            );
+            return;
+          } else {
+            createPdf(controllerNama, controllerDeskripsi, controllerHarga,
+                _selectedValue, gambarPath, _rating, context, id);
+            setState(() {
+              const uuid = Uuid();
+              id = uuid.v1();
+            });
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.amber,
+          textStyle: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        child: Text('Create PDF'),
+      ),
+    );
   }
 }
