@@ -36,3 +36,10 @@ Fungsi yang ada:
 - generate qr pembayaran (Agustinus)
 - gps lokasi user (Joanna)
 - shake untuk mendapat promo harga (Candra)
+
+---------------------- UGD LIBRARY ----------------------------------
+Fungsi yang ada:
+
+- membuat dan menampilkan preview pdf berdasarkan objek wisata yang dipilih (Idelia)
+- pdf menggunakan library barcode_widget, pdf, printing, uuid, dan intl
+- mengubah fungsi profil picture dengan menggunakan lib image_picker (Agustinus)
