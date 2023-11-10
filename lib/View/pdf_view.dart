@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:intl/intl.dart';
-
+import 'package:barcode_widget/barcode_widget.dart';
 import 'package:ugd1/View/preview_screen.dart';
 
 Future<void> createPdf(
@@ -69,8 +69,10 @@ Future<void> createPdf(
               pw.SizedBox(height: 30),
               personalDataFromInput(controllerNama, controllerDeskripsi,
                   controllerHarga, kategori, rating),
-              pw.SizedBox(height: 100),
+              pw.SizedBox(height: 40),
               bawah(),
+              pw.SizedBox(height: 10),
+              barcodeGaris(id),
               pw.SizedBox(height: 10),
               footerPDF(formattedDate),
             ],
@@ -332,3 +334,17 @@ pw.Center footerPDF(String formattedDate) => pw.Center(
         ),
       ),
     );
+
+pw.Container barcodeGaris(String id) {
+  return pw.Container(
+    child: pw.Padding(
+      padding: pw.EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+      child: pw.BarcodeWidget(
+        barcode: Barcode.code128(escapes: true),
+        data: id,
+        width: 80,
+        height: 40,
+      ),
+    ),
+  );
+}
