@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ugd1/View/home.dart';
+//import 'package:ugd1/View/home.dart';
 //import 'package:ugd1/View/profile.dart';
-import 'package:ugd1/bloc/form_submission_state.dart';
 import 'package:ugd1/bloc/login_bloc.dart';
 import 'package:ugd1/bloc/login_event.dart';
 import 'package:ugd1/bloc/login_state.dart';
@@ -10,6 +9,9 @@ import 'package:ugd1/View/register.dart';
 import 'package:ugd1/config/theme.dart';
 import 'package:ugd1/database/sql_helper_user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ugd1/core/app_export.dart';
+import 'package:ugd1/widgets/custom_elevated_button.dart';
+import 'package:ugd1/widgets/custom_text_form_field.dart';
 
 class Loginview extends StatefulWidget {
   const Loginview({super.key});
@@ -76,6 +78,7 @@ class _LoginviewState extends State<Loginview> {
     return BlocProvider<LoginBloc>(
         create: (context) => LoginBloc(),
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
           body: BlocListener<LoginBloc, LoginState>(
             listener: (context, state) {
               // if (state.formSubmissionState is SubmissionSuccess) {
@@ -113,118 +116,160 @@ class _LoginviewState extends State<Loginview> {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 20.0, vertical: 10.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              TextFormField(
-                                controller: usernameController,
-                                decoration: const InputDecoration(
-                                  prefixIcon: Icon(Icons.person),
-                                  labelText: 'Username',
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(height: 55),
+                                Text(
+                                  "Login",
+                                  style: CustomTextStyles
+                                      .headlineLargePoppinsBlack900,
                                 ),
-                                validator: (value) => value == ''
-                                    ? 'Please enter your username'
-                                    : null,
-                              ),
-                              TextFormField(
-                                controller: passwordController,
-                                decoration: InputDecoration(
-                                  prefixIcon: const Icon(Icons.lock),
-                                  labelText: 'Password',
-                                  suffixIcon: IconButton(
-                                    onPressed: () {
-                                      context.read<LoginBloc>().add(
-                                            IsPasswordVisibleChanged(),
-                                          );
-                                    },
-                                    icon: Icon(
-                                      state.isPasswordVisible
-                                          ? Icons.visibility_off
-                                          : Icons.visibility,
-                                      color: state.isPasswordVisible
-                                          ? Colors.grey
-                                          : Colors.blue,
-                                    ),
+                                SizedBox(height: 95),
+                                _buildGambar(context),
+                                SizedBox(height: 30),
+                                CustomTextFormField(
+                                  controller: usernameController,
+                                  hintText: "Username",
+                                  prefix: Container(
+                                    margin: EdgeInsets.fromLTRB(15, 15, 15, 15),
+                                    child: Icon(Icons.person),
                                   ),
+                                  prefixConstraints: BoxConstraints(
+                                    maxHeight: 50,
+                                  ),
+                                  contentPadding: EdgeInsets.only(
+                                    top: 5,
+                                    right: 30,
+                                    bottom: 5,
+                                  ),
+                                  borderDecoration:
+                                      TextFormFieldStyleHelper.outlineBlack,
+                                  fillColor: theme.colorScheme.onPrimary
+                                      .withOpacity(1),
+                                  validator: (value) => value == ''
+                                      ? 'Please enter your username'
+                                      : null,
                                 ),
-                                obscureText: state.isPasswordVisible,
-                                validator: (value) => value == ''
-                                    ? 'Please enter your password'
-                                    : null,
-                              ),
-                              const SizedBox(height: 30),
-                              SizedBox(
-                                width: double.infinity,
-                                child: ElevatedButton(
-                                  onPressed: () async {
-                                    if (formKey.currentState!.validate()) {
-                                      if (await checkUserExist(
-                                          usernameController.text,
-                                          passwordController.text)) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          const SnackBar(
-                                            content: Text('Login Success'),
-                                          ),
-                                        );
-
-                                        await getUserByIdAndProcess(
-                                            userLogin); //untuk profil
-
-                                        Navigator.of(context).pushReplacement(
-                                          MaterialPageRoute(
-                                            builder: (context) => HomeView(),
-                                          ),
-                                        );
-                                      } else {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: Text('Login Failed'),
-                                          ),
-                                        );
-                                      }
-                                    }
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 16.0,
-                                      horizontal: 16.0,
-                                    ),
-                                    child: const Text("Login"),
+                                SizedBox(height: 15),
+                                CustomTextFormField(
+                                  controller: passwordController,
+                                  hintText: "Password",
+                                  prefix: Container(
+                                    margin: EdgeInsets.fromLTRB(15, 15, 15, 15),
+                                    child: const Icon(Icons.lock),
                                   ),
-                                ),
-                              ),
-                              const SizedBox(height: 25),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Text(
-                                    "Belum mempunyai akun?   ",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                    ),
+                                  prefixConstraints: BoxConstraints(
+                                    maxHeight: 50,
                                   ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const RegisterPage(),
-                                        ),
-                                      );
-                                    },
-                                    child: const Text(
-                                      "Register",
-                                      style: TextStyle(
-                                        color: Colors.blue,
-                                        fontWeight: FontWeight.bold,
+                                  suffix: Container(
+                                    child: IconButton(
+                                      onPressed: () {
+                                        context.read<LoginBloc>().add(
+                                              IsPasswordVisibleChanged(),
+                                            );
+                                      },
+                                      icon: Icon(
+                                        state.isPasswordVisible
+                                            ? Icons.visibility_off
+                                            : Icons.visibility,
+                                        color: state.isPasswordVisible
+                                            ? Colors.grey
+                                            : ThemeHelper()
+                                                .themeColor()
+                                                .deepPurple500,
                                       ),
                                     ),
                                   ),
-                                ],
-                              )
-                            ],
+                                  suffixConstraints: BoxConstraints(
+                                    maxHeight: 50,
+                                  ),
+                                  borderDecoration:
+                                      TextFormFieldStyleHelper.outlineBlack,
+                                  fillColor: theme.colorScheme.onPrimary
+                                      .withOpacity(1),
+                                  obscureText: state.isPasswordVisible,
+                                  validator: (value) => value == ''
+                                      ? 'Please enter your password'
+                                      : null,
+                                ),
+                                const SizedBox(height: 30),
+
+                                //tombol login
+                                GestureDetector(
+                                  child: CustomElevatedButton(
+                                    height: 50,
+                                    text: "Login",
+                                    margin: EdgeInsets.only(
+                                      left: 20,
+                                      right: 20,
+                                    ),
+                                    buttonStyle: CustomButtonStyles.fillPrimary,
+                                    buttonTextStyle:
+                                        CustomTextStyles.titleLargeOnPrimary,
+                                    //tambah method login disini krn di ontapnya ga bisa
+                                    onPressed: () async {
+                                      try {
+                                        if (formKey.currentState!.validate()) {
+                                          if (await checkUserExist(
+                                              usernameController.text,
+                                              passwordController.text)) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              const SnackBar(
+                                                content: Text('Login Success'),
+                                              ),
+                                            );
+
+                                            await getUserByIdAndProcess(
+                                                userLogin); //untuk profil
+
+                                            Navigator.pushNamed(
+                                                context, AppRoutes.home);
+                                          } else {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text('Login Failed'),
+                                              ),
+                                            );
+                                          }
+                                        }
+                                      } catch (e) {
+                                        print('Error during login: $e');
+                                      }
+                                    },
+                                  ),
+                                ),
+
+                                const SizedBox(height: 25),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Belum mempunyai akun?   ",
+                                      style: CustomTextStyles
+                                          .bodyLargePoppinsBlack90017,
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.pushNamed(
+                                            context, AppRoutes.register);
+                                      },
+                                      child: Text(
+                                        "Register",
+                                        style: CustomTextStyles
+                                            .bodyLargePoppinsPrimary
+                                            .copyWith(
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -235,6 +280,9 @@ class _LoginviewState extends State<Loginview> {
                             isTextWhite = !isTextWhite;
                           });
                         },
+                        backgroundColor: isDarkMode
+                            ? Colors.white
+                            : ThemeHelper().themeColor().deepPurple500,
                         child: Icon(
                             isDarkMode ? Icons.light_mode : Icons.dark_mode),
                       ),
@@ -243,5 +291,34 @@ class _LoginviewState extends State<Loginview> {
             }),
           ),
         ));
+  }
+
+  /// Section Widget
+  Widget _buildGambar(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: 100,
+        vertical: 27,
+      ),
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(
+            ImageConstant.candi,
+          ),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(height: 5),
+          CustomImageView(
+            imagePath: ImageConstant.logotripper,
+            height: 85,
+            width: 130,
+          ),
+        ],
+      ),
+    );
   }
 }

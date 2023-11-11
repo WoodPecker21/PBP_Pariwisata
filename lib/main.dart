@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ugd1/View/login.dart';
+import 'core/app_export.dart';
+import '';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +16,8 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         colorSchemeSeed: Colors.blue,
       ),
-      home: const Loginview(),
+      routes: AppRoutes.routes,
+      initialRoute: AppRoutes.landingPageScreen,
     );
   }
 }

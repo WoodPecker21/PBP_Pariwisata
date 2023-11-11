@@ -1,12 +1,10 @@
 import 'dart:io';
 
 import 'package:image_picker/image_picker.dart';
-import 'package:ugd1/View/home.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ugd1/config/theme.dart';
 import 'package:ugd1/database/sql_helper_user.dart';
-import 'package:ugd1/View/camera/camera.dart';
 import 'package:flutter/services.dart';
 
 class Profile extends StatefulWidget {
@@ -88,30 +86,30 @@ class _ProfileState extends State<Profile> {
   }
 
   Future<void> saveEditedData() async {
-  try {
-    final username = usernameController.text;
-    await SQLHelper.updateProfileImages(username, imageProfile);
+    try {
+      final username = usernameController.text;
+      await SQLHelper.updateProfileImages(username, imageProfile);
 
-    await SQLHelper.editUser(
-      idUser,
-      username,
-      emailController.text,
-      phoneNumberController.text,
-      birthdateController.text,
-      imageProfile,
-    );
+      await SQLHelper.editUser(
+        idUser,
+        username,
+        emailController.text,
+        phoneNumberController.text,
+        birthdateController.text,
+        imageProfile,
+      );
 
-    setState(() {
-      _isEditing = false;
-    });
-    print('edited di database id user: $idUser');
+      setState(() {
+        _isEditing = false;
+      });
+      print('edited di database id user: $idUser');
 
-    // User edited successfully
-  } catch (e) {
-    // Handle database insertion error here
-    print('Error editing user: $e');
+      // User edited successfully
+    } catch (e) {
+      // Handle database insertion error here
+      print('Error editing user: $e');
+    }
   }
-}
 
   List<Map<String, dynamic>> users = [];
 
@@ -192,53 +190,56 @@ class _ProfileState extends State<Profile> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   GestureDetector(
-          onTap: () async {
-            await showModalBottomSheet(
-              context: context,
-              builder: ((builder) {
-                return Container(
-                  height: 100.0,
-                  width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 20,
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      Text(
-                        "Choose Profile Photo",
-                        style: TextStyle(
-                          fontSize: 20.0,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          TextButton.icon(
-                              onPressed: () {
-                                Navigator.pop(context); // Close the modal
-                                _pickImageFromCamera();
-                              },
-                              icon: Icon(Icons.camera),
-                              label: Text("Camera")),
-                          TextButton.icon(
-                              onPressed: () {
-                                Navigator.pop(context); // Close the modal
-                                _pickImageFromGallery();
-                              },
-                              icon: Icon(Icons.image),
-                              label: Text('Gallery'))
-                        ],
-                      )
-                    ],
-                  ),
-                );
-              }),
-            );
-          },
+                    onTap: () async {
+                      await showModalBottomSheet(
+                        context: context,
+                        builder: ((builder) {
+                          return Container(
+                            height: 100.0,
+                            width: MediaQuery.of(context).size.width,
+                            margin: EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 20,
+                            ),
+                            child: Column(
+                              children: <Widget>[
+                                Text(
+                                  "Choose Profile Photo",
+                                  style: TextStyle(
+                                    fontSize: 20.0,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                    TextButton.icon(
+                                        onPressed: () {
+                                          Navigator.pop(
+                                              context); // Close the modal
+                                          _pickImageFromCamera();
+                                        },
+                                        icon: Icon(Icons.camera),
+                                        label: Text("Camera")),
+                                    TextButton.icon(
+                                        onPressed: () {
+                                          Navigator.pop(
+                                              context); // Close the modal
+                                          _pickImageFromGallery();
+                                        },
+                                        icon: Icon(Icons.image),
+                                        label: Text('Gallery'))
+                                  ],
+                                )
+                              ],
+                            ),
+                          );
+                        }),
+                      );
+                    },
                     child: CircleAvatar(
                         backgroundColor: Colors.white70,
                         minRadius: 60.0,
@@ -426,15 +427,14 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-
-
-Future _pickImageFromGallery() async {
-    final returnedImage = await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 25);
+  Future _pickImageFromGallery() async {
+    final returnedImage = await ImagePicker()
+        .pickImage(source: ImageSource.gallery, imageQuality: 25);
 
     if (returnedImage == null) return;
     final imageFile = File(returnedImage.path);
     final imageBytes = await imageFile.readAsBytes();
-    final username= usernameController.text;
+    final username = usernameController.text;
 
     final result = await SQLHelper.updateProfileImages(username, imageBytes);
 
@@ -444,17 +444,16 @@ Future _pickImageFromGallery() async {
         loadUserData();
       });
     }
-    
   }
 
   Future _pickImageFromCamera() async {
-    final returnedImage = await ImagePicker().pickImage(source: ImageSource.camera, imageQuality: 25);
+    final returnedImage = await ImagePicker()
+        .pickImage(source: ImageSource.camera, imageQuality: 25);
 
-   
     if (returnedImage == null) return;
     final imageFile = File(returnedImage.path);
     final imageBytes = await imageFile.readAsBytes();
-    final username= usernameController.text;
+    final username = usernameController.text;
 
     final result = await SQLHelper.updateProfileImages(username, imageBytes);
 
