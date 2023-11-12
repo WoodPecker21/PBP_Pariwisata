@@ -224,6 +224,8 @@ class _LoginviewState extends State<Loginview> {
 
                                             await getUserByIdAndProcess(
                                                 userLogin); //untuk profil
+                                            await Future.delayed(
+                                                Duration(seconds: 1));
 
                                             Navigator.pushNamed(
                                                 context, AppRoutes.home);

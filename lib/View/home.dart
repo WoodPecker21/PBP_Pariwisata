@@ -72,7 +72,7 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Go Trip"),
+        title: Text("Tripper"),
         actions: [
           IconButton(
             icon: Icon(Icons.my_location),

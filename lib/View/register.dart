@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,6 +31,10 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController birthdateController = TextEditingController();
   DateTime selectedDate = DateTime.now();
+  String gender = 'Laki-laki';
+  bool check1 = false;
+  bool genderValid = false;
+  bool validasi = false;
 
   List<Map<String, dynamic>> users = [];
 
@@ -60,14 +65,6 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   final formKey = GlobalKey<FormState>();
-
-  Future<void> saveUserToSharedPreferences(User user) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('username', usernameController.text);
-    prefs.setString('email', emailController.text);
-    prefs.setString('phoneNumber', phoneNumberController.text);
-    prefs.setString('birthdate', birthdateController.text.toString());
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -332,6 +329,103 @@ class _RegisterPageState extends State<RegisterPage> {
                                       ),
                                     ),
                                   ),
+                                  const SizedBox(height: 15),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: RadioListTile(
+                                          title: const Text("Laki-Laki",
+                                              style: TextStyle(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontFamily: 'Poppins')),
+                                          value: "Laki-Laki",
+                                          groupValue: gender,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              gender = value.toString();
+                                              genderValid = true;
+                                            });
+                                          },
+                                          controlAffinity: ListTileControlAffinity
+                                              .leading, // Move radio button to the left
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal:
+                                                      1), // Adjust the spacing
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width:
+                                            6, // Add spacing between radio buttons
+                                      ),
+                                      Expanded(
+                                        child: RadioListTile(
+                                          title: const Text("Perempuan",
+                                              style: TextStyle(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontFamily: 'Poppins')),
+                                          value: "Perempuan",
+                                          groupValue: gender,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              gender = value.toString();
+                                              genderValid = true;
+                                            });
+                                          },
+                                          controlAffinity: ListTileControlAffinity
+                                              .leading, // Move radio button to the left
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal:
+                                                      1), // Adjust the spacing
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  if (!genderValid && validasi == true)
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 8.0, left: 0),
+                                      child: Text(
+                                        'Jenis Kelamin harus dipilih!',
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                  const SizedBox(height: 15),
+                                  CheckboxListTile(
+                                    value: check1,
+                                    controlAffinity:
+                                        ListTileControlAffinity.leading,
+                                    onChanged: (bool? value) {
+                                      setState(() {
+                                        check1 = value!;
+                                      });
+                                    },
+                                    title: RichText(
+                                      text: TextSpan(
+                                        children: [
+                                          _buildPrivacyPolicyText(context),
+                                        ],
+                                      ),
+                                    ),
+                                    contentPadding: EdgeInsets.zero,
+                                  ),
+                                  if (!check1 && validasi == true)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 8.0),
+                                      child: Text(
+                                        'Centang setelah memahami kebijakan privasi!',
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
                                   const SizedBox(height: 30),
                                   SizedBox(
                                     width: double.infinity,
@@ -347,8 +441,14 @@ class _RegisterPageState extends State<RegisterPage> {
                                       buttonTextStyle:
                                           CustomTextStyles.titleLargeOnPrimary,
                                       onPressed: () async {
-                                        if (formKey.currentState!.validate()) {
+                                        setState(() {
+                                          validasi = true;
+                                        });
+                                        if (formKey.currentState!.validate() &&
+                                            genderValid == true &&
+                                            check1 == true) {
                                           print('masuk validasi---------');
+
                                           await addUser();
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
@@ -356,6 +456,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                               content: Text('Register Success'),
                                             ),
                                           );
+                                          await Future.delayed(
+                                              Duration(seconds: 1));
 
                                           Navigator.pushNamed(
                                               context, AppRoutes.login);
@@ -383,6 +485,7 @@ class _RegisterPageState extends State<RegisterPage> {
         emailController.text,
         phoneNumberController.text,
         birthdateController.text,
+        gender,
       );
       print('masuk add---------');
       // User added successfully
@@ -418,6 +521,31 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
         ],
       ),
+    );
+  }
+
+  TextSpan _buildPrivacyPolicyText(BuildContext context) {
+    return TextSpan(
+      text: "Saya Telah Membaca dan Menyetujui ",
+      style: TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.w500,
+        fontFamily: 'Poppins',
+        color: Colors.black,
+      ),
+      children: [
+        TextSpan(
+          text: " Kebijakan Privasi",
+          style: TextStyle(
+            fontWeight: FontWeight.w800,
+            color: appTheme.blueA700,
+          ),
+          recognizer: TapGestureRecognizer()
+            ..onTap = () {
+              Navigator.pushNamed(context, AppRoutes.privasiPage);
+            },
+        ),
+      ],
     );
   }
 }

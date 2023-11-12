@@ -36,59 +36,13 @@ class CustomTextStyles {
   static get bodyMediumOnPrimary => theme.textTheme.bodyMedium!.copyWith(
         color: theme.colorScheme.onPrimary,
       );
-  static get bodySmall10 => theme.textTheme.bodySmall!.copyWith(
-        fontSize: 8,
-      );
-  static get bodySmallBlack900 => theme.textTheme.bodySmall!.copyWith(
-        color: appTheme.black900.withOpacity(0.6),
-      );
-  static get bodySmallBlack90010 => theme.textTheme.bodySmall!.copyWith(
-        color: appTheme.black900.withOpacity(0.8),
-        fontSize: 8,
-      );
-  static get bodySmallBlack900_1 => theme.textTheme.bodySmall!.copyWith(
-        color: appTheme.black900.withOpacity(0.6),
-      );
-  static get bodySmallBlack900_2 => theme.textTheme.bodySmall!.copyWith(
-        color: appTheme.black900.withOpacity(0.8),
-      );
-  static get bodySmallInterCyan700 => theme.textTheme.bodySmall!.inter.copyWith(
-        color: appTheme.cyan700,
-      );
-  static get bodySmallInterGray700 => theme.textTheme.bodySmall!.inter.copyWith(
-        color: appTheme.gray700,
-        fontSize: 8,
-      );
-  static get bodySmallInterGray70011 =>
-      theme.textTheme.bodySmall!.inter.copyWith(
-        color: appTheme.gray700,
-        fontSize: 9,
-      );
+
   static get bodySmallInterOnPrimary =>
       theme.textTheme.bodySmall!.inter.copyWith(
         color: theme.colorScheme.onPrimary.withOpacity(1),
         fontSize: 7,
       );
-  static get bodySmallInterOnPrimaryContainer =>
-      theme.textTheme.bodySmall!.inter.copyWith(
-        color: theme.colorScheme.onPrimaryContainer,
-      );
-  static get bodySmallInterOnPrimaryContainer10 =>
-      theme.textTheme.bodySmall!.inter.copyWith(
-        color: theme.colorScheme.onPrimaryContainer,
-        fontSize: 8,
-      );
-  static get bodySmallInterOnPrimaryContainer_1 =>
-      theme.textTheme.bodySmall!.inter.copyWith(
-        color: theme.colorScheme.onPrimaryContainer,
-      );
-  static get bodySmallLight => theme.textTheme.bodySmall!.copyWith(
-        fontWeight: FontWeight.w300,
-      );
-  static get bodySmallPrimary => theme.textTheme.bodySmall!.copyWith(
-        color: theme.colorScheme.primary,
-      );
-  static get bodySmall_1 => theme.textTheme.bodySmall!;
+
   // Display text style
   static get displayMediumEncodeSansSemiCondensed =>
       theme.textTheme.displayMedium!.encodeSansSemiCondensed.copyWith(
@@ -117,24 +71,7 @@ class CustomTextStyles {
         fontSize: 10,
         fontWeight: FontWeight.w500,
       );
-  static get labelLargeBlack900Medium_1 => theme.textTheme.labelLarge!.copyWith(
-        color: appTheme.black900,
-        fontWeight: FontWeight.w500,
-      );
-  static get labelLargeGreenA700 => theme.textTheme.labelLarge!.copyWith(
-        color: appTheme.greenA700,
-        fontWeight: FontWeight.w500,
-      );
-  static get labelLargeInterOnPrimaryContainer =>
-      theme.textTheme.labelLarge!.inter.copyWith(
-        color: theme.colorScheme.onPrimaryContainer,
-      );
-  static get labelLargeSecondaryContainer =>
-      theme.textTheme.labelLarge!.copyWith(
-        color: theme.colorScheme.secondaryContainer,
-        fontSize: 10,
-        fontWeight: FontWeight.w500,
-      );
+
   static get labelMediumOnPrimary => theme.textTheme.labelMedium!.copyWith(
         color: theme.colorScheme.onPrimary.withOpacity(1),
         fontSize: 9,
@@ -159,15 +96,7 @@ class CustomTextStyles {
   static get labelMediumSemiBold => theme.textTheme.labelMedium!.copyWith(
         fontWeight: FontWeight.w600,
       );
-  static get labelSmallOnPrimary => theme.textTheme.labelSmall!.copyWith(
-        color: theme.colorScheme.onPrimary.withOpacity(1),
-      );
-  static get labelSmallOnPrimary_1 => theme.textTheme.labelSmall!.copyWith(
-        color: theme.colorScheme.onPrimary.withOpacity(1),
-      );
-  static get labelSmallOnPrimary_2 => theme.textTheme.labelSmall!.copyWith(
-        color: theme.colorScheme.onPrimary.withOpacity(1),
-      );
+
   // Poppins text style
   static get poppinsOnPrimary => TextStyle(
         color: theme.colorScheme.onPrimary.withOpacity(1),

@@ -12,17 +12,16 @@ class SQLHelper {
         email TEXT,
         phoneNumber TEXT,
         birthDate TEXT,
+        gender TEXT,
         profileImage BLOB
       )
     """);
   }
 
   static Future<int> updateProfileImages(
-    String name, Uint8List profileImage) async {
+      String name, Uint8List profileImage) async {
     final db = await SQLHelper.db();
-    final data = {
-      'imageProfile': profileImage
-    };
+    final data = {'imageProfile': profileImage};
     return db.update('user', data, where: 'name = ?', whereArgs: [name]);
   }
 
@@ -36,7 +35,7 @@ class SQLHelper {
 
   //insert
   static Future<int> addUser(String name, String password, String email,
-      String phoneNumber, String birthDate) async {
+      String phoneNumber, String birthDate, String gender) async {
     final db = await SQLHelper.db();
 
     final data = {
@@ -45,6 +44,7 @@ class SQLHelper {
       'email': email,
       'phoneNumber': phoneNumber,
       'birthDate': birthDate,
+      'gender': gender,
     };
     return await db.insert('user', data);
   }
@@ -56,14 +56,21 @@ class SQLHelper {
   }
 
   //update
-  static Future<int> editUser(int id, String name, String email,
-      String phoneNumber, String birthDate, Uint8List imageProfil) async {
+  static Future<int> editUser(
+      int id,
+      String name,
+      String email,
+      String phoneNumber,
+      String birthDate,
+      String gender,
+      Uint8List imageProfil) async {
     final db = await SQLHelper.db();
     final data = {
       'name': name,
       'email': email,
       'phoneNumber': phoneNumber,
       'birthDate': birthDate,
+      'gender': gender,
       'imageProfile': imageProfil,
     };
     return await db.update('user', data, where: "id = $id");

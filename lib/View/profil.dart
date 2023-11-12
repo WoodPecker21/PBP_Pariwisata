@@ -6,6 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ugd1/config/theme.dart';
 import 'package:ugd1/database/sql_helper_user.dart';
 import 'package:flutter/services.dart';
+import 'package:ugd1/core/app_export.dart';
+import 'package:ugd1/widgets/custom_elevated_button.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -20,6 +22,7 @@ class _ProfileState extends State<Profile> {
   TextEditingController phoneNumberController = TextEditingController();
   TextEditingController birthdateController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController genderController = TextEditingController();
 
   bool _isEditing = false;
   int idUser = 0;
@@ -78,6 +81,7 @@ class _ProfileState extends State<Profile> {
       setState(() {
         username = user['name'] ?? '';
       });
+      genderController.text = user['gender'] ?? '';
     } else {
       // Handle the case when user is null
       print('User not found or is null.');
@@ -96,6 +100,7 @@ class _ProfileState extends State<Profile> {
         emailController.text,
         phoneNumberController.text,
         birthdateController.text,
+        genderController.text,
         imageProfile,
       );
 
@@ -179,8 +184,8 @@ class _ProfileState extends State<Profile> {
       children: <Widget>[
         Container(
           height: 250,
-          decoration: const BoxDecoration(
-            color: Color.fromARGB(255, 10, 76, 131),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.primary,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -195,7 +200,7 @@ class _ProfileState extends State<Profile> {
                         context: context,
                         builder: ((builder) {
                           return Container(
-                            height: 100.0,
+                            height: 110.0,
                             width: MediaQuery.of(context).size.width,
                             margin: EdgeInsets.symmetric(
                               horizontal: 20,
@@ -266,6 +271,7 @@ class _ProfileState extends State<Profile> {
                   fontSize: 35,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
+                  fontFamily: 'Poppins',
                 ),
               ),
             ],
@@ -278,19 +284,19 @@ class _ProfileState extends State<Profile> {
             children: <Widget>[
               const SizedBox(height: 20),
               ListTile(
-                title: const Text(
-                  'Username',
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                title: Text('Username',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.primary,
+                      fontFamily: 'Poppins',
+                    )),
                 subtitle: TextFormField(
                   controller: usernameController,
                   readOnly: !_isEditing,
                   style: TextStyle(
                     fontSize: 18,
+                    fontFamily: 'Poppins',
                     color: _isEditing ? Colors.black : Colors.grey,
                   ),
                   validator: (value) {
@@ -304,12 +310,13 @@ class _ProfileState extends State<Profile> {
                 ),
               ),
               ListTile(
-                title: const Text(
+                title: Text(
                   'Password',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.blue,
+                    color: theme.colorScheme.primary,
+                    fontFamily: 'Poppins',
                   ),
                 ),
                 subtitle: TextFormField(
@@ -317,6 +324,7 @@ class _ProfileState extends State<Profile> {
                   readOnly: !_isEditing,
                   style: TextStyle(
                     fontSize: 18,
+                    fontFamily: 'Poppins',
                     color: _isEditing ? Colors.black : Colors.grey,
                   ),
                   validator: (value) {
@@ -330,12 +338,13 @@ class _ProfileState extends State<Profile> {
                 ),
               ),
               ListTile(
-                title: const Text(
+                title: Text(
                   'Email',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.blue,
+                    color: theme.colorScheme.primary,
+                    fontFamily: 'Poppins',
                   ),
                 ),
                 subtitle: TextFormField(
@@ -343,6 +352,7 @@ class _ProfileState extends State<Profile> {
                   readOnly: !_isEditing,
                   style: TextStyle(
                     fontSize: 18,
+                    fontFamily: 'Poppins',
                     color: _isEditing ? Colors.black : Colors.grey,
                   ),
                   validator: (value) {
@@ -358,12 +368,13 @@ class _ProfileState extends State<Profile> {
                 ),
               ),
               ListTile(
-                title: const Text(
+                title: Text(
                   'Nomor Telepon',
                   style: TextStyle(
                     fontSize: 20,
+                    fontFamily: 'Poppins',
                     fontWeight: FontWeight.bold,
-                    color: Colors.blue,
+                    color: theme.colorScheme.primary,
                   ),
                 ),
                 subtitle: TextFormField(
@@ -371,6 +382,7 @@ class _ProfileState extends State<Profile> {
                   readOnly: !_isEditing,
                   style: TextStyle(
                     fontSize: 18,
+                    fontFamily: 'Poppins',
                     color: _isEditing ? Colors.black : Colors.grey,
                   ),
                   validator: (value) {
@@ -385,10 +397,11 @@ class _ProfileState extends State<Profile> {
                 ),
               ),
               ListTile(
-                title: const Text(
+                title: Text(
                   'Tanggal Lahir',
                   style: TextStyle(
-                    color: Colors.blue,
+                    color: theme.colorScheme.primary,
+                    fontFamily: 'Poppins',
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
@@ -398,6 +411,7 @@ class _ProfileState extends State<Profile> {
                   readOnly: !_isEditing,
                   style: TextStyle(
                     fontSize: 18,
+                    fontFamily: 'Poppins',
                     color: _isEditing ? Colors.black : Colors.grey,
                   ),
                   validator: (value) {
@@ -409,15 +423,50 @@ class _ProfileState extends State<Profile> {
                   },
                 ),
               ),
+              ListTile(
+                title: Text(
+                  'Jenis Kelamin',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+                subtitle: TextFormField(
+                  controller: genderController,
+                  readOnly: !_isEditing,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontFamily: 'Poppins',
+                    color: _isEditing ? Colors.black : Colors.grey,
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Jenis Kelamin harus terisi!!';
+                    } else if (value != 'Laki-laki' && value != 'Perempuan') {
+                      return 'Jenis kelamin hanya bisa Laki-laki atau Perempuan';
+                    }
+                    return null;
+                  },
+                ),
+              ),
               const SizedBox(height: 20),
               if (_isEditing) // Conditionally show the Save button
-                ElevatedButton(
+                CustomElevatedButton(
+                  height: 50,
+                  text: "Simpan",
+                  margin: EdgeInsets.only(
+                    left: 20,
+                    right: 20,
+                  ),
+                  buttonStyle: CustomButtonStyles.fillPrimary,
+                  buttonTextStyle: CustomTextStyles.titleLargeOnPrimary,
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
                       await saveEditedData();
                     }
                   },
-                  child: const Text('SIMPAN', style: TextStyle(fontSize: 20)),
                 ),
               const SizedBox(height: 20),
             ],
