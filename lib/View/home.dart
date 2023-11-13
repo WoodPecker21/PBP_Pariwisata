@@ -4,6 +4,7 @@ import 'package:ugd1/View/profil.dart';
 import 'package:ugd1/View/UGDView.dart';
 import 'package:ugd1/config/theme.dart';
 import 'package:ugd1/View/inputPage.dart';
+import 'package:ugd1/core/app_export.dart';
 import 'package:ugd1/database/sql_helper.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:ugd1/View/UGDView.dart';
@@ -149,11 +150,8 @@ class _HomeViewState extends State<HomeView> {
       itemBuilder: (context, index) {
         return GestureDetector(
           onTap: () {
-            // Ketika container diklik, arahkan ke halaman PaymentPage
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const PaymentPage()),
-            );
+            // Ketika container diklik, arahkan ke halaman booking1, nanti baru payment
+            Navigator.pushNamed(context, AppRoutes.booking1);
           },
           child: Padding(
               padding: EdgeInsets.all(10),

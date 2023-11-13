@@ -13,7 +13,7 @@ class SQLHelper {
         phoneNumber TEXT,
         birthDate TEXT,
         gender TEXT,
-        profileImage BLOB
+        imageProfile BLOB
       )
     """);
   }

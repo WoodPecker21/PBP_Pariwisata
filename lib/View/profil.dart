@@ -444,7 +444,7 @@ class _ProfileState extends State<Profile> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Jenis Kelamin harus terisi!!';
-                    } else if (value != 'Laki-laki' && value != 'Perempuan') {
+                    } else if (value != 'Laki-Laki' && value != 'Perempuan') {
                       return 'Jenis kelamin hanya bisa Laki-laki atau Perempuan';
                     }
                     return null;

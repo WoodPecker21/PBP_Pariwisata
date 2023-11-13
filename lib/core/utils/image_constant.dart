@@ -14,7 +14,11 @@ class ImageConstant {
   //static String imgLockIcon = '$imagePath/img_lock_icon.png';
   //static String imgHideIcon = '$imagePath/img_hide_icon.png';
 
-  // Android Large - Six images
+  // booking halaman
+  static String imgBackAppbar = '$imagePath/img_back_appbar.svg';
+  static String imgBookingHeader = '$imagePath/img_booking.png';
+
+  // News
   static String imgRectangle1036 = '$imagePath/img_rectangle_1036.png';
 
   static String imgArrowLeft = '$imagePath/img_arrow_left.svg';
@@ -113,11 +117,6 @@ class ImageConstant {
   static String imgMaterialSymbol = '$imagePath/img_material_symbol.svg';
 
   static String imgAngleLeft = '$imagePath/img_angle_left.svg';
-
-  static String imgArrowLeftBlack90015x9 =
-      '$imagePath/img_arrow_left_black_900_15x9.svg';
-
-  static String imgFrame696 = '$imagePath/img_frame_696.png';
 
   static String imgRectangle2 = '$imagePath/img_rectangle_2.png';
 

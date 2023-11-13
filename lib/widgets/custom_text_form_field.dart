@@ -27,6 +27,7 @@ class CustomTextFormField extends StatelessWidget {
     this.validator,
     this.keyboardType, // New parameter
     this.inputFormatters, // New parameter
+    this.readOnly,
   }) : super(
           key: key,
         );
@@ -53,6 +54,7 @@ class CustomTextFormField extends StatelessWidget {
   final FormFieldValidator<String>? validator;
   final TextInputType? keyboardType; // New property
   final List<TextInputFormatter>? inputFormatters; // New property
+  final bool? readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +76,7 @@ class CustomTextFormField extends StatelessWidget {
           textInputAction: textInputAction,
           keyboardType: keyboardType,
           inputFormatters: inputFormatters,
+          readOnly: readOnly ?? false,
           maxLines: maxLines ?? 1,
           decoration: decoration,
           validator: validator,

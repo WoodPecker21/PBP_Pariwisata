@@ -138,10 +138,17 @@ class CustomTextStyles {
         fontSize: 14,
         fontWeight: FontWeight.w600,
       );
+  static get titleMediumSemiBold16 => theme.textTheme.titleMedium!.copyWith(
+        fontSize: 15,
+        fontWeight: FontWeight.w600,
+      );
   static get titleMediumPrimarySemiBold =>
       theme.textTheme.titleMedium!.copyWith(
         color: theme.colorScheme.primary,
         fontWeight: FontWeight.w600,
+      );
+  static get bodySmallBlack900_1 => theme.textTheme.bodySmall!.copyWith(
+        color: appTheme.black900.withOpacity(0.6),
       );
   static get titleMediumSemiBold => theme.textTheme.titleMedium!.copyWith(
         fontSize: 14,
@@ -181,7 +188,7 @@ class CustomTextStyles {
       );
   static get titleSmallRobotoErrorContainer =>
       theme.textTheme.titleSmall!.roboto.copyWith(
-        color: theme.colorScheme.errorContainer,
+        color: const Color.fromARGB(255, 122, 122, 122),
       );
   static get titleSmallSemiBold => theme.textTheme.titleSmall!.copyWith(
         fontWeight: FontWeight.w600,
