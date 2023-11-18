@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:ugd1/config/theme.dart';
-import 'package:ugd1/database/sql_helper_transaksi.dart';
 import 'package:ugd1/core/app_export.dart';
 import 'package:ugd1/widgets/custom_elevated_button.dart';
 import 'package:ugd1/widgets/custom_text_form_field.dart';
 import 'package:ugd1/widgets/app_bar/custom_app_bar.dart';
 import 'package:ugd1/widgets/app_bar/appbar_image.dart';
 import 'package:ugd1/widgets/app_bar/appbar_subtitle.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Booking1Page extends StatefulWidget {
   const Booking1Page({Key? key}) : super(key: key);
@@ -19,8 +19,17 @@ class _Booking1PageState extends State<Booking1Page> {
   final TextEditingController tglstartController = TextEditingController();
   final TextEditingController tglendController = TextEditingController();
   DateTime selectedDate = DateTime.now();
-
   final formKey = GlobalKey<FormState>();
+
+  //untuk tampung nama dan id objek dari shared pref
+  String namaObjekWisata = '';
+  int idObjekWisata = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,13 +59,13 @@ class _Booking1PageState extends State<Booking1Page> {
                               child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("Raja Ampat",
+                                    Text("$namaObjekWisata",
                                         style: CustomTextStyles
-                                            .titleSmallBlack900SemiBold), //nanti ambil dari database
+                                            .headerBooking), // ambil dari database
                                     SizedBox(height: 2),
-                                    Text("Order ID #00001",
+                                    Text("Objek Wisata ID #$idObjekWisata",
                                         style: CustomTextStyles
-                                            .bodySmallBlack900_1)
+                                            .headerSubtitleBooking)
                                   ]))
                         ])),
                 SizedBox(height: 16),
@@ -76,23 +85,17 @@ class _Booking1PageState extends State<Booking1Page> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            // SizedBox(height: 55),
-                            // Text(
-                            //   "Pilih Tanggal Keberangkatan",
-                            //   style: CustomTextStyles.titleMediumSemiBold16,
-                            // ),
                             SizedBox(height: 30),
                             Text(
                                 "Tanggal pulang secara otomatis terisi berdasarkan durasi",
                                 maxLines: 3,
                                 overflow: TextOverflow.ellipsis,
-                                style: CustomTextStyles
-                                    .titleSmallRobotoErrorContainer
+                                style: CustomTextStyles.labelKeteranganTanggal
                                     .copyWith(height: 1.43)),
                             SizedBox(height: 60),
-                            Align(
+                            const Align(
                               alignment: Alignment.centerLeft,
-                              child: const Text(
+                              child: Text(
                                 "Tanggal Keberangkatan",
                                 style: TextStyle(
                                   fontSize: 13,
@@ -203,16 +206,33 @@ class _Booking1PageState extends State<Booking1Page> {
         ));
   }
 
-  Future<void> addTransaksi() async {
-    try {
-      await SQLHelper.addTransaksi(
-        tglstartController.text,
-      );
-      print('masuk add---------');
-      // Transaksi added successfully
-    } catch (e) {
-      // Handle database insertion error here
-      print('Error adding transaksi: $e');
+  //ini sharedpref utk simpan tanggal start, nanti di langkah booking 3 (pembayaran),
+  //baru insert semua data sharedpref ke databse
+  Future<void> saveData() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('bookingTglStart', tglstartController.text);
+  }
+
+  Future<void> loadData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final tanggal = prefs.getString('bookingTglStart');
+    final idObjek = prefs.getInt('idObjek');
+    final namaObjek = prefs.getString('namaObjek') ?? '';
+
+    if (idObjek != null) {
+      setState(() {
+        idObjekWisata = idObjek;
+        namaObjekWisata = namaObjek;
+      });
+    }
+
+    if (tanggal != null) {
+      setState(() {
+        tglstartController.text = tanggal;
+        DateTime startDate = DateTime.parse(tanggal);
+        DateTime endDate = startDate.add(Duration(days: 3));
+        tglendController.text = endDate.toString().substring(0, 10);
+      });
     }
   }
 
@@ -227,7 +247,7 @@ class _Booking1PageState extends State<Booking1Page> {
                   width: 150,
                   text: "Back",
                   buttonStyle: CustomButtonStyles.fillGray,
-                  buttonTextStyle: CustomTextStyles.titleSmallGray60001,
+                  buttonTextStyle: CustomTextStyles.teksButtonBack,
                   onPressed: () {
                     Navigator.pop(context);
                   }),
@@ -238,8 +258,8 @@ class _Booking1PageState extends State<Booking1Page> {
                   buttonStyle: CustomButtonStyles.fillPrimary,
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
-                      addTransaksi();
-                      Navigator.pushNamed(context, AppRoutes.paymentPage);
+                      saveData();
+                      Navigator.pushNamed(context, AppRoutes.booking2);
                     }
                   })
             ]));
@@ -274,15 +294,14 @@ class _Booking1PageState extends State<Booking1Page> {
           child: RichText(
               text: TextSpan(children: [
                 TextSpan(
-                    text: "Durasi", style: CustomTextStyles.titleSmallBlack900),
+                    text: "Durasi", style: CustomTextStyles.subHeaderBooking),
                 TextSpan(text: "  "),
               ]),
               textAlign: TextAlign.left)),
       RichText(
           text: TextSpan(
               text: "3 days ",
-              style:
-                  CustomTextStyles.titleMediumSemiBold), //nanti dari database
+              style: CustomTextStyles.labelPembayaran), //nanti dari database
           textAlign: TextAlign.left)
     ]);
   }

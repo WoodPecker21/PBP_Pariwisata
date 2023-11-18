@@ -2,17 +2,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ugd1/bloc/form_submission_state.dart';
 import 'package:ugd1/bloc/register_state.dart';
 import 'package:ugd1/bloc/register_bloc.dart';
-import 'package:ugd1/model/user.dart';
-//import 'package:ugd1/repository/register_repository.dart';
 import 'package:ugd1/bloc/register_event.dart';
-import 'package:ugd1/View/login.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ugd1/config/theme.dart';
 import 'package:ugd1/database/sql_helper_user.dart';
-import 'package:ugd1/View/login.dart';
 import 'package:ugd1/core/app_export.dart';
 import 'package:ugd1/widgets/custom_elevated_button.dart';
 import 'package:ugd1/widgets/custom_text_form_field.dart';
@@ -86,15 +80,6 @@ class _RegisterPageState extends State<RegisterPage> {
               //     phoneNumber: phoneNumberController.text,
               //     birthDate: selectedDate,
               //   );
-              //   saveUserToSharedPreferences(
-              //       user); // This is where you save the user's data.
-
-              //   Navigator.of(context).pushReplacement(
-              //     MaterialPageRoute(
-              //       builder: (context) => Loginview(),
-              //     ),
-              //   );
-              // }
               // if (state.formSubmissionState is SubmissionFailed) {
               //   print('---sudah gagal---');
               //   ScaffoldMessenger.of(context).showSnackBar(
@@ -128,8 +113,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   SizedBox(height: 55),
                                   Text(
                                     "Register",
-                                    style: CustomTextStyles
-                                        .headlineLargePoppinsBlack900,
+                                    style: CustomTextStyles.titleForm,
                                   ),
                                   SizedBox(height: 95),
                                   _buildGambar(context),
@@ -167,6 +151,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                   CustomTextFormField(
                                     controller: emailController,
                                     hintText: "Email",
+                                    textInputType: TextInputType.emailAddress,
+                                    keyboardType: TextInputType.emailAddress,
                                     prefix: Container(
                                       margin:
                                           EdgeInsets.fromLTRB(15, 15, 15, 15),
@@ -439,7 +425,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                       buttonStyle:
                                           CustomButtonStyles.fillPrimary,
                                       buttonTextStyle:
-                                          CustomTextStyles.titleLargeOnPrimary,
+                                          CustomTextStyles.teksTombol,
                                       onPressed: () async {
                                         setState(() {
                                           validasi = true;

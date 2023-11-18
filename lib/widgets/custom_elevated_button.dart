@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:ugd1/core/app_export.dart';
 import 'package:ugd1/widgets/base_button.dart';
 
+// ignore: must_be_immutable
 class CustomElevatedButton extends BaseButton {
   CustomElevatedButton({
-    Key? key,
+    super.key,
     this.decoration,
     this.leftIcon,
     this.rightIcon,
@@ -17,6 +18,7 @@ class CustomElevatedButton extends BaseButton {
     double? height,
     double? width,
     required String text,
+    Color? textColor,
   }) : super(
           text: text,
           onPressed: onPressed,
@@ -27,13 +29,14 @@ class CustomElevatedButton extends BaseButton {
           width: width,
           alignment: alignment,
           margin: margin,
-        );
+        ) {
+    this.textColor = textColor;
+  }
 
   final BoxDecoration? decoration;
-
   final Widget? leftIcon;
-
   final Widget? rightIcon;
+  Color? textColor;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +63,8 @@ class CustomElevatedButton extends BaseButton {
               leftIcon ?? const SizedBox.shrink(),
               Text(
                 text,
-                style: buttonTextStyle ?? theme.textTheme.titleSmall,
+                style: buttonTextStyle?.copyWith(color: textColor) ??
+                    theme.textTheme.titleSmall?.copyWith(color: textColor),
               ),
               rightIcon ?? const SizedBox.shrink(),
             ],

@@ -461,7 +461,7 @@ class _ProfileState extends State<Profile> {
                     right: 20,
                   ),
                   buttonStyle: CustomButtonStyles.fillPrimary,
-                  buttonTextStyle: CustomTextStyles.titleLargeOnPrimary,
+                  buttonTextStyle: CustomTextStyles.teksTombol,
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
                       await saveEditedData();

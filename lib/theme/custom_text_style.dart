@@ -1,195 +1,107 @@
 import 'package:flutter/material.dart';
 import '../core/app_export.dart';
 
-/// A collection of pre-defined text styles for customizing text appearance,
-/// categorized by different font families and weights.
-/// Additionally, this class includes extensions on [TextStyle] to easily apply specific font families to text.
-
 class CustomTextStyles {
-  // Body text style
-  static get bodyLargeDeeppurple500 => theme.textTheme.bodyLarge!.copyWith(
-        color: appTheme.deepPurple500,
+  //
+  //-----------------------dipakai di booking------------------------
+  static get labelHargaBooking => theme.textTheme.titleMedium!.copyWith(
+        fontSize: 15,
+        color: theme.colorScheme.primary,
+        fontWeight: FontWeight.w600,
       );
-  static get bodyLargePoppinsBlack900 =>
-      theme.textTheme.bodyLarge!.poppins.copyWith(
+  static get headerSubtitleBooking => theme.textTheme.bodySmall!.copyWith(
+        color: appTheme.black900.withOpacity(0.6),
+      );
+  static get labelPembayaran => theme.textTheme.titleMedium!.copyWith(
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+      );
+  static get titleBooking => theme.textTheme.titleMedium!.copyWith(
+        fontWeight: FontWeight.w600,
+      );
+  static get subtitleBooking => theme.textTheme.bodySmall!.copyWith(
+        color: appTheme.black900.withOpacity(0.8),
+      );
+  static get labelFormBooking => theme.textTheme.bodySmall!.copyWith(
+        color: appTheme.black900.withOpacity(0.8),
+        fontSize: 9,
+      );
+  static get labelJumOrang => theme.textTheme.bodySmall!.copyWith(
+        color: theme.colorScheme.primary,
+      );
+  static get labelBookingSukses => theme.textTheme.bodyMedium!.copyWith(
+        color: theme.colorScheme.onPrimary,
+      );
+  static get titleBookingSukses => theme.textTheme.displaySmall!.copyWith(
+        fontSize: 34,
+      );
+  static get headerBooking => theme.textTheme.titleSmall!.copyWith(
         color: appTheme.black900,
+        fontWeight: FontWeight.w600,
       );
-  static get bodyLargePoppinsBlack90017 =>
-      theme.textTheme.bodyLarge!.poppins.copyWith(
+  static get subHeaderBooking => theme.textTheme.titleSmall!.copyWith(
+        color: appTheme.black900,
+        fontWeight: FontWeight.w600,
+      );
+  static get teksButtonBack => theme.textTheme.titleSmall!.copyWith(
+        color: appTheme.gray60001,
+        fontWeight: FontWeight.w600,
+      );
+  static get labelKeteranganTanggal =>
+      theme.textTheme.titleSmall!.roboto.copyWith(
+        color: const Color.fromARGB(255, 122, 122, 122),
+      );
+
+  //---------------------------------dipake di register dan login----------------------
+  static get titleForm => theme.textTheme.headlineLarge!.poppins.copyWith(
+        color: appTheme.black900,
+        fontWeight: FontWeight.w600,
+      );
+  static get labelAkunRegister => theme.textTheme.bodyLarge!.poppins.copyWith(
         color: appTheme.black900,
         fontSize: 15,
       );
-  static get bodyLargePoppinsPrimary =>
-      theme.textTheme.bodyLarge!.poppins.copyWith(
+  static get labelRegister => theme.textTheme.bodyLarge!.poppins.copyWith(
         color: theme.colorScheme.primary,
         fontSize: 15,
       );
-  static get bodyMediumEncodeSansSemiCondensedOnPrimary =>
+  static get teksTombol => theme.textTheme.titleLarge!.copyWith(
+        color: theme.colorScheme.onPrimary.withOpacity(1),
+      );
+
+  static get teksHint => theme.textTheme.titleMedium!.copyWith(
+        color: appTheme.gray500,
+        fontSize: 15,
+        fontWeight: FontWeight.w500,
+      );
+
+  //-----------------------------dipakai di landing page-----------------
+  static get labelLanding =>
       theme.textTheme.bodyMedium!.encodeSansSemiCondensed.copyWith(
         color: theme.colorScheme.onPrimary.withOpacity(1),
         fontSize: 11,
       );
-  static get bodyMediumLight => theme.textTheme.bodyMedium!.copyWith(
-        fontSize: 11,
-        fontWeight: FontWeight.w300,
-      );
-  static get bodyMediumOnPrimary => theme.textTheme.bodyMedium!.copyWith(
-        color: theme.colorScheme.onPrimary,
-      );
-
-  static get bodySmallInterOnPrimary =>
-      theme.textTheme.bodySmall!.inter.copyWith(
-        color: theme.colorScheme.onPrimary.withOpacity(1),
-        fontSize: 7,
-      );
-
-  // Display text style
-  static get displayMediumEncodeSansSemiCondensed =>
+  static get subtitleLanding =>
       theme.textTheme.displayMedium!.encodeSansSemiCondensed.copyWith(
         fontWeight: FontWeight.w700,
       );
-  static get displaySmall36 => theme.textTheme.displaySmall!.copyWith(
-        fontSize: 34,
-      );
-  static get displaySmallGray800 => theme.textTheme.displaySmall!.copyWith(
-        color: appTheme.gray800,
-        fontSize: 36,
-      );
-  // Headline text style
-  static get headlineLargePoppinsBlack900 =>
-      theme.textTheme.headlineLarge!.poppins.copyWith(
-        color: appTheme.black900,
-        fontWeight: FontWeight.w600,
-      );
-  // Label text style
-  static get labelLargeBlack900 => theme.textTheme.labelLarge!.copyWith(
-        color: appTheme.black900,
-        fontWeight: FontWeight.w500,
-      );
-  static get labelLargeBlack900Medium => theme.textTheme.labelLarge!.copyWith(
-        color: appTheme.black900,
-        fontSize: 10,
-        fontWeight: FontWeight.w500,
-      );
 
-  static get labelMediumOnPrimary => theme.textTheme.labelMedium!.copyWith(
-        color: theme.colorScheme.onPrimary.withOpacity(1),
-        fontSize: 9,
-        fontWeight: FontWeight.w600,
-      );
-  static get labelMediumOnPrimarySemiBold =>
-      theme.textTheme.labelMedium!.copyWith(
-        color: theme.colorScheme.onPrimary.withOpacity(1),
-        fontWeight: FontWeight.w600,
-      );
-  static get labelMediumOnPrimarySemiBold11 =>
-      theme.textTheme.labelMedium!.copyWith(
-        color: theme.colorScheme.onPrimary.withOpacity(1),
-        fontSize: 9,
-        fontWeight: FontWeight.w600,
-      );
-  static get labelMediumOnPrimarySemiBold_1 =>
-      theme.textTheme.labelMedium!.copyWith(
-        color: theme.colorScheme.onPrimary.withOpacity(1),
-        fontWeight: FontWeight.w600,
-      );
-  static get labelMediumSemiBold => theme.textTheme.labelMedium!.copyWith(
-        fontWeight: FontWeight.w600,
-      );
-
-  // Poppins text style
-  static get poppinsOnPrimary => TextStyle(
-        color: theme.colorScheme.onPrimary.withOpacity(1),
-        fontSize: 5,
-        fontWeight: FontWeight.w500,
-      ).poppins;
-  // Title text style
-  static get titleLargeBold => theme.textTheme.titleLarge!.copyWith(
-        fontWeight: FontWeight.w700,
-      );
-  static get titleLargeEncodeSansSemiCondensedOnPrimary =>
+  static get titleLanding =>
       theme.textTheme.titleLarge!.encodeSansSemiCondensed.copyWith(
         color: theme.colorScheme.onPrimary.withOpacity(1),
         fontSize: 19,
         fontWeight: FontWeight.w700,
       );
-  static get titleLargeOnPrimary => theme.textTheme.titleLarge!.copyWith(
-        color: theme.colorScheme.onPrimary.withOpacity(1),
-      );
-  static get titleMedium17 => theme.textTheme.titleMedium!.copyWith(
-        fontSize: 15,
-      );
-  static get titleMediumGray500 => theme.textTheme.titleMedium!.copyWith(
-        color: appTheme.gray500,
-        fontSize: 15,
-        fontWeight: FontWeight.w500,
-      );
-  static get titleMediumGray600 => theme.textTheme.titleMedium!.copyWith(
-        color: appTheme.gray600,
-        fontSize: 15,
-      );
-  static get titleMediumOnPrimary => theme.textTheme.titleMedium!.copyWith(
-        color: theme.colorScheme.onPrimary.withOpacity(1),
-        fontSize: 15,
-        fontWeight: FontWeight.w500,
-      );
-  static get titleMediumPrimary => theme.textTheme.titleMedium!.copyWith(
-        color: theme.colorScheme.primary,
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-      );
-  static get titleMediumSemiBold16 => theme.textTheme.titleMedium!.copyWith(
-        fontSize: 15,
-        fontWeight: FontWeight.w600,
-      );
-  static get titleMediumPrimarySemiBold =>
-      theme.textTheme.titleMedium!.copyWith(
-        color: theme.colorScheme.primary,
-        fontWeight: FontWeight.w600,
-      );
-  static get bodySmallBlack900_1 => theme.textTheme.bodySmall!.copyWith(
-        color: appTheme.black900.withOpacity(0.6),
-      );
-  static get titleMediumSemiBold => theme.textTheme.titleMedium!.copyWith(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-      );
-  static get titleMediumSemiBold14 => theme.textTheme.titleMedium!.copyWith(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-      );
-  static get titleMediumSemiBold14_1 => theme.textTheme.titleMedium!.copyWith(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-      );
-  static get titleMediumSemiBold_1 => theme.textTheme.titleMedium!.copyWith(
-        fontWeight: FontWeight.w600,
-      );
-  static get titleSmallBlack900 => theme.textTheme.titleSmall!.copyWith(
-        color: appTheme.black900,
-        fontWeight: FontWeight.w600,
-      );
-  static get titleSmallBlack900SemiBold => theme.textTheme.titleSmall!.copyWith(
-        color: appTheme.black900,
-        fontWeight: FontWeight.w600,
-      );
-  static get titleSmallGray60001 => theme.textTheme.titleSmall!.copyWith(
-        color: appTheme.gray60001,
-        fontWeight: FontWeight.w600,
-      );
-  static get titleSmallGray900 => theme.textTheme.titleSmall!.copyWith(
+
+  //------- dipakai di appbar-----------------------
+
+  static get teksAppbarSmall => theme.textTheme.titleSmall!.copyWith(
         color: appTheme.gray900,
         fontWeight: FontWeight.w600,
       );
-  static get titleSmallRoboto => theme.textTheme.titleSmall!.roboto;
-  static get titleSmallRobotoDeeppurple500 =>
-      theme.textTheme.titleSmall!.roboto.copyWith(
-        color: appTheme.deepPurple500,
-      );
-  static get titleSmallRobotoErrorContainer =>
-      theme.textTheme.titleSmall!.roboto.copyWith(
-        color: const Color.fromARGB(255, 122, 122, 122),
-      );
+
+  //------- USELESS-----------------------
+
   static get titleSmallSemiBold => theme.textTheme.titleSmall!.copyWith(
         fontWeight: FontWeight.w600,
       );

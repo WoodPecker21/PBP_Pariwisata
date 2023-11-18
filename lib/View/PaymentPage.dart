@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ugd1/View/DanaPaymenPage.dart';
 import 'package:ugd1/View/scanEmoney.dart';
-import 'package:ugd1/model/objekWisata.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'dart:core';
 
 class PaymentPage extends StatelessWidget {
@@ -16,16 +17,12 @@ class PaymentPage extends StatelessWidget {
       body: ListView(
         children: [
           PaymentMethodItem(
-            title: "E-Money",
+            title: "Scan QR Code",
             icon: Icons.credit_card,
           ),
           PaymentMethodItem(
-            title: "Dana",
+            title: "Generate QR Code",
             icon: Icons.payment,
-          ),
-          PaymentMethodItem(
-            title: "Transfer Bank",
-            icon: Icons.account_balance,
           ),
         ],
       ),
@@ -50,16 +47,19 @@ class PaymentMethodItem extends StatelessWidget {
       child: ListTile(
         leading: Icon(icon),
         title: Text(title),
-        onTap: () {
-          if (title == "Dana") {
-            final harga = 100000.0; // Ganti dengan harga yang sesuai
+        onTap: () async {
+          if (title == "Generate QR Code") {
+            //masukkan harga sesuai dengan pembayaran di booking
+            final prefs = await SharedPreferences.getInstance();
+            double totalHarga = prefs.getDouble('bookingTotalHarga') ?? 0;
+            final harga = totalHarga;
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => DanaPaymentPage(harga: harga),
               ),
             );
-          } else if (title == "E-Money") {
+          } else if (title == "Scan QR Code") {
             // Mengarahkan ke scan_qr_page.dart
             Navigator.push(
               context,

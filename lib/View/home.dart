@@ -3,12 +3,12 @@ import 'package:ugd1/View/gpsPage.dart';
 import 'package:ugd1/View/profil.dart';
 import 'package:ugd1/View/UGDView.dart';
 import 'package:ugd1/config/theme.dart';
-import 'package:ugd1/View/inputPage.dart';
 import 'package:ugd1/core/app_export.dart';
-import 'package:ugd1/database/sql_helper.dart';
+import 'package:ugd1/database/sql_helper_objek.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:ugd1/View/UGDView.dart';
+//import 'package:ugd1/View/UGDView.dart';
 import 'package:ugd1/View/paymentPage.dart'; // Import PaymentPage
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MyApp());
@@ -89,20 +89,9 @@ class _HomeViewState extends State<HomeView> {
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () async {
-              Navigator.push(
+              Navigator.pushNamed(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const InputPage(
-                    title: 'INPUT OBJEK WISATA',
-                    id: null,
-                    nama: null,
-                    deskripsi: null,
-                    kategori: null,
-                    gambar: null,
-                    rating: null,
-                    harga: null,
-                  ),
-                ),
+                AppRoutes.inputPage,
               ).then((_) => refresh());
             },
           ),
@@ -149,8 +138,13 @@ class _HomeViewState extends State<HomeView> {
       itemCount: objekwisata.length,
       itemBuilder: (context, index) {
         return GestureDetector(
-          onTap: () {
-            // Ketika container diklik, arahkan ke halaman booking1, nanti baru payment
+          onTap: () async {
+            //untuk simpan id objek wisata ke pref, dipke di insert transaksi booking
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setInt('idObjek', objekwisata[index]['id']);
+            await prefs.setString('namaObjek', objekwisata[index]['nama']);
+
+            // Ketika container diklik, arahkan ke halaman booking1, booking2, nanti baru payment
             Navigator.pushNamed(context, AppRoutes.booking1);
           },
           child: Padding(
@@ -230,6 +224,7 @@ class _HomeViewState extends State<HomeView> {
                                   "Deskripsi : " +
                                       objekwisata[index]['deskripsi'],
                                   style: TextStyle(fontSize: 16),
+                                  maxLines: 3,
                                 ),
                               ],
                             ),
@@ -244,23 +239,11 @@ class _HomeViewState extends State<HomeView> {
                       color: Colors.blue,
                       icon: Icons.update,
                       onTap: () async {
-                        final updatedData = objekwisata[index];
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => InputPage(
-                              title: 'Update Objek Wisata',
-                              id: updatedData['id'],
-                              nama: updatedData['nama'],
-                              deskripsi: updatedData['deskripsi'],
-                              kategori: updatedData['kategori'],
-                              gambar: updatedData['gambar'],
-                              rating: updatedData['rating'],
-                              harga: updatedData['harga'],
-                            ),
-                          ),
-                        );
-                        refresh();
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.setInt(
+                            'idUpdate', objekwisata[index]['id']);
+                        Navigator.pushNamed(context, AppRoutes.inputPage)
+                            .then((_) => refresh());
                       },
                     ),
                     IconSlideAction(

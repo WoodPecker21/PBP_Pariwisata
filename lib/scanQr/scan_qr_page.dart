@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+//import 'package:flutter/services.dart';
 import 'package:ugd1/constant/app_constant.dart';
-import 'package:ugd1/scanQr/scan_qr_page.dart';
+//import 'package:ugd1/scanQr/scan_qr_page.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:ugd1/scanQr/scanner_error_widget.dart';
 // import '../database/sql_helper_qr.dart';

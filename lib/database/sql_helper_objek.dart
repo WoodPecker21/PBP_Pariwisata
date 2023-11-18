@@ -15,6 +15,7 @@ class SQLHelper {
       )
     """);
   }
+  //harus tambah kolom gambar(blob), durasi, akomodasi, transportasi
 
   //call db
   static Future<sql.Database> db() async {
@@ -39,13 +40,24 @@ class SQLHelper {
     return await db.insert('objekwisata', data);
   }
 
-  //read employee
+  //read all
   static Future<List<Map<String, dynamic>>> getObjekWisata() async {
     final db = await SQLHelper.db();
     return db.query('objekwisata');
   }
 
-  //update employee
+  //read by id
+  static Future<Map<String, dynamic>?> getObjekWisataById(int id) async {
+    final db = await SQLHelper.db();
+    final result = await db.query('objekwisata', where: "id = $id");
+    if (result.isNotEmpty) {
+      return result.first;
+    } else {
+      return null;
+    }
+  }
+
+  //update
   static Future<int> editObjekWisata(int id, String nama, String deskripsi,
       String kategori, String gambar, double rating, double harga) async {
     final db = await SQLHelper.db();
@@ -60,9 +72,20 @@ class SQLHelper {
     return await db.update('objekwisata', data, where: "id = $id");
   }
 
-  //delete employee
+  //delete
   static Future<int> deleteObjekWisata(int id) async {
     final db = await SQLHelper.db();
     return await db.delete('objekwisata', where: "id = $id");
+  }
+
+  //get harga
+  static Future<double?> getHarga(int id) async {
+    final db = await SQLHelper.db();
+    final result = await db.query('objekwisata', where: "id = $id");
+    if (result.isNotEmpty) {
+      return result.first['harga'] as double;
+    } else {
+      return null;
+    }
   }
 }

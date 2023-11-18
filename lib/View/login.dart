@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ugd1/bloc/login_bloc.dart';
 import 'package:ugd1/bloc/login_event.dart';
 import 'package:ugd1/bloc/login_state.dart';
-import 'package:ugd1/View/register.dart';
 import 'package:ugd1/config/theme.dart';
 import 'package:ugd1/database/sql_helper_user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -63,10 +62,10 @@ class _LoginviewState extends State<Loginview> {
     if (user != null) {
       final prefs = await SharedPreferences
           .getInstance(); // This is where you save the user's data.
-      prefs.setString('username', user['name']);
-      prefs.setString('email', user['email']);
-      prefs.setString('phoneNumber', user['phoneNumber']);
-      prefs.setString('birthdate', user['birthDate']);
+      // prefs.setString('username', user['name']);
+      // prefs.setString('email', user['email']);
+      // prefs.setString('phoneNumber', user['phoneNumber']);
+      // prefs.setString('birthdate', user['birthDate']);
       prefs.setInt('id', user['id']);
     } else {
       print('User not found');
@@ -123,8 +122,7 @@ class _LoginviewState extends State<Loginview> {
                                 SizedBox(height: 55),
                                 Text(
                                   "Login",
-                                  style: CustomTextStyles
-                                      .headlineLargePoppinsBlack900,
+                                  style: CustomTextStyles.titleForm,
                                 ),
                                 SizedBox(height: 95),
                                 _buildGambar(context),
@@ -207,7 +205,7 @@ class _LoginviewState extends State<Loginview> {
                                     ),
                                     buttonStyle: CustomButtonStyles.fillPrimary,
                                     buttonTextStyle:
-                                        CustomTextStyles.titleLargeOnPrimary,
+                                        CustomTextStyles.teksTombol,
                                     //tambah method login disini krn di ontapnya ga bisa
                                     onPressed: () async {
                                       try {
@@ -251,8 +249,7 @@ class _LoginviewState extends State<Loginview> {
                                   children: [
                                     Text(
                                       "Belum mempunyai akun?   ",
-                                      style: CustomTextStyles
-                                          .bodyLargePoppinsBlack90017,
+                                      style: CustomTextStyles.labelAkunRegister,
                                     ),
                                     GestureDetector(
                                       onTap: () {
@@ -261,8 +258,7 @@ class _LoginviewState extends State<Loginview> {
                                       },
                                       child: Text(
                                         "Register",
-                                        style: CustomTextStyles
-                                            .bodyLargePoppinsPrimary
+                                        style: CustomTextStyles.labelRegister
                                             .copyWith(
                                           fontWeight: FontWeight.w700,
                                         ),

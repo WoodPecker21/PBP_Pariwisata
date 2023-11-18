@@ -43,12 +43,10 @@ class LandingPageScreen extends StatelessWidget {
                       text: TextSpan(children: [
                         TextSpan(
                             text: "Discover",
-                            style: CustomTextStyles
-                                .displayMediumEncodeSansSemiCondensed),
+                            style: CustomTextStyles.subtitleLanding),
                         TextSpan(
                             text: "\nYour World with ",
-                            style: CustomTextStyles
-                                .titleLargeEncodeSansSemiCondensedOnPrimary),
+                            style: CustomTextStyles.titleLanding),
                       ]),
                       textAlign: TextAlign.left))),
           Align(
@@ -59,8 +57,7 @@ class LandingPageScreen extends StatelessWidget {
                       "Tripper, Your Passport to Unforgettable Journeys. One place at a time.",
                       maxLines: 4,
                       overflow: TextOverflow.ellipsis,
-                      style: CustomTextStyles
-                          .bodyMediumEncodeSansSemiCondensedOnPrimary
+                      style: CustomTextStyles.labelLanding
                           .copyWith(height: 1.62)))),
           Padding(
               padding: const EdgeInsets.only(right: 12, bottom: 6),

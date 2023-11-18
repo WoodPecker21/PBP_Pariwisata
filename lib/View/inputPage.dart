@@ -1,25 +1,13 @@
 import 'package:flutter/material.dart';
-import '../database/sql_helper.dart';
+import '../database/sql_helper_objek.dart';
 import '../model/objekWisata.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:ugd1/View/pdf_view.dart';
 import 'package:uuid/uuid.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class InputPage extends StatefulWidget {
-  const InputPage(
-      {super.key,
-      required this.title,
-      required this.id,
-      required this.nama,
-      required this.deskripsi,
-      required this.kategori,
-      required this.gambar,
-      required this.rating,
-      required this.harga});
-
-  final String? title, nama, deskripsi, kategori, gambar;
-  final int? id;
-  final double? rating, harga;
+  const InputPage({Key? key}) : super(key: key);
 
   @override
   State<InputPage> createState() => _InputPageState();
@@ -34,19 +22,47 @@ class _InputPageState extends State<InputPage> {
   String _selectedValue = 'Alam';
   String gambarPath = 'image/alam.jpg'; //defaultnya path ke gambar alam
   String id = const Uuid().v1();
+  bool isUpdate = false;
+  int updatedId = 0;
+
+  void initState() {
+    super.initState();
+    cekUpdate();
+  }
+
+  Future<void> cekUpdate() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (prefs.containsKey('idUpdate')) {
+        int idObjekUpdate = prefs.getInt('idUpdate') ?? 0;
+
+        //jika merupakan update maka retrieve dulu data dari database
+        Map<String, dynamic>? objekWisata =
+            await SQLHelper.getObjekWisataById(idObjekUpdate);
+        if (objekWisata != null) {
+          setState(() {
+            _selectedValue = objekWisata['kategori'];
+            _rating = objekWisata['rating'];
+            controllerNama.text = objekWisata['nama'];
+            controllerDeskripsi.text = objekWisata['deskripsi'];
+            controllerHarga.text = objekWisata['harga'].toString();
+            updatedId = objekWisata['id'];
+          });
+        }
+        setState(() {
+          isUpdate = true;
+        });
+      }
+    } catch (e) {
+      print('error di retrieve update data: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.id != null) {
-      _selectedValue = widget.kategori ?? 'Alam';
-      _rating = widget.rating ?? 0.0;
-      controllerNama.text = widget.nama!;
-      controllerDeskripsi.text = widget.deskripsi!;
-      controllerHarga.text = widget.harga.toString();
-    }
     return Scaffold(
         appBar: AppBar(
-          title: Text("INPUT OBJEK WISATA"),
+          title: Text("Data Objek Wisata"),
         ),
         body: ListView(
           padding: EdgeInsets.all(16),
@@ -199,13 +215,13 @@ class _InputPageState extends State<InputPage> {
                   return;
                 }
 
-                if (widget.id == null) {
+                if (isUpdate == false) {
                   print('ini add data');
                   initData();
                   await addObjectWisata();
                 } else {
                   print('ini edit data');
-                  await editObjekWisata(widget.id!);
+                  await editObjekWisata(updatedId);
                 }
                 Navigator.pop(context);
               },
@@ -259,6 +275,13 @@ class _InputPageState extends State<InputPage> {
         gambarPath,
         _rating,
         hargaInput);
+    print('add data success');
+    print('nama: ${controllerNama.text}');
+    print('deskripsi: ${controllerDeskripsi.text}');
+    print('kategori: $_selectedValue');
+    print('gambar: $gambarPath');
+    print('rating: $_rating');
+    print('harga: $hargaInput');
   }
 
   Future<void> editObjekWisata(int id) async {
@@ -269,7 +292,7 @@ class _InputPageState extends State<InputPage> {
         _selectedValue,
         gambarPath,
         _rating,
-        hargaInput);
+        double.parse(controllerHarga.text));
   }
 
   Container buttonCreatePDF(BuildContext context) {

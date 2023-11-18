@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ugd1/View/DanaPaymenPage.dart';
 
 class PaymentForm extends StatefulWidget {
   final double harga;

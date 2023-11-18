@@ -1,4 +1,4 @@
-export 'package:ugd1/core/constants/constants.dart';
+export 'package:ugd1/constant/app_constant.dart';
 export 'package:ugd1/core/utils/image_constant.dart';
 export 'package:ugd1/core/utils/size_utils.dart';
 export 'package:ugd1/routes/app_routes.dart';
