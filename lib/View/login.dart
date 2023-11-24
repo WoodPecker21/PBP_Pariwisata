@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-//import 'package:ugd1/View/home.dart';
-//import 'package:ugd1/View/profile.dart';
 import 'package:ugd1/bloc/login_bloc.dart';
 import 'package:ugd1/bloc/login_event.dart';
 import 'package:ugd1/bloc/login_state.dart';
 import 'package:ugd1/config/theme.dart';
-import 'package:ugd1/database/sql_helper_user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ugd1/core/app_export.dart';
+import 'package:ugd1/model/user.dart';
 import 'package:ugd1/widgets/custom_elevated_button.dart';
 import 'package:ugd1/widgets/custom_text_form_field.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ugd1/client/UserClient.dart';
 
 class Loginview extends StatefulWidget {
   const Loginview({super.key});
@@ -26,51 +26,38 @@ class _LoginviewState extends State<Loginview> {
   int userLogin = -1;
   List<Map<String, dynamic>> users = [];
 
-  void refresh() async {
-    final data = await SQLHelper.getUser();
-    setState(() {
-      users = data;
-    });
-    for (var user in users) {
-      print('ID: ${user['id']}');
-      print('Name: ${user['name']}');
-      print('Password: ${user['password']}');
-    }
-  }
-
-  @override
-  void initState() {
-    refresh();
-    super.initState();
-  }
-
   Future<bool> checkUserExist(
       String usernameInput, String passwordInput) async {
-    final userId = await SQLHelper.searchUser(usernameInput, passwordInput);
+    try {
+      // Call the searchUser method to check if the user exists
+      final userId = await UserClient.searchUser(usernameInput, passwordInput);
 
-    if (userId != -1) {
-      userLogin = userId;
-      return true;
-    } else {
+      if (userId != -1) {
+        userLogin = userId!;
+        //save id utk login
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setInt('id', userId);
+        print('User id login: $userId');
+        return true; //user exist
+      } else {
+        return false;
+      }
+    } catch (e) {
       return false;
     }
   }
 
-  Future<void> getUserByIdAndProcess(int userId) async {
-    final user = await SQLHelper.getUserById(userId);
+  // Future<void> getUserByIdAndProcess(int userId) async {
+  //   final user = await SQLHelper.getUserById(userId);
 
-    if (user != null) {
-      final prefs = await SharedPreferences
-          .getInstance(); // This is where you save the user's data.
-      // prefs.setString('username', user['name']);
-      // prefs.setString('email', user['email']);
-      // prefs.setString('phoneNumber', user['phoneNumber']);
-      // prefs.setString('birthdate', user['birthDate']);
-      prefs.setInt('id', user['id']);
-    } else {
-      print('User not found');
-    }
-  }
+  //   if (user != null) {
+  //     final prefs = await SharedPreferences
+  //         .getInstance(); // This is where you save the user's data.
+  //     prefs.setInt('id', user['id']);
+  //   } else {
+  //     print('User not found');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -220,8 +207,6 @@ class _LoginviewState extends State<Loginview> {
                                               ),
                                             );
 
-                                            await getUserByIdAndProcess(
-                                                userLogin); //untuk profil
                                             await Future.delayed(
                                                 Duration(seconds: 1));
 
@@ -273,10 +258,8 @@ class _LoginviewState extends State<Loginview> {
                       ),
                       floatingActionButton: FloatingActionButton(
                         onPressed: () {
-                          setState(() {
-                            isDarkMode = !isDarkMode;
-                            isTextWhite = !isTextWhite;
-                          });
+                          isDarkMode = !isDarkMode;
+                          isTextWhite = !isTextWhite;
                         },
                         backgroundColor: isDarkMode
                             ? Colors.white

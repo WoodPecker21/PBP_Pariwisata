@@ -8,6 +8,9 @@ import 'package:ugd1/database/sql_helper_user.dart';
 import 'package:flutter/services.dart';
 import 'package:ugd1/core/app_export.dart';
 import 'package:ugd1/widgets/custom_elevated_button.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ugd1/client/UserClient.dart';
+import 'package:ugd1/model/user.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -33,7 +36,6 @@ class _ProfileState extends State<Profile> {
   @override
   void initState() {
     loadProfileData();
-    refresh();
     print('initState');
     super.initState();
   }
@@ -56,7 +58,6 @@ class _ProfileState extends State<Profile> {
         imageProfile = defaultImage;
       });
     }
-
     print('load image');
   }
 
@@ -67,77 +68,89 @@ class _ProfileState extends State<Profile> {
   }
 
   Future<void> loadUserData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    idUser = prefs.getInt('id') ?? 0;
-    print('idUser: $idUser');
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      idUser = prefs.getInt('id') ?? 0;
+      print('idUser: $idUser');
 
-    final user = await SQLHelper.getUserById(idUser);
-    if (user != null) {
-      usernameController.text = user['name'] ?? '';
-      emailController.text = user['email'] ?? '';
-      phoneNumberController.text = user['phoneNumber'] ?? '';
-      passwordController.text = user['password'] ?? '';
-      birthdateController.text = user['birthDate'] ?? '';
+      User res = await UserClient.find(idUser);
       setState(() {
-        username = user['name'] ?? '';
+        usernameController.value = TextEditingValue(text: res.name!);
+        emailController.value = TextEditingValue(text: res.email!);
+        phoneNumberController.value = TextEditingValue(text: res.phoneNumber!);
+        birthdateController.value = TextEditingValue(text: res.birthDate!);
+        passwordController.value = TextEditingValue(text: res.password!);
+        genderController.value = TextEditingValue(text: res.gender!);
+        username = res.name!;
       });
-      genderController.text = user['gender'] ?? '';
-    } else {
-      // Handle the case when user is null
-      print('User not found or is null.');
+    } catch (e) {
+      print('Error load user data: $e');
     }
-    print('load data');
   }
 
   Future<void> saveEditedData() async {
     try {
-      final username = usernameController.text;
-      await SQLHelper.updateProfileImages(username, imageProfile);
-
-      await SQLHelper.editUser(
-        idUser,
-        username,
-        emailController.text,
-        phoneNumberController.text,
-        birthdateController.text,
-        genderController.text,
-        imageProfile,
+      User user = User(
+        name: usernameController.text,
+        password: passwordController.text,
+        email: emailController.text,
+        phoneNumber: phoneNumberController.text,
+        birthDate: birthdateController.text,
+        gender: genderController.text,
+        imageProfile: null, //biarkan dulu
       );
 
       setState(() {
         _isEditing = false;
       });
-      print('edited di database id user: $idUser');
+      await UserClient.update(user);
 
-      // User edited successfully
+      print('User updated successfully');
     } catch (e) {
-      // Handle database insertion error here
-      print('Error editing user: $e');
+      // Handle error during user creation
+      print('Error adding user: $e');
     }
+    // try {
+    //   final username = usernameController.text;
+    //   await SQLHelper.updateProfileImages(username, imageProfile);
+
+    //   await SQLHelper.editUser(
+    //     idUser,
+    //     username,
+    //     emailController.text,
+    //     phoneNumberController.text,
+    //     birthdateController.text,
+    //     genderController.text,
+    //     imageProfile,
+    //   );
+
+    //   setState(() {
+    //     _isEditing = false;
+    //   });
+    //   print('edited di database id user: $idUser');
+
+    //   // User edited successfully
+    // } catch (e) {
+    //   // Handle database insertion error here
+    //   print('Error editing user: $e');
+    // }
   }
 
-  List<Map<String, dynamic>> users = [];
+  bool isEmailUnik = false;
 
-  void refresh() async {
-    final data = await SQLHelper.getUser();
-    setState(() {
-      users = data;
-    });
-  }
+  Future<void> checkEmailUnik() async {
+    try {
+      // Call the cekEmailUnik method from UserClient
+      bool getEmailUnik = await UserClient.cekEmailUnik(emailController.text);
 
-  bool cekEmailUnik(String emailInput, List<Map<String, dynamic>> users) {
-    for (Map<String, dynamic> user in users) {
-      String? userEmail = user['email'];
-      if (userEmail == emailInput) {
-        if (idUser != user['id']) {
-          return false;
-        }
-      }
-      if (userEmail == null) {
-        return true;
-      }
+      setState(() {
+        isEmailUnik = getEmailUnik;
+      });
+      print('dapat email unik: $isEmailUnik');
+    } catch (e) {
+      // Handle errors as needed
+      print('Error checking email uniqueness: $e');
     }
-    return true;
   }
 
   @override
@@ -360,7 +373,7 @@ class _ProfileState extends State<Profile> {
                       return 'Email harus terisi!!';
                     } else if (!value.contains('@')) {
                       return 'Email harus menggunakan @';
-                    } else if (!cekEmailUnik(value, users)) {
+                    } else if (isEmailUnik == false) {
                       return 'Email harus unik!';
                     }
                     return null;
@@ -463,6 +476,7 @@ class _ProfileState extends State<Profile> {
                   buttonStyle: CustomButtonStyles.fillPrimary,
                   buttonTextStyle: CustomTextStyles.teksTombol,
                   onPressed: () async {
+                    await checkEmailUnik();
                     if (formKey.currentState!.validate()) {
                       await saveEditedData();
                     }

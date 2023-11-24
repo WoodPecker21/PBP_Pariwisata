@@ -11,6 +11,10 @@ import 'package:ugd1/core/app_export.dart';
 import 'package:ugd1/widgets/custom_elevated_button.dart';
 import 'package:ugd1/widgets/custom_text_form_field.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ugd1/client/UserClient.dart';
+import 'package:ugd1/model/user.dart';
+
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
 
@@ -30,32 +34,25 @@ class _RegisterPageState extends State<RegisterPage> {
   bool genderValid = false;
   bool validasi = false;
 
-  List<Map<String, dynamic>> users = [];
+  final listProvider = FutureProvider<List<User>>((ref) async {
+    return await UserClient.fetchAll();
+  });
 
-  void refresh() async {
-    final data = await SQLHelper.getUser();
-    setState(() {
-      users = data;
-    });
-  }
+  bool isEmailUnik = false;
 
-  @override
-  void initState() {
-    refresh();
-    super.initState();
-  }
+  Future<void> checkEmailUnik() async {
+    try {
+      // Call the cekEmailUnik method from UserClient
+      bool getEmailUnik = await UserClient.cekEmailUnik(emailController.text);
 
-  bool cekEmailUnik(String emailInput, List<Map<String, dynamic>> users) {
-    for (Map<String, dynamic> user in users) {
-      String? userEmail = user['email'];
-      if (userEmail == emailInput) {
-        return false;
-      }
-      if (userEmail == null) {
-        return true;
-      }
+      setState(() {
+        isEmailUnik = getEmailUnik;
+      });
+      print('dapat email unik: $isEmailUnik');
+    } catch (e) {
+      // Handle errors as needed
+      print('Error checking email uniqueness: $e');
     }
-    return true;
   }
 
   final formKey = GlobalKey<FormState>();
@@ -175,7 +172,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                         return 'Email harus terisi!!';
                                       } else if (!value.contains('@')) {
                                         return 'Email harus menggunakan @';
-                                      } else if (!cekEmailUnik(value, users)) {
+                                      } else if (isEmailUnik == false) {
                                         return 'Email harus unik!';
                                       }
                                       return null;
@@ -430,6 +427,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                         setState(() {
                                           validasi = true;
                                         });
+                                        await checkEmailUnik();
                                         if (formKey.currentState!.validate() &&
                                             genderValid == true &&
                                             check1 == true) {
@@ -465,18 +463,21 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Future<void> addUser() async {
     try {
-      await SQLHelper.addUser(
-        usernameController.text,
-        passwordController.text,
-        emailController.text,
-        phoneNumberController.text,
-        birthdateController.text,
-        gender,
+      User user = User(
+        name: usernameController.text,
+        password: passwordController.text,
+        email: emailController.text,
+        phoneNumber: phoneNumberController.text,
+        birthDate: birthdateController.text,
+        gender: gender,
+        imageProfile: null,
       );
-      print('masuk add---------');
-      // User added successfully
+
+      await UserClient.create(user);
+
+      print('User added successfully');
     } catch (e) {
-      // Handle database insertion error here
+      // Handle error during user creation
       print('Error adding user: $e');
     }
   }
