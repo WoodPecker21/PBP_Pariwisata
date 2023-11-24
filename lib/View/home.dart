@@ -128,7 +128,7 @@ class _HomeViewState extends State<HomeView> {
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: Colors.blue, // Mengatur warna ikon terpilih
+        selectedItemColor: Colors.blue,
       ),
     );
   }
@@ -143,8 +143,9 @@ class _HomeViewState extends State<HomeView> {
             final prefs = await SharedPreferences.getInstance();
             await prefs.setInt('idObjek', objekwisata[index]['id']);
             await prefs.setString('namaObjek', objekwisata[index]['nama']);
+            await prefs.setInt(
+                'durasiObjek', objekwisata[index]['durasi']); //TAMBAHAN
 
-            // Ketika container diklik, arahkan ke halaman booking1, booking2, nanti baru payment
             Navigator.pushNamed(context, AppRoutes.booking1);
           },
           child: Padding(

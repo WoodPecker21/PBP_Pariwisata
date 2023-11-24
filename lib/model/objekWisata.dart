@@ -5,6 +5,7 @@ class ObjekWisata {
   String? nama, deskripsi, kategori, gambar;
   double? rating, harga;
   String? akomodasi, fasilitas;
+  int? durasi;
 
   ObjekWisata(
       {this.id,
@@ -14,6 +15,7 @@ class ObjekWisata {
       this.gambar,
       this.rating,
       this.harga,
+      this.durasi,
       this.akomodasi,
       this.fasilitas});
 
@@ -29,7 +31,8 @@ class ObjekWisata {
       rating: json["rating"],
       harga: json["harga"],
       akomodasi: json["akomodasi"],
-      fasilitas: json["fasilitas"]);
+      fasilitas: json["fasilitas"],
+      durasi: json["durasi"]);
 
   //untuk buat json dari objek barang yg akan dikirim ke API
   String toRawJson() => json.encode(toJson());
@@ -43,5 +46,6 @@ class ObjekWisata {
         "harga": harga,
         "akomodasi": akomodasi,
         "fasilitas": fasilitas,
+        "durasi": durasi,
       };
 }
