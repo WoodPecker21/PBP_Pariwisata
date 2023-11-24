@@ -10,6 +10,7 @@ import 'package:ugd1/View/booking3.dart';
 import 'package:ugd1/View/booking_sukses.dart';
 import 'package:ugd1/View/PaymentPage.dart';
 import 'package:ugd1/View/inputPage.dart';
+import 'package:ugd1/View/forgotpassword.dart';
 
 class AppRoutes {
   static const String landingPageScreen = '/landing_page_screen';
@@ -23,6 +24,7 @@ class AppRoutes {
   static const String bookingSukses = '/booking_sukses';
   static const String paymentPage = '/PaymentPage';
   static const String inputPage = '/inputPage';
+  static const String forgotpassword = '/forgotpassword';
 
   static Map<String, WidgetBuilder> routes = {
     landingPageScreen: (context) => const LandingPageScreen(),
@@ -36,5 +38,6 @@ class AppRoutes {
     bookingSukses: (context) => const BookingSukses(),
     paymentPage: (context) => const PaymentPage(),
     inputPage: (context) => const InputPage(),
+    forgotpassword: (context) => const ForgotPasswordPage(),
   };
 }

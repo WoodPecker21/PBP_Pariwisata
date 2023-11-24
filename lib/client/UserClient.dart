@@ -1,11 +1,12 @@
 import 'package:ugd1/model/user.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
+import 'package:ugd1/client/UrlClient.dart';
 
 class UserClient {
   //untuk device hp
-  static final String url = '192.168.168.56';
-  static final String endpoint = '/LaravelAPI_Pariwisata/public/api/user';
+  static final String url = UrlClient.baseurl;
+  static final String endpoint = UrlClient.endpoint + UrlClient.user;
 
   //ambil semua data barang dari api
   static Future<List<User>> fetchAll() async {
@@ -63,6 +64,37 @@ class UserClient {
       return response;
     } catch (e) {
       return Future.error(e.toString());
+    }
+  }
+
+  static Future<User> updatePassword(
+      String emailInput, String newPassword) async {
+    try {
+      String endpointUpdatePassword =
+          UrlClient.endpoint + UrlClient.updatePassword;
+
+      // '/LaravelAPI_Pariwisata/public/api/updatePassword';
+      var urlEmail = Uri.http(url, '$endpointUpdatePassword/$emailInput');
+
+      var response = await put(
+        urlEmail,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'password': newPassword}),
+      );
+
+      if (response.statusCode == 200) {
+        print(response.body);
+        User user = User.fromJson(json.decode(response.body));
+        return user;
+      } else {
+        print(response.body);
+        var errorResponse = json.decode(response.body);
+        var errorMessage = errorResponse['message'];
+        throw Exception(errorMessage);
+      }
+    } catch (e) {
+      print('error client: $e');
+      throw Exception(e.toString());
     }
   }
 

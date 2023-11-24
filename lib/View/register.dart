@@ -440,8 +440,6 @@ class _RegisterPageState extends State<RegisterPage> {
                                               content: Text('Register Success'),
                                             ),
                                           );
-                                          await Future.delayed(
-                                              Duration(seconds: 1));
 
                                           Navigator.pushNamed(
                                               context, AppRoutes.login);

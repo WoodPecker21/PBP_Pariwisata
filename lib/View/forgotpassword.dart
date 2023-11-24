@@ -4,60 +4,82 @@ import 'package:ugd1/bloc/login_bloc.dart';
 import 'package:ugd1/bloc/login_event.dart';
 import 'package:ugd1/bloc/login_state.dart';
 import 'package:ugd1/config/theme.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ugd1/core/app_export.dart';
-import 'package:ugd1/model/user.dart';
 import 'package:ugd1/widgets/custom_elevated_button.dart';
 import 'package:ugd1/widgets/custom_text_form_field.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ugd1/client/UserClient.dart';
 
-class Loginview extends StatefulWidget {
-  const Loginview({super.key});
+class ForgotPasswordPage extends StatefulWidget {
+  const ForgotPasswordPage({super.key});
 
   @override
-  State<Loginview> createState() => _LoginviewState();
+  State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
 }
 
-class _LoginviewState extends State<Loginview> {
+class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final formKey = GlobalKey<FormState>();
-  TextEditingController usernameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  int userLogin = -1;
+  TextEditingController confirmController = TextEditingController();
+
   List<Map<String, dynamic>> users = [];
 
-  Future<bool> checkUserExist(
-      String usernameInput, String passwordInput) async {
-    try {
-      // Call the searchUser method to check if the user exists
-      final userId = await UserClient.searchUser(usernameInput, passwordInput);
+  // Future<bool> updatePassword(String emailInput, String passwordnew) async {
+  //   try {
+  //     final id = await UserClient.searchEmail(emailInput);
+  //     if (id != null) {
+  //       setState(() {
+  //         idUser = id;
+  //       });
+  //     }
+  //     if (id == -1) {
+  //       return false;
+  //     }
+  //     try {
+  //       // Call the updatePassword function
+  //       var response = await UserClient.updatePassword(idUser, passwordnew);
 
-      if (userId != -1) {
-        userLogin = userId!;
-        //save id utk login
-        final prefs = await SharedPreferences.getInstance();
-        prefs.setInt('id', userId);
-        print('User id login: $userId');
-        return true; //user exist
-      } else {
-        return false;
-      }
+  //       // Handle the response if needed
+  //       print('Password updated successfully: $response');
+
+  //       return true;
+  //     } catch (e) {
+  //       // Handle errors
+  //       print('Error updating password: $e');
+  //       return false;
+  //     }
+  //   } catch (e) {
+  //     return false;
+  //   }
+  //}
+
+  Future<void> updatePassword(String emailInput, String newPassword) async {
+    try {
+      await UserClient.updatePassword(emailInput, newPassword);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Update password Success'),
+        ),
+      );
+      print('Password updated successfully');
     } catch (e) {
-      return false;
+      var errorMessage = e.toString();
+      if (errorMessage.contains('Password cannot be the same as the old one')) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Tidak boleh sama dengan password lama'),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Update password Failed'),
+          ),
+        );
+      }
+      print('Error during update: $e');
     }
   }
-
-  // Future<void> getUserByIdAndProcess(int userId) async {
-  //   final user = await SQLHelper.getUserById(userId);
-
-  //   if (user != null) {
-  //     final prefs = await SharedPreferences
-  //         .getInstance(); // This is where you save the user's data.
-  //     prefs.setInt('id', user['id']);
-  //   } else {
-  //     print('User not found');
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -66,31 +88,7 @@ class _LoginviewState extends State<Loginview> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           body: BlocListener<LoginBloc, LoginState>(
-            listener: (context, state) {
-              // if (state.formSubmissionState is SubmissionSuccess) {
-              //   ScaffoldMessenger.of(context).showSnackBar(
-              //     const SnackBar(
-              //       content: Text('Login Success'),
-              //     ),
-              //   );
-
-              //   Navigator.of(context).pushReplacement(
-              //     MaterialPageRoute(
-              //       builder: (context) => HomeView(),
-              //     ),
-              //   );
-              // }
-              // if (state.formSubmissionState is SubmissionFailed) {
-              //   ScaffoldMessenger.of(context).showSnackBar(
-              //     SnackBar(
-              //       content: Text(
-              //           (state.formSubmissionState as SubmissionFailed)
-              //               .exception
-              //               .toString()),
-              //     ),
-              //   );
-              // }
-            },
+            listener: (context, state) {},
             child:
                 BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
               return MaterialApp(
@@ -106,20 +104,31 @@ class _LoginviewState extends State<Loginview> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                SizedBox(height: 55),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: IconButton(
+                                    icon: Icon(Icons.arrow_back),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ),
+                                SizedBox(height: 45),
                                 Text(
-                                  "Login",
+                                  "Forgot Password",
                                   style: CustomTextStyles.titleForm,
                                 ),
                                 SizedBox(height: 95),
                                 _buildGambar(context),
                                 SizedBox(height: 30),
                                 CustomTextFormField(
-                                  controller: usernameController,
-                                  hintText: "Username",
+                                  controller: emailController,
+                                  hintText: "Email",
+                                  textInputType: TextInputType.emailAddress,
+                                  keyboardType: TextInputType.emailAddress,
                                   prefix: Container(
                                     margin: EdgeInsets.fromLTRB(15, 15, 15, 15),
-                                    child: Icon(Icons.person),
+                                    child: const Icon(Icons.email),
                                   ),
                                   prefixConstraints: BoxConstraints(
                                     maxHeight: 50,
@@ -133,14 +142,17 @@ class _LoginviewState extends State<Loginview> {
                                       TextFormFieldStyleHelper.outlineBlack,
                                   fillColor: theme.colorScheme.onPrimary
                                       .withOpacity(1),
-                                  validator: (value) => value == ''
-                                      ? 'Please enter your username'
-                                      : null,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Email harus terisi!!';
+                                    }
+                                    return null;
+                                  },
                                 ),
                                 SizedBox(height: 15),
                                 CustomTextFormField(
                                   controller: passwordController,
-                                  hintText: "Password",
+                                  hintText: "New Password",
                                   prefix: Container(
                                     margin: EdgeInsets.fromLTRB(15, 15, 15, 15),
                                     child: const Icon(Icons.lock),
@@ -179,13 +191,61 @@ class _LoginviewState extends State<Loginview> {
                                       ? 'Please enter your password'
                                       : null,
                                 ),
+                                const SizedBox(height: 15),
+                                CustomTextFormField(
+                                  controller: confirmController,
+                                  hintText: "Confirm Password",
+                                  prefix: Container(
+                                    margin: EdgeInsets.fromLTRB(15, 15, 15, 15),
+                                    child: const Icon(Icons.lock),
+                                  ),
+                                  prefixConstraints: BoxConstraints(
+                                    maxHeight: 50,
+                                  ),
+                                  suffix: Container(
+                                    child: IconButton(
+                                      onPressed: () {
+                                        context.read<LoginBloc>().add(
+                                              IsPasswordVisibleChanged(),
+                                            );
+                                      },
+                                      icon: Icon(
+                                        state.isPasswordVisible
+                                            ? Icons.visibility_off
+                                            : Icons.visibility,
+                                        color: state.isPasswordVisible
+                                            ? Colors.grey
+                                            : ThemeHelper()
+                                                .themeColor()
+                                                .deepPurple500,
+                                      ),
+                                    ),
+                                  ),
+                                  suffixConstraints: BoxConstraints(
+                                    maxHeight: 50,
+                                  ),
+                                  borderDecoration:
+                                      TextFormFieldStyleHelper.outlineBlack,
+                                  fillColor: theme.colorScheme.onPrimary
+                                      .withOpacity(1),
+                                  obscureText: state.isPasswordVisible,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Harus mengisi confirm password!!';
+                                    } else if (value !=
+                                        passwordController.text) {
+                                      return 'Confirm password tidak sama!!';
+                                    }
+                                    return null;
+                                  },
+                                ),
                                 const SizedBox(height: 30),
 
-                                //tombol login
+                                //tombol save
                                 GestureDetector(
                                   child: CustomElevatedButton(
                                     height: 50,
-                                    text: "Login",
+                                    text: "Save",
                                     margin: EdgeInsets.only(
                                       left: 20,
                                       right: 20,
@@ -193,69 +253,22 @@ class _LoginviewState extends State<Loginview> {
                                     buttonStyle: CustomButtonStyles.fillPrimary,
                                     buttonTextStyle:
                                         CustomTextStyles.teksTombol,
-                                    //tambah method login disini krn di ontapnya ga bisa
+                                    //tambah method  disini krn di ontapnya ga bisa
                                     onPressed: () async {
                                       try {
                                         if (formKey.currentState!.validate()) {
-                                          if (await checkUserExist(
-                                              usernameController.text,
-                                              passwordController.text)) {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              const SnackBar(
-                                                content: Text('Login Success'),
-                                              ),
-                                            );
-                                            Navigator.pushNamed(
-                                                context, AppRoutes.home);
-                                          } else {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              SnackBar(
-                                                content: Text('Login Failed'),
-                                              ),
-                                            );
-                                          }
+                                          await updatePassword(
+                                              emailController.text,
+                                              passwordController.text);
                                         }
                                       } catch (e) {
-                                        print('Error during login: $e');
+                                        print('Error during update: $e');
                                       }
                                     },
                                   ),
                                 ),
 
                                 const SizedBox(height: 25),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.pushNamed(
-                                            context,
-                                            AppRoutes
-                                                .forgotpassword); //route ke halaman forget pass
-                                      },
-                                      child: Text(
-                                        "Forgot Password?     ",
-                                        style:
-                                            CustomTextStyles.labelAkunRegister,
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.pushNamed(
-                                            context, AppRoutes.register);
-                                      },
-                                      child: Text(
-                                        "Register",
-                                        style: CustomTextStyles.labelRegister
-                                            .copyWith(
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                )
                               ],
                             ),
                           ),
