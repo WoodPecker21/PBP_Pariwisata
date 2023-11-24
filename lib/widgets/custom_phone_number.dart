@@ -31,12 +31,12 @@ class CustomPhoneNumber extends StatelessWidget {
           },
           child: Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(
-                13,
-              ),
-              border: Border.all(
-                color: appTheme.black900.withOpacity(0.1),
-                width: 1,
+              borderRadius: BorderRadius.circular(5),
+              border: const Border(
+                top: BorderSide(width: 1.0, color: Colors.black),
+                left: BorderSide(width: 1.0, color: Colors.black),
+                right: BorderSide(width: 1.0, color: Colors.black),
+                bottom: BorderSide(width: 1.0, color: Colors.black),
               ),
             ),
             child: Row(
@@ -44,8 +44,20 @@ class CustomPhoneNumber extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(
                     left: 13,
-                    top: 12,
-                    bottom: 14,
+                    top: 10,
+                    bottom: 10,
+                  ),
+                  child: Icon(
+                    Icons.phone,
+                    size: 20,
+                    color: Colors.grey,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: 10,
+                    top: 10,
+                    bottom: 10,
                   ),
                   child: Text(
                     "+${country.phoneCode}",
@@ -53,11 +65,10 @@ class CustomPhoneNumber extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(
-                      3.0), // Adjust the padding values as needed
+                  padding: EdgeInsets.all(4.0),
                   child: Icon(
                     Icons.keyboard_arrow_down,
-                    size: 16,
+                    size: 20,
                     color: Colors.black,
                   ),
                 ),
@@ -69,11 +80,17 @@ class CustomPhoneNumber extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.only(left: 5),
             child: CustomTextFormField(
-              width: 225,
               controller: controller,
-              hintText: "823 456 789",
-              textInputType: TextInputType.phone,
+              hintText: "81122223333",
               keyboardType: TextInputType.phone,
+              contentPadding: EdgeInsets.only(
+                top: 10,
+                right: 30,
+                bottom: 10,
+                left: 15,
+              ),
+              borderDecoration: TextFormFieldStyleHelper.outlineBlack,
+              fillColor: theme.colorScheme.onPrimary.withOpacity(1),
               validator: validator,
             ),
           ),

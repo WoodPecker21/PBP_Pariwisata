@@ -6,7 +6,6 @@ import 'package:ugd1/bloc/register_state.dart';
 import 'package:ugd1/bloc/register_bloc.dart';
 import 'package:ugd1/bloc/register_event.dart';
 import 'package:ugd1/config/theme.dart';
-import 'package:ugd1/database/sql_helper_user.dart';
 import 'package:ugd1/core/app_export.dart';
 import 'package:ugd1/widgets/custom_elevated_button.dart';
 import 'package:ugd1/widgets/custom_text_form_field.dart';
@@ -14,6 +13,9 @@ import 'package:ugd1/widgets/custom_text_form_field.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ugd1/client/UserClient.dart';
 import 'package:ugd1/model/user.dart';
+import 'package:country_pickers/country.dart';
+import 'package:country_pickers/country_pickers.dart';
+import 'package:ugd1/widgets/custom_phone_number.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -33,6 +35,13 @@ class _RegisterPageState extends State<RegisterPage> {
   bool check1 = false;
   bool genderValid = false;
   bool validasi = false;
+  Country selectedCountry = CountryPickerUtils.getCountryByPhoneCode('62');
+
+  @override
+  void initState() {
+    super.initState();
+    selectedCountry = CountryPickerUtils.getCountryByPhoneCode('62');
+  }
 
   final listProvider = FutureProvider<List<User>>((ref) async {
     return await UserClient.fetchAll();
@@ -226,40 +235,23 @@ class _RegisterPageState extends State<RegisterPage> {
                                         return null;
                                       }),
                                   const SizedBox(height: 15),
-                                  CustomTextFormField(
-                                    controller: phoneNumberController,
-                                    hintText: "Nomor Telepon",
-                                    keyboardType: TextInputType.phone,
-                                    inputFormatters: <TextInputFormatter>[
-                                      FilteringTextInputFormatter.digitsOnly,
-                                    ],
-                                    prefix: Container(
-                                      margin:
-                                          EdgeInsets.fromLTRB(15, 15, 15, 15),
-                                      child: Icon(Icons.phone),
-                                    ),
-                                    prefixConstraints: BoxConstraints(
-                                      maxHeight: 50,
-                                    ),
-                                    contentPadding: EdgeInsets.only(
-                                      top: 5,
-                                      right: 30,
-                                      bottom: 5,
-                                    ),
-                                    borderDecoration:
-                                        TextFormFieldStyleHelper.outlineBlack,
-                                    fillColor: theme.colorScheme.onPrimary
-                                        .withOpacity(1),
-                                    validator: (value) {
-                                      if (value == '') {
-                                        return 'Nomor telepon harus terisi!!';
-                                      }
-                                      if (value!.length < 5) {
-                                        return 'Nomor Telepon harus 5 digit';
-                                      }
-                                      return null;
-                                    },
-                                  ),
+                                  CustomPhoneNumber(
+                                      country: selectedCountry,
+                                      controller: phoneNumberController,
+                                      onTap: (Country country) {
+                                        setState(() {
+                                          selectedCountry = country;
+                                        });
+                                      },
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Nomor HP harus terisi!!';
+                                        }
+                                        if (value.length < 5) {
+                                          return 'Nomor Telepon harus 5 digit';
+                                        }
+                                        return null;
+                                      }),
                                   const SizedBox(height: 15),
                                   GestureDetector(
                                     onTap: () async {
@@ -461,11 +453,14 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Future<void> addUser() async {
     try {
+      String mergedPhoneNumber =
+          '+${selectedCountry.phoneCode}${phoneNumberController.text}';
+      print('phone: $mergedPhoneNumber');
       User user = User(
         name: usernameController.text,
         password: passwordController.text,
         email: emailController.text,
-        phoneNumber: phoneNumberController.text,
+        phoneNumber: mergedPhoneNumber,
         birthDate: birthdateController.text,
         gender: gender,
         imageProfile: null,

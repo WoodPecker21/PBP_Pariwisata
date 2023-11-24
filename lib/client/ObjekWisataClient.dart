@@ -1,13 +1,12 @@
 import 'package:ugd1/model/objekWisata.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
+import 'package:ugd1/client/UrlClient.dart';
 
-class UserClient {
+class ObjekWisataClient {
   //untuk device hp
-  static final String url = '192.168.251.56';
-  static final String endpoint =
-      '/LaravelAPI_Pariwisata/public/api/objekwisata';
-
+  static final String url = UrlClient.baseurl;
+  static final String endpoint = UrlClient.endpoint + UrlClient.objekwisata;
   //ambil semua data barang dari api
   static Future<List<ObjekWisata>> fetchAll() async {
     try {

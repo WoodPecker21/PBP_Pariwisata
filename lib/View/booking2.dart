@@ -20,9 +20,6 @@ class Booking2Page extends StatefulWidget {
 class _Booking2PageState extends State<Booking2Page> {
   TextEditingController guestNameController = TextEditingController();
   TextEditingController numberOfPersonsController = TextEditingController();
-  Country selectedCountry = CountryPickerUtils.getCountryByPhoneCode('62');
-  TextEditingController phoneNumberController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
   TextEditingController kTPNumberController = TextEditingController();
   double harga = 0;
   final formKey = GlobalKey<FormState>();
@@ -30,7 +27,6 @@ class _Booking2PageState extends State<Booking2Page> {
   @override
   void initState() {
     super.initState();
-    selectedCountry = CountryPickerUtils.getCountryByPhoneCode('62');
     loadIsiForm();
   }
 
@@ -40,37 +36,18 @@ class _Booking2PageState extends State<Booking2Page> {
 
       if (prefs.containsKey('bookingName') &&
           prefs.containsKey('bookingJumlah') &&
-          prefs.containsKey('bookingEmail') &&
           prefs.containsKey('bookingKTP') &&
-          prefs.containsKey('bookingPhone') &&
           prefs.containsKey('bookingPanjangKode')) {
         // Retrieve data from shared preferences
         String bookingName = prefs.getString('bookingName') ?? '';
         int bookingJumlah = prefs.getInt('bookingJumlah') ?? 0;
-        String bookingEmail = prefs.getString('bookingEmail') ?? '';
         String bookingKTP = prefs.getString('bookingKTP') ?? '';
-        String bookingPhone = prefs.getString('bookingPhone') ?? '';
-        int bookingPanjangKode = prefs.getInt('bookingPanjangKode') ?? 0;
 
         // Update TextControllers with the retrieved data
         setState(() {
           guestNameController.text = bookingName;
           numberOfPersonsController.text = bookingJumlah.toString();
-          emailController.text = bookingEmail;
           kTPNumberController.text = bookingKTP;
-
-          // Extract phone number without the country code
-          if (bookingPhone.isNotEmpty) {
-            String phoneNumberWithoutPlus = bookingPhone.replaceAll('+', '');
-            String phoneWithoutCode =
-                phoneNumberWithoutPlus.substring(bookingPanjangKode + 1);
-            phoneNumberController.text = phoneWithoutCode;
-
-            String countryCode =
-                phoneNumberWithoutPlus.substring(0, bookingPanjangKode);
-            selectedCountry =
-                CountryPickerUtils.getCountryByPhoneCode(countryCode);
-          }
         });
       }
 
@@ -85,19 +62,13 @@ class _Booking2PageState extends State<Booking2Page> {
       final prefs = await SharedPreferences.getInstance();
 
       //simpan data form ke shared preferences
-      String mergedPhoneNumber =
-          '+${selectedCountry.phoneCode}${phoneNumberController.text}';
+
       await prefs.setString('bookingName', guestNameController.text);
       await prefs.setInt(
           'bookingJumlah', int.tryParse(numberOfPersonsController.text) ?? 0);
-      await prefs.setString('bookingEmail', emailController.text);
       await prefs.setString('bookingKTP', kTPNumberController.text);
-      await prefs.setString('bookingPhone', mergedPhoneNumber);
-      await prefs.setInt(
-          'bookingPanjangKode', selectedCountry.phoneCode.length);
       await prefs.setDouble('bookingTotalHarga', harga);
 
-      print('phone: $mergedPhoneNumber');
       print('data saved to shared preferences');
     } catch (e) {
       print('Error saving data to shared preferences: $e');
@@ -134,15 +105,6 @@ class _Booking2PageState extends State<Booking2Page> {
                               style: CustomTextStyles.labelFormBooking),
                           SizedBox(height: 2),
                           _buildNumberOfPersons(context),
-                          SizedBox(height: 14),
-                          Text("No. Telp",
-                              style: CustomTextStyles.labelFormBooking),
-                          _buildPhoneNumber(context),
-                          SizedBox(height: 12),
-                          Text("Email",
-                              style: CustomTextStyles.labelFormBooking),
-                          SizedBox(height: 2),
-                          _buildEmail(context),
                           SizedBox(height: 14),
                           Text("No. KTP",
                               style: CustomTextStyles.labelFormBooking),
@@ -195,40 +157,6 @@ class _Booking2PageState extends State<Booking2Page> {
             if (numberOfPersons <= 0) {
               return 'Jumlah Tamu harus lebih dari 0!!';
             }
-          }
-          return null;
-        });
-  }
-
-  /// Section Widget
-  Widget _buildPhoneNumber(BuildContext context) {
-    return CustomPhoneNumber(
-        country: selectedCountry,
-        controller: phoneNumberController,
-        onTap: (Country country) {
-          setState(() {
-            selectedCountry = country;
-          });
-        },
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Nomor HP harus terisi!!';
-          }
-          return null;
-        });
-  }
-
-  /// Section Widget
-  Widget _buildEmail(BuildContext context) {
-    return CustomTextFormField(
-        controller: emailController,
-        hintText: "john.ux@gmail.com",
-        textInputType: TextInputType.emailAddress,
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Email harus terisi!!';
-          } else if (value.contains('@') == false) {
-            return 'Email harus mengandung @ !!';
           }
           return null;
         });
