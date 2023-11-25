@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'package:ugd1/View/landing_page_screen.dart';
 import 'package:ugd1/View/login.dart';
 import 'package:ugd1/View/home.dart';
@@ -11,6 +12,7 @@ import 'package:ugd1/View/booking_sukses.dart';
 import 'package:ugd1/View/PaymentPage.dart';
 import 'package:ugd1/View/inputPage.dart';
 import 'package:ugd1/View/forgotpassword.dart';
+import 'package:ugd1/View/homeUser.dart';
 
 class AppRoutes {
   static const String landingPageScreen = '/landing_page_screen';
@@ -25,6 +27,7 @@ class AppRoutes {
   static const String paymentPage = '/PaymentPage';
   static const String inputPage = '/inputPage';
   static const String forgotpassword = '/forgotpassword';
+  static const String homeUser = '/homeUser';
 
   static Map<String, WidgetBuilder> routes = {
     landingPageScreen: (context) => const LandingPageScreen(),
@@ -39,5 +42,6 @@ class AppRoutes {
     paymentPage: (context) => const PaymentPage(),
     inputPage: (context) => const InputPage(),
     forgotpassword: (context) => const ForgotPasswordPage(),
+    homeUser: (context) => const HomePageUser(),
   };
 }
