@@ -2,9 +2,10 @@ import 'dart:convert';
 
 class ObjekWisata {
   final int? id;
-  String? nama, deskripsi, kategori, gambar;
+  String? nama, deskripsi, kategori, gambar, pulau;
   double? rating, harga;
-  String? akomodasi, fasilitas;
+  String? akomodasi, transportasi;
+  int? durasi;
 
   ObjekWisata(
       {this.id,
@@ -12,10 +13,12 @@ class ObjekWisata {
       this.deskripsi,
       this.kategori,
       this.gambar,
+      this.pulau,
       this.rating,
       this.harga,
+      this.durasi,
       this.akomodasi,
-      this.fasilitas});
+      this.transportasi});
 
   //untuk buat objek dari json yg diterima API
   factory ObjekWisata.fromRawJson(String str) =>
@@ -26,10 +29,12 @@ class ObjekWisata {
       deskripsi: json["deskripsi"],
       kategori: json["kategori"],
       gambar: json["gambar"],
-      rating: json["rating"],
-      harga: json["harga"],
+      pulau: json["pulau"],
+      rating: json["rating"].toDouble(), // Cast to double
+      harga: json["harga"].toDouble(), // Cast to double
       akomodasi: json["akomodasi"],
-      fasilitas: json["fasilitas"]);
+      transportasi: json["transportasi"],
+      durasi: json["durasi"]);
 
   //untuk buat json dari objek barang yg akan dikirim ke API
   String toRawJson() => json.encode(toJson());
@@ -39,9 +44,11 @@ class ObjekWisata {
         "deskripsi": deskripsi,
         "kategori": kategori,
         "gambar": gambar,
+        "pulau": pulau,
         "rating": rating,
         "harga": harga,
         "akomodasi": akomodasi,
-        "fasilitas": fasilitas,
+        "transportasi": transportasi,
+        "durasi": durasi,
       };
 }

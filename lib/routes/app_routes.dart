@@ -29,7 +29,7 @@ class AppRoutes {
   static Map<String, WidgetBuilder> routes = {
     landingPageScreen: (context) => const LandingPageScreen(),
     login: (context) => const Loginview(),
-    home: (context) => const HomeView(),
+    home: (context) => HomeView(),
     register: (context) => const RegisterPage(),
     privasiPage: (context) => PrivacyPolicyPage(),
     booking1: (context) => const Booking1Page(),

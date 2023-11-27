@@ -4,76 +4,75 @@ import 'package:ugd1/View/profil.dart';
 import 'package:ugd1/View/UGDView.dart';
 import 'package:ugd1/config/theme.dart';
 import 'package:ugd1/core/app_export.dart';
-import 'package:ugd1/database/sql_helper_objek.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-//import 'package:ugd1/View/UGDView.dart';
 import 'package:ugd1/View/paymentPage.dart'; // Import PaymentPage
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ugd1/client/ObjekWisataClient.dart';
+import 'package:ugd1/model/objekWisata.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: isDarkMode ? ThemeData.dark() : ThemeData.light(),
-      home: const HomeView(),
-    );
-  }
-}
-
-class HomeView extends StatefulWidget {
-  const HomeView({Key? key}) : super(key: key);
-
-  @override
-  _HomeViewState createState() => _HomeViewState();
-}
-
-class _HomeViewState extends State<HomeView> {
+class HomeView extends ConsumerWidget {
   int _selectedIndex = 0;
 
-  void _onItemTapped(int index) {
-    setState(() {
-      if (index == 3) {
-        // Jika menu "Pembayaran" (index 3) diklik, arahkan ke PaymentPage
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const PaymentPage()),
-        );
-      } else {
-        _selectedIndex = index;
-      }
-    });
+  final listProvider = FutureProvider<List<ObjekWisata>>((ref) async {
+    try {
+      print('retrieve data');
+      return await ObjekWisataClient.fetchAll();
+    } catch (e) {
+      return Future.error(e.toString());
+    }
+  });
+
+  void onItemTapped(int index, WidgetRef ref, BuildContext context) {
+    if (index == 3) {
+      Navigator.pushNamed(context, AppRoutes.paymentPage);
+    } else if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Profile(), // Navigate to the Profile page
+        ),
+      );
+    } else {
+      _selectedIndex = index;
+    }
   }
 
-  List<Map<String, dynamic>> objekwisata = [];
-
-  void refresh() async {
-    final data = await SQLHelper.getObjekWisata();
-    setState(() {
-      objekwisata = data;
-    });
+  void onDelete(id, context, ref) async {
+    try {
+      await ObjekWisataClient.destroy(id);
+      ref.refresh(listProvider);
+      showSnackBar(context, "Delete Success", Colors.green);
+    } catch (e) {
+      showSnackBar(context, e.toString(), Colors.red);
+    }
   }
 
-  @override
-  void initState() {
-    refresh();
-    super.initState();
+  void showSnackBar(BuildContext context, String msg, Color bg) {
+    final scaffold = ScaffoldMessenger.of(context);
+    scaffold.showSnackBar(
+      SnackBar(
+        content: Text(msg),
+        backgroundColor: bg,
+        action: SnackBarAction(
+          label: 'hide',
+          onPressed: scaffold.hideCurrentSnackBar,
+        ),
+      ),
+    );
   }
 
   Widget _buildUGDContent() {
-    return UGD();
+    return const UGD();
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    var listener = ref.watch(listProvider);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("Tripper"),
+        title: const Text("Tripper"),
         actions: [
           IconButton(
             icon: Icon(Icons.my_location),
@@ -92,13 +91,22 @@ class _HomeViewState extends State<HomeView> {
               Navigator.pushNamed(
                 context,
                 AppRoutes.inputPage,
-              ).then((_) => refresh());
+              ).then((value) => ref.refresh(listProvider));
             },
           ),
         ],
       ),
       body: _selectedIndex == 0
-          ? buildHomeContent()
+          ? listener.when(
+              data: (objekwisatas) => ListView.builder(
+                itemCount: objekwisatas.length,
+                itemBuilder: (context, index) {
+                  return buildKonten(objekwisatas[index], context, ref);
+                },
+              ),
+              error: (err, s) => Center(child: Text(err.toString())),
+              loading: () => const Center(child: CircularProgressIndicator()),
+            )
           : _selectedIndex == 1
               ? Profile()
               : _buildUGDContent(),
@@ -107,7 +115,7 @@ class _HomeViewState extends State<HomeView> {
           BottomNavigationBarItem(
             icon: Icon(
               Icons.home,
-              color: Colors.black, // Mengatur warna ikon terpilih
+              color: Colors.black,
             ),
             label: 'Home',
           ),
@@ -127,160 +135,111 @@ class _HomeViewState extends State<HomeView> {
           ),
         ],
         currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        selectedItemColor: Colors.blue, // Mengatur warna ikon terpilih
+        onTap: (index) => onItemTapped(index, ref, context),
+        selectedItemColor: Colors.blue,
       ),
     );
   }
 
-  Widget buildHomeContent() {
-    return ListView.builder(
-      itemCount: objekwisata.length,
-      itemBuilder: (context, index) {
-        return GestureDetector(
-          onTap: () async {
-            //untuk simpan id objek wisata ke pref, dipke di insert transaksi booking
-            final prefs = await SharedPreferences.getInstance();
-            await prefs.setInt('idObjek', objekwisata[index]['id']);
-            await prefs.setString('namaObjek', objekwisata[index]['nama']);
+  Widget buildKonten(ObjekWisata o, context, ref) {
+    return GestureDetector(
+      onTap: () async {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setInt('idObjek', o.id!);
+        await prefs.setString('namaObjek', o.nama!);
+        await prefs.setInt('durasiObjek', o.durasi!);
 
-            // Ketika container diklik, arahkan ke halaman booking1, booking2, nanti baru payment
-            Navigator.pushNamed(context, AppRoutes.booking1);
-          },
-          child: Padding(
-              padding: EdgeInsets.all(10),
-              child: Expanded(
-                child: Slidable(
-                  actionPane: const SlidableDrawerActionPane(),
-                  actionExtentRatio: 0.25,
+        Navigator.pushNamed(context, AppRoutes.booking1);
+      },
+      child: Padding(
+        padding: EdgeInsets.all(10),
+        child: Slidable(
+          actionPane: const SlidableDrawerActionPane(),
+          actionExtentRatio: 0.25,
+          child: Card(
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              children: [
+                Center(
                   child: Container(
-                    child: Card(
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          // Objekwisata Name (placed at the top)
-                          Container(
-                            margin: EdgeInsets.only(bottom: 10),
-                            child: Text(
-                              objekwisata[index]['nama'],
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                            ),
-                          ),
-
-                          // Image (takes 80% width of the card)
-                          Container(
-                            width: MediaQuery.of(context).size.width *
-                                0.8, // 80% of the screen width
-                            height: 150, // Set the desired height of the image
-                            child: Center(
-                              child: Image(
-                                image: AssetImage(
-                                    setImage(objekwisata[index]['kategori'])),
-                                fit: BoxFit
-                                    .cover, // Ensure the image covers the entire container
-                              ),
-                            ),
-                          ),
-
-                          // Rest of the data (placed under the image)
-                          const Divider(
-                            color: Colors.grey,
-                            height: 20,
-                            indent: 10,
-                            endIndent: 10,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                                bottom: 10,
-                                left: 10,
-                                right:
-                                    10), // Set padding for the start of the card
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Kategori  : " +
-                                      objekwisata[index]['kategori'],
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                                Text(
-                                  "Harga      : RP " +
-                                      objekwisata[index]['harga'].toString(),
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                                Text(
-                                  "Rating      : " +
-                                      objekwisata[index]['rating'].toString(),
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                                Text(
-                                  "Deskripsi : " +
-                                      objekwisata[index]['deskripsi'],
-                                  style: TextStyle(fontSize: 16),
-                                  maxLines: 3,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                    margin: EdgeInsets.only(bottom: 10),
+                    child: Text(
+                      o.nama!,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
                       ),
                     ),
                   ),
-                  secondaryActions: <Widget>[
-                    IconSlideAction(
-                      caption: 'Update',
-                      color: Colors.blue,
-                      icon: Icons.update,
-                      onTap: () async {
-                        final prefs = await SharedPreferences.getInstance();
-                        await prefs.setInt(
-                            'idUpdate', objekwisata[index]['id']);
-                        Navigator.pushNamed(context, AppRoutes.inputPage)
-                            .then((_) => refresh());
-                      },
-                    ),
-                    IconSlideAction(
-                      caption: 'Delete',
-                      color: Colors.red,
-                      icon: Icons.delete,
-                      onTap: () async {
-                        await deleteObjekWisata(objekwisata[index]['id']);
-                      },
-                    ),
-                  ],
                 ),
-              )),
-        );
-      },
+                const Center(
+                  child: Divider(
+                    color: Colors.grey,
+                    height: 20,
+                    indent: 10,
+                    endIndent: 10,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: 10,
+                    left: 12,
+                    right: 10,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "ID   :   ${o.id}    Kategori  : ${o.kategori}",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      Text(
+                        "Harga      : RP ${o.harga}",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      Text(
+                        "Rating      : ${o.rating}",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      Text(
+                        "Deskripsi : ${o.deskripsi}",
+                        style: TextStyle(fontSize: 16),
+                        maxLines: 3,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          secondaryActions: <Widget>[
+            IconSlideAction(
+              caption: 'Update',
+              color: Colors.blue,
+              icon: Icons.update,
+              onTap: () async {
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.setInt('idUpdate', o.id!);
+                Navigator.pushNamed(
+                  context,
+                  AppRoutes.inputPage,
+                ).then((value) => ref.refresh(listProvider));
+              },
+            ),
+            IconSlideAction(
+              caption: 'Delete',
+              color: Colors.red,
+              icon: Icons.delete,
+              onTap: () {
+                onDelete(o.id, context, ref);
+              },
+            ),
+          ],
+        ),
+      ),
     );
-  }
-
-  Future<void> deleteObjekWisata(int id) async {
-    await SQLHelper.deleteObjekWisata(id);
-    refresh();
-  }
-
-  String setImage(String kategori) {
-    if (kategori == 'Alam') {
-      return ('image/alam.jpg');
-    } else if (kategori == 'Budaya') {
-      return ('image/budaya.jpeg');
-    } else if (kategori == 'Komersial') {
-      return ('image/komersial.jpg');
-    } else if (kategori == 'Kuliner') {
-      return ('image/kuliner.jpg');
-    } else if (kategori == 'Maritim') {
-      return ('image/maritim.jpg');
-    } else if (kategori == 'Religius') {
-      return ('image/religius.jpg');
-    }
-    return '';
   }
 }

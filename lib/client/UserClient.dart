@@ -5,7 +5,7 @@ import 'package:ugd1/client/UrlClient.dart';
 
 class UserClient {
   //untuk device hp
-  static final String url = UrlClient.baseurl;
+  static final String url = '10.0.2.2:8000';
   static final String endpoint = UrlClient.endpoint + UrlClient.user;
 
   //ambil semua data barang dari api

@@ -261,7 +261,7 @@ class _LoginviewState extends State<Loginview> {
                           ),
                         ),
                       ),
-                      floatingActionButton: FloatingActionButton(
+                    floatingActionButton: FloatingActionButton(
                         onPressed: () {
                           isDarkMode = !isDarkMode;
                           isTextWhite = !isTextWhite;
