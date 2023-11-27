@@ -73,7 +73,6 @@ class UserClient {
       String endpointUpdatePassword =
           UrlClient.endpoint + UrlClient.updatePassword;
 
-      // '/LaravelAPI_Pariwisata/public/api/updatePassword';
       var urlEmail = Uri.http(url, '$endpointUpdatePassword/$emailInput');
 
       var response = await put(
@@ -140,8 +139,6 @@ class UserClient {
       var response = await get(
         Uri.http(url, endpoint),
       );
-      print('Response status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
 
       if (response.statusCode != 200) {
         throw Exception(response.reasonPhrase);
@@ -155,6 +152,36 @@ class UserClient {
       for (final userJson in list) {
         final user = User.fromJson(userJson);
         if (user.email == emailInput) {
+          print('masuk ke list db');
+          return false; //berarti tidak unik
+        }
+      }
+
+      return true; //berarti unik
+    } catch (e) {
+      print('error client: $e');
+      return false;
+    }
+  }
+
+  static Future<bool> cekEmailUnikEdit(String emailInput, int id) async {
+    try {
+      var response = await get(
+        Uri.http(url, endpoint),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception(response.reasonPhrase);
+      }
+
+      Iterable list = json.decode(response.body)['data'];
+      if (list.isEmpty) {
+        return true; // Database is empty, treat it as unique
+      }
+
+      for (final userJson in list) {
+        final user = User.fromJson(userJson);
+        if (user.email == emailInput && user.id != id) {
           print('masuk ke list db');
           return false; //berarti tidak unik
         }

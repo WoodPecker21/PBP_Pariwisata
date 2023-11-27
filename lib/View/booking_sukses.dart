@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:ugd1/core/app_export.dart';
 import 'package:ugd1/widgets/custom_elevated_button.dart';
-import 'package:ugd1/database/sql_helper_transaksi.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:ugd1/model/transaksi.dart';
+import 'package:ugd1/client/TransaksiClient.dart';
+import 'package:ugd1/model/pembayaran.dart';
+import 'package:ugd1/client/PembayaranClient.dart';
 
 class BookingSukses extends StatelessWidget {
   const BookingSukses({Key? key}) : super(key: key);
@@ -61,12 +65,35 @@ class BookingSukses extends StatelessWidget {
         textColor: theme.colorScheme.primary,
         margin: EdgeInsets.only(left: 40, right: 34, bottom: 16),
         onPressed: () {
+          insertDataPembayaran();
           insertDataBooking();
           Navigator.popUntil(context, (route) {
-            // stop di route home
             return route.settings.name == AppRoutes.home;
           });
         });
+  }
+
+  Future<void> insertDataPembayaran() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      double pricePembayaran = prefs.getDouble('bookingTotalHarga') ?? 0;
+      String metodePembayaran = prefs.getString('bookingMetode') ?? '';
+
+      //Simpan pembayaran ke database
+      Pembayaran pembayaran =
+          Pembayaran(price: pricePembayaran, metode: metodePembayaran);
+      var insertedIdBayar = await PembayaranClient.create(pembayaran);
+
+      print('insert data pembayaran success');
+
+      await prefs.setInt('bookingIdBayar', insertedIdBayar);
+
+      //hapus key dari shared pref setelah insert ke db
+      prefs.remove('bookingTotalHarga');
+      prefs.remove('bookingMetode');
+    } catch (e) {
+      print('error insert data pembayaran: $e');
+    }
   }
 
   Future<void> insertDataBooking() async {
@@ -77,31 +104,34 @@ class BookingSukses extends StatelessWidget {
       int idObjek = prefs.getInt('idObjek') ?? 0;
       String bookingName = prefs.getString('bookingName') ?? '';
       int bookingJumlah = prefs.getInt('bookingJumlah') ?? 0;
-      String bookingEmail = prefs.getString('bookingEmail') ?? '';
       String bookingKTP = prefs.getString('bookingKTP') ?? '';
-      String bookingPhone = prefs.getString('bookingPhone') ?? '';
       String bookingTanggal = prefs.getString('bookingTglStart') ?? '';
       int idBayar = prefs.getInt('bookingIdBayar') ?? 0;
 
-      await SQLHelper.insertBooking(idUser, idObjek, bookingName, bookingJumlah,
-          bookingEmail, bookingKTP, bookingPhone, bookingTanggal, idBayar);
+      //Simpan booking ke database
+      Transaksi booking = Transaksi(
+          idUser: idUser,
+          idObjek: idObjek,
+          name: bookingName,
+          jumlahTamu: bookingJumlah,
+          ktpNumber: bookingKTP,
+          tglStart: bookingTanggal,
+          idBayar: idBayar);
+      await TransaksiClient.create(booking);
 
       print('insert data booking success');
 
       //hapus key dari shared pref setelah insert ke db
       prefs.remove('idObjek');
+      prefs.remove('namaObjek');
+      prefs.remove('durasiObjek');
       prefs.remove('bookingName');
       prefs.remove('bookingJumlah');
-      prefs.remove('bookingEmail');
       prefs.remove('bookingKTP');
-      prefs.remove('bookingPhone');
       prefs.remove('bookingTglStart');
       prefs.remove('bookingIdBayar');
-      prefs.remove('bookingTotalHarga');
-      prefs.remove('bookingPanjangKode');
-      prefs.remove('namaObjek');
 
-      print('remove shared pref');
+      print('removed shared pref');
     } catch (e) {
       print('error insert data booking: $e');
     }

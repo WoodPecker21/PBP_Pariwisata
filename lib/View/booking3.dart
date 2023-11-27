@@ -6,7 +6,6 @@ import 'package:ugd1/widgets/app_bar/custom_app_bar.dart';
 import 'package:ugd1/widgets/app_bar/appbar_image.dart';
 import 'package:ugd1/widgets/app_bar/appbar_subtitle.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ugd1/database/sql_helper_pembayaran.dart';
 
 class Booking3Page extends StatefulWidget {
   const Booking3Page({super.key});
@@ -147,12 +146,9 @@ class _Booking3PageState extends State<Booking3Page> {
 
       final prefs = await SharedPreferences.getInstance();
       double totalHarga = prefs.getDouble('bookingTotalHarga') ?? 0;
-      int insertedIdBayar = await SQLHelper.addPembayaran(metode, totalHarga);
 
-      await prefs.setInt('bookingIdBayar', insertedIdBayar);
-
-      print(
-          'sukses inserted id pembayaran: $insertedIdBayar, dengan metode: $metode dan total harga: $totalHarga');
+      await prefs.setString('bookingMetode', metode);
+      print('inserted metode $metode and harga $totalHarga ke shared pref');
     } catch (e) {
       print('Error saving pembayaran to database: $e');
     }
@@ -255,8 +251,7 @@ class _Booking3PageState extends State<Booking3Page> {
               textAlign: TextAlign.left)),
       RichText(
           text: TextSpan(
-              text:
-                  "Rp $hargaPembayaran / $jumlahTamu px", //nanti dari database
+              text: "Rp $hargaPembayaran / $jumlahTamu px", //dari shared pref
               style: CustomTextStyles.labelPembayaran),
           textAlign: TextAlign.left)
     ]);

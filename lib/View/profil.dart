@@ -91,6 +91,7 @@ class _ProfileState extends State<Profile> {
   Future<void> saveEditedData() async {
     try {
       User user = User(
+        id: idUser,
         name: usernameController.text,
         password: passwordController.text,
         email: emailController.text,
@@ -108,32 +109,8 @@ class _ProfileState extends State<Profile> {
       print('User updated successfully');
     } catch (e) {
       // Handle error during user creation
-      print('Error adding user: $e');
+      print('Error updating user: $e');
     }
-    // try {
-    //   final username = usernameController.text;
-    //   await SQLHelper.updateProfileImages(username, imageProfile);
-
-    //   await SQLHelper.editUser(
-    //     idUser,
-    //     username,
-    //     emailController.text,
-    //     phoneNumberController.text,
-    //     birthdateController.text,
-    //     genderController.text,
-    //     imageProfile,
-    //   );
-
-    //   setState(() {
-    //     _isEditing = false;
-    //   });
-    //   print('edited di database id user: $idUser');
-
-    //   // User edited successfully
-    // } catch (e) {
-    //   // Handle database insertion error here
-    //   print('Error editing user: $e');
-    // }
   }
 
   bool isEmailUnik = false;
@@ -141,7 +118,8 @@ class _ProfileState extends State<Profile> {
   Future<void> checkEmailUnik() async {
     try {
       // Call the cekEmailUnik method from UserClient
-      bool getEmailUnik = await UserClient.cekEmailUnik(emailController.text);
+      bool getEmailUnik =
+          await UserClient.cekEmailUnikEdit(emailController.text, idUser);
 
       setState(() {
         isEmailUnik = getEmailUnik;

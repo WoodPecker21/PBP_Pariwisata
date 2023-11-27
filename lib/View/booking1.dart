@@ -7,6 +7,8 @@ import 'package:ugd1/widgets/app_bar/custom_app_bar.dart';
 import 'package:ugd1/widgets/app_bar/appbar_image.dart';
 import 'package:ugd1/widgets/app_bar/appbar_subtitle.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ugd1/model/objekWisata.dart';
+import 'package:ugd1/client/ObjekWisataClient.dart';
 
 class Booking1Page extends StatefulWidget {
   const Booking1Page({Key? key}) : super(key: key);
@@ -21,9 +23,10 @@ class _Booking1PageState extends State<Booking1Page> {
   DateTime selectedDate = DateTime.now();
   final formKey = GlobalKey<FormState>();
 
-  //untuk tampung nama dan id objek dari shared pref
+  //untuk tampung nama, id, durasi objek dari shared pref
   String namaObjekWisata = '';
   int idObjekWisata = 0;
+  int durasi = 3; //default 3 hari
 
   @override
   void initState() {
@@ -50,7 +53,7 @@ class _Booking1PageState extends State<Booking1Page> {
                         children: [
                           CustomImageView(
                               imagePath: ImageConstant
-                                  .imgBookingHeader, //nanti ambil dari database
+                                  .imgBookingHeader, //gambar nanti ambil dari database
                               height: 47,
                               width: 47,
                               radius: BorderRadius.circular(5)),
@@ -61,7 +64,7 @@ class _Booking1PageState extends State<Booking1Page> {
                                   children: [
                                     Text("$namaObjekWisata",
                                         style: CustomTextStyles
-                                            .headerBooking), // ambil dari database
+                                            .headerBooking), // ambil dari shared pref
                                     SizedBox(height: 2),
                                     Text("Objek Wisata ID #$idObjekWisata",
                                         style: CustomTextStyles
@@ -122,10 +125,9 @@ class _Booking1PageState extends State<Booking1Page> {
                                       "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
                                   tglstartController.text = formattedDate;
 
-                                  //setting utk tgl kepulangan
                                   final tglend = selectedDate.add(Duration(
-                                      days:
-                                          3)); // nanti get duration from paket objek wisata
+                                      days: durasi)); //durasi dari shared pref
+
                                   final formattedDate2 =
                                       "${tglend.year}-${tglend.month}-${tglend.day}";
                                   tglendController.text = formattedDate2;
@@ -218,19 +220,22 @@ class _Booking1PageState extends State<Booking1Page> {
     final tanggal = prefs.getString('bookingTglStart');
     final idObjek = prefs.getInt('idObjek');
     final namaObjek = prefs.getString('namaObjek') ?? '';
+    final durasiObjek = prefs.getInt('durasiObjek') ?? 3;
 
     if (idObjek != null) {
       setState(() {
         idObjekWisata = idObjek;
         namaObjekWisata = namaObjek;
+        durasi = durasiObjek;
       });
     }
+    print('durasi $durasi dari id objek $idObjek');
 
     if (tanggal != null) {
       setState(() {
         tglstartController.text = tanggal;
         DateTime startDate = DateTime.parse(tanggal);
-        DateTime endDate = startDate.add(Duration(days: 3));
+        DateTime endDate = startDate.add(Duration(days: durasi ?? 3));
         tglendController.text = endDate.toString().substring(0, 10);
       });
     }
@@ -300,8 +305,8 @@ class _Booking1PageState extends State<Booking1Page> {
               textAlign: TextAlign.left)),
       RichText(
           text: TextSpan(
-              text: "3 days ",
-              style: CustomTextStyles.labelPembayaran), //nanti dari database
+              text: "$durasi days ",
+              style: CustomTextStyles.labelPembayaran), //dari database
           textAlign: TextAlign.left)
     ]);
   }

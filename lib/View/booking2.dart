@@ -1,14 +1,12 @@
-import 'package:country_pickers/country.dart';
-import 'package:country_pickers/country_pickers.dart';
 import 'package:flutter/material.dart';
 import 'package:ugd1/core/app_export.dart';
 import 'package:ugd1/widgets/app_bar/appbar_leading_image.dart';
 import 'package:ugd1/widgets/app_bar/custom_app_bar.dart';
 import 'package:ugd1/widgets/custom_elevated_button.dart';
-import 'package:ugd1/widgets/custom_phone_number.dart';
 import 'package:ugd1/widgets/custom_text_form_field.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ugd1/database/sql_helper_objek.dart';
+import 'package:ugd1/model/objekWisata.dart';
+import 'package:ugd1/client/ObjekWisataClient.dart';
 
 class Booking2Page extends StatefulWidget {
   const Booking2Page({Key? key}) : super(key: key);
@@ -180,7 +178,9 @@ class _Booking2PageState extends State<Booking2Page> {
     final prefs = await SharedPreferences.getInstance();
     int idObjek = prefs.getInt('idObjek') ?? 0;
     double? harga;
-    harga = await SQLHelper.getHarga(idObjek);
+
+    ObjekWisata objekWisata = await ObjekWisataClient.find(idObjek);
+    harga = objekWisata.harga;
     if (harga == null) {
       harga = 0;
     }
