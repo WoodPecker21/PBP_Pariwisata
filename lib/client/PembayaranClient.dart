@@ -5,7 +5,7 @@ import 'package:ugd1/client/UrlClient.dart';
 
 class PembayaranClient {
   static final String url = UrlClient.baseurl;
-  static final String endpoint = UrlClient.endpoint + UrlClient.objekwisata;
+  static final String endpoint = UrlClient.endpoint + UrlClient.pembayaran;
   //ambil semua data barang dari api
   static Future<List<Pembayaran>> fetchAll() async {
     try {
@@ -58,6 +58,9 @@ class PembayaranClient {
       var response = await post(Uri.http(url, endpoint),
           headers: {'Content-Type': 'application/json'},
           body: objek.toRawJson());
+
+      print('Response Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
       if (response.statusCode != 200) throw Exception(response.reasonPhrase);
       return json.decode(response.body)['data']['id'];
     } catch (e) {

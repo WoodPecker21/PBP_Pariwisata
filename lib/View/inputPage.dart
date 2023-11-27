@@ -1,15 +1,12 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ugd1/client/objekWisataClient.dart';
-import 'package:ugd1/database/sql_helper_objek.dart';
 import 'package:ugd1/model/objekWisata.dart';
 import 'package:ugd1/widgets/custom_text_form_field.dart';
 import 'package:uuid/uuid.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 import 'package:ugd1/View/pdf_view.dart';
 
 class InputPage extends StatefulWidget {
@@ -87,11 +84,6 @@ class _InputPageState extends State<InputPage> {
         gambar: null,
       );
 
-      if (_imageFile != null) {
-        List<int> imageBytes = await _imageFile!.readAsBytes();
-        await sendImageToServer(imageBytes);
-      }
-
       await ObjekWisataClient.create(objek);
       print('Data berhasil disimpan');
     } catch (e) {
@@ -99,25 +91,9 @@ class _InputPageState extends State<InputPage> {
     }
   }
 
-  Future<void> sendImageToServer(List<int> imageBytes) async {
-    try {
-      final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/save-image'),
-        body: {'image': base64Encode(imageBytes)},
-      );
-
-      if (response.statusCode == 200) {
-        print('Image sent successfully');
-      } else {
-        print('Failed to send image. Status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error sending image: $e');
-    }
-  }
-
   Future<void> updateData() async {
     try {
+      final prefs = await SharedPreferences.getInstance();
       ObjekWisata objek = ObjekWisata(
         id: updatedId,
         nama: controllerNama.text,
@@ -133,25 +109,11 @@ class _InputPageState extends State<InputPage> {
       );
 
       await ObjekWisataClient.update(objek);
+      prefs.remove('idUpdate');
       print('Data berhasil diupdate');
     } catch (e) {
       print('Error: $e');
     }
-  }
-
-  void _clearForm() {
-    setState(() {
-      _selectedValue = 'Alam';
-      _rating = 0.0;
-      controllerNama.clear();
-      controllerDeskripsi.clear();
-      controllerHarga.clear();
-      controllerAkomodasi.clear();
-      controllerDurasi.clear();
-      controllerPulau.clear();
-      controllerTransportasi.clear();
-      _imageFile = null;
-    });
   }
 
   Future<void> _pickImageFromGallery() async {
@@ -182,7 +144,7 @@ class _InputPageState extends State<InputPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Data Objek Wisata"),
+        title: Text(isUpdate ? "Update Objek Wisata" : "Insert Objek Wisata"),
       ),
       body: ListView(
         padding: EdgeInsets.all(16),
@@ -241,17 +203,27 @@ class _InputPageState extends State<InputPage> {
             validator: (value) =>
                 value == '' ? 'Transportasi tidak boleh kosong' : null,
           ),
-          SizedBox(height: 12),
+          SizedBox(height: 20),
+          Padding(
+              padding: EdgeInsets.only(left: 10),
+              child: Text(
+                'Pick Image',
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey,
+                    fontFamily: 'Poppins'),
+              )),
           Row(
             children: <Widget>[
               ElevatedButton(
                 onPressed: _pickImageFromGallery,
-                child: Text("Gambar dari Galeri"),
+                child: Text("Gallery"),
               ),
               SizedBox(width: 12),
               ElevatedButton(
                 onPressed: _pickImageFromCamera,
-                child: Text("Gambar dari Kamera"),
+                child: Text("Camera"),
               ),
             ],
           ),
@@ -272,10 +244,16 @@ class _InputPageState extends State<InputPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Text(
-                'Kategori: ',
-                style: TextStyle(fontSize: 18),
-              ),
+              Padding(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Text(
+                    'Kategori  : ',
+                    style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey,
+                        fontFamily: 'Poppins'),
+                  )),
               SizedBox(width: 24),
               DropdownButton<String>(
                 value: _selectedValue,
@@ -296,17 +274,24 @@ class _InputPageState extends State<InputPage> {
                 ].map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
-                    child: Text(value),
+                    child: Text(value,
+                        style: TextStyle(fontFamily: 'Poppins', fontSize: 13)),
                   );
                 }).toList(),
               ),
             ],
           ),
           SizedBox(height: 24),
-          Text(
-            'Rating: $_rating',
-            style: TextStyle(fontSize: 20),
-          ),
+          Padding(
+              padding: EdgeInsets.only(left: 10),
+              child: Text(
+                'Rating   : $_rating',
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey,
+                    fontFamily: 'Poppins'),
+              )),
           RatingBar.builder(
             initialRating: _rating,
             direction: Axis.horizontal,

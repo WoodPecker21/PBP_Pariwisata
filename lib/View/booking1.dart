@@ -7,8 +7,6 @@ import 'package:ugd1/widgets/app_bar/custom_app_bar.dart';
 import 'package:ugd1/widgets/app_bar/appbar_image.dart';
 import 'package:ugd1/widgets/app_bar/appbar_subtitle.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ugd1/model/objekWisata.dart';
-import 'package:ugd1/client/ObjekWisataClient.dart';
 
 class Booking1Page extends StatefulWidget {
   const Booking1Page({Key? key}) : super(key: key);
@@ -235,7 +233,7 @@ class _Booking1PageState extends State<Booking1Page> {
       setState(() {
         tglstartController.text = tanggal;
         DateTime startDate = DateTime.parse(tanggal);
-        DateTime endDate = startDate.add(Duration(days: durasi ?? 3));
+        DateTime endDate = startDate.add(Duration(days: durasi));
         tglendController.text = endDate.toString().substring(0, 10);
       });
     }

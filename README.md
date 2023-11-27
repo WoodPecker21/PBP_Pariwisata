@@ -43,3 +43,13 @@ Fungsi yang ada:
 - membuat dan menampilkan preview pdf berdasarkan objek wisata yang dipilih (Idelia)
 - pdf menggunakan library barcode_widget, pdf, printing, uuid, dan intl
 - mengubah fungsi profil picture dengan menggunakan lib image_picker (Agustinus)
+
+--------------------- UGD API ----------------------------
+Fungsi:
+
+- login dengan api (Candra dan Idelia)
+- register (Joanna dan Idelia)
+- forgot password (Idelia)
+- update profile (Idelia)
+- cruds objekwisata (Agustinus, Idelia)
+- cruds transaksi (Idelia)
