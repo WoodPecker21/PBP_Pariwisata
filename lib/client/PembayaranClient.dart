@@ -5,7 +5,7 @@ import 'package:ugd1/client/UrlClient.dart';
 
 class PembayaranClient {
   static final String url = UrlClient.baseurl;
-  static final String endpoint = UrlClient.endpoint + UrlClient.objekwisata;
+  static final String endpoint = UrlClient.endpoint + UrlClient.pembayaran;
   //ambil semua data barang dari api
   static Future<List<Pembayaran>> fetchAll() async {
     try {

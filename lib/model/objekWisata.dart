@@ -4,11 +4,7 @@ class ObjekWisata {
   final int? id;
   String? nama, deskripsi, kategori, gambar, pulau;
   double? rating, harga;
-<<<<<<< HEAD
   String? akomodasi, transportasi;
-=======
-  String? akomodasi, fasilitas;
->>>>>>> 38a11da08c2f9e388c23b0b653b37e2cf2a8c65b
   int? durasi;
 
   ObjekWisata(
@@ -37,11 +33,7 @@ class ObjekWisata {
       rating: json["rating"].toDouble(), // Cast to double
       harga: json["harga"].toDouble(), // Cast to double
       akomodasi: json["akomodasi"],
-<<<<<<< HEAD
       transportasi: json["transportasi"],
-=======
-      fasilitas: json["fasilitas"],
->>>>>>> 38a11da08c2f9e388c23b0b653b37e2cf2a8c65b
       durasi: json["durasi"]);
 
   //untuk buat json dari objek barang yg akan dikirim ke API
@@ -56,11 +48,7 @@ class ObjekWisata {
         "rating": rating,
         "harga": harga,
         "akomodasi": akomodasi,
-<<<<<<< HEAD
         "transportasi": transportasi,
-=======
-        "fasilitas": fasilitas,
->>>>>>> 38a11da08c2f9e388c23b0b653b37e2cf2a8c65b
         "durasi": durasi,
       };
 }
