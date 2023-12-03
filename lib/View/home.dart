@@ -10,22 +10,6 @@ import 'package:ugd1/client/ObjekWisataClient.dart';
 import 'package:ugd1/model/objekWisata.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// void main() {
-//   runApp(const MyApp());
-// }
-
-// class MyApp extends StatelessWidget {
-//   const MyApp({Key? key}) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       theme: isDarkMode ? ThemeData.dark() : ThemeData.light(),
-//       home: HomeView(),
-//     );
-//   }
-// }
-
 class HomeView extends ConsumerWidget {
   final selectedIndexProvider = StateProvider<int>((ref) => 0);
   int _selectedIndexState = 0;
@@ -77,6 +61,7 @@ class HomeView extends ConsumerWidget {
     var listener = ref.watch(listProvider);
 
     return Scaffold(
+      key: Key('home'),
       appBar: AppBar(
         title: const Text("Tripper"),
         actions: [
@@ -92,6 +77,7 @@ class HomeView extends ConsumerWidget {
             },
           ),
           IconButton(
+            key: Key('inputobjek'),
             icon: Icon(Icons.add),
             onPressed: () async {
               Navigator.pushNamed(

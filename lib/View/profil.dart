@@ -4,11 +4,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ugd1/config/theme.dart';
-import 'package:ugd1/database/sql_helper_user.dart';
+//import 'package:ugd1/database/sql_helper_user.dart';
 import 'package:flutter/services.dart';
 import 'package:ugd1/core/app_export.dart';
 import 'package:ugd1/widgets/custom_elevated_button.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ugd1/client/UserClient.dart';
 import 'package:ugd1/model/user.dart';
 
@@ -46,18 +45,22 @@ class _ProfileState extends State<Profile> {
   }
 
   Future<void> loadImageProfile() async {
-    Uint8List? imageData = await SQLHelper.getImageProfile(idUser);
-    if (imageData != null && imageData.isNotEmpty) {
-      setState(() {
-        imageProfile = imageData;
-      });
-    } else {
-      // Set default image when imageData is null or empty
-      Uint8List defaultImage = Uint8List.fromList(await loadDefaultImage());
-      setState(() {
-        imageProfile = defaultImage;
-      });
-    }
+    // Uint8List? imageData = await SQLHelper.getImageProfile(idUser);
+    // if (imageData != null && imageData.isNotEmpty) {
+    //   setState(() {
+    //     imageProfile = imageData;
+    //   });
+    // } else {
+    //   // Set default image when imageData is null or empty
+    //   Uint8List defaultImage = Uint8List.fromList(await loadDefaultImage());
+    //   setState(() {
+    //     imageProfile = defaultImage;
+    //   });
+    // }
+    Uint8List defaultImage = Uint8List.fromList(await loadDefaultImage());
+    setState(() {
+      imageProfile = defaultImage;
+    });
     print('load image');
   }
 
@@ -477,14 +480,13 @@ class _ProfileState extends State<Profile> {
     final imageBytes = await imageFile.readAsBytes();
     final username = usernameController.text;
 
-    final result = await SQLHelper.updateProfileImages(username, imageBytes);
+    // final result = await SQLHelper.updateProfileImages(username, imageBytes);
 
-    if (result > 0) {
-      setState(() {
-        imageProfile = imageBytes;
-        loadUserData();
-      });
-    }
+    // if (result > 0) {
+    //   setState(() {
+    //     imageProfile = imageBytes;
+    //     loadUserData();
+    //   });
   }
 
   Future _pickImageFromCamera() async {
@@ -496,13 +498,13 @@ class _ProfileState extends State<Profile> {
     final imageBytes = await imageFile.readAsBytes();
     final username = usernameController.text;
 
-    final result = await SQLHelper.updateProfileImages(username, imageBytes);
+    // final result = await SQLHelper.updateProfileImages(username, imageBytes);
 
-    if (result > 0) {
-      setState(() {
-        imageProfile = imageBytes;
-        loadUserData();
-      });
-    }
+    // if (result > 0) {
+    //   setState(() {
+    //     imageProfile = imageBytes;
+    //     loadUserData();
+    //   });
+    //}
   }
 }

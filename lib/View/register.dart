@@ -72,33 +72,7 @@ class _RegisterPageState extends State<RegisterPage> {
         create: (context) => RegisterBloc(),
         child: Scaffold(
           body: BlocListener<RegisterBloc, RegisterState>(
-            listener: (context, state) {
-              // if (state.formSubmissionState is SubmissionSuccess) {
-              //   print('---sudah sukses---');
-              //   ScaffoldMessenger.of(context).showSnackBar(
-              //     const SnackBar(
-              //       content: Text('Register Success'),
-              //     ),
-              //   );
-              //   final user = User(
-              //     name: usernameController.text,
-              //     email: emailController.text,
-              //     phoneNumber: phoneNumberController.text,
-              //     birthDate: selectedDate,
-              //   );
-              // if (state.formSubmissionState is SubmissionFailed) {
-              //   print('---sudah gagal---');
-              //   ScaffoldMessenger.of(context).showSnackBar(
-              //     SnackBar(
-              //       content: Text(
-              //         (state.formSubmissionState as SubmissionFailed)
-              //             .exception
-              //             .toString(),
-              //       ),
-              //     ),
-              //   );
-              // }
-            },
+            listener: (context, state) {},
             child: BlocBuilder<RegisterBloc, RegisterState>(
                 builder: (context, state) {
               return MaterialApp(
@@ -125,6 +99,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   _buildGambar(context),
                                   SizedBox(height: 30),
                                   CustomTextFormField(
+                                    key: Key('username'),
                                     controller: usernameController,
                                     hintText: "Username",
                                     prefix: Container(
@@ -155,6 +130,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   ),
                                   const SizedBox(height: 15),
                                   CustomTextFormField(
+                                    key: Key('email'),
                                     controller: emailController,
                                     hintText: "Email",
                                     textInputType: TextInputType.emailAddress,
@@ -189,6 +165,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   ),
                                   const SizedBox(height: 15),
                                   CustomTextFormField(
+                                      key: Key('password'),
                                       controller: passwordController,
                                       hintText: "Password",
                                       prefix: Container(
@@ -236,6 +213,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                       }),
                                   const SizedBox(height: 15),
                                   CustomPhoneNumber(
+                                      key: Key('hp'),
                                       country: selectedCountry,
                                       controller: phoneNumberController,
                                       onTap: (Country country) {
@@ -271,6 +249,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     },
                                     child: AbsorbPointer(
                                       child: CustomTextFormField(
+                                        key: Key('tanggallahir'),
                                         controller: birthdateController,
                                         hintText: "Tanggal Lahir",
                                         prefix: Container(
@@ -309,6 +288,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     children: [
                                       Expanded(
                                         child: RadioListTile(
+                                          key: Key('laki'),
                                           title: const Text("Laki-Laki",
                                               style: TextStyle(
                                                   fontSize: 13,
@@ -373,6 +353,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     ),
                                   const SizedBox(height: 15),
                                   CheckboxListTile(
+                                    key: Key('check'),
                                     value: check1,
                                     controlAffinity:
                                         ListTileControlAffinity.leading,
@@ -381,11 +362,14 @@ class _RegisterPageState extends State<RegisterPage> {
                                         check1 = value!;
                                       });
                                     },
-                                    title: RichText(
-                                      text: TextSpan(
-                                        children: [
-                                          _buildPrivacyPolicyText(context),
-                                        ],
+                                    title: Semantics(
+                                      excludeSemantics: true,
+                                      child: RichText(
+                                        text: TextSpan(
+                                          children: [
+                                            _buildPrivacyPolicyText(context),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                     contentPadding: EdgeInsets.zero,
@@ -405,6 +389,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   SizedBox(
                                     width: double.infinity,
                                     child: CustomElevatedButton(
+                                      key: Key('register'),
                                       height: 50,
                                       text: "Register",
                                       margin: EdgeInsets.only(

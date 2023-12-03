@@ -62,7 +62,8 @@ class PembayaranClient {
       print('Response Status Code: ${response.statusCode}');
       print('Response Body: ${response.body}');
       if (response.statusCode != 200) throw Exception(response.reasonPhrase);
-      return json.decode(response.body)['data']['id'];
+      int id = json.decode(response.body)['data']['id'];
+      return id;
     } catch (e) {
       return Future.error(e.toString());
     }

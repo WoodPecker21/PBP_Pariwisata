@@ -24,6 +24,8 @@ class _InputPageState extends State<InputPage> {
   TextEditingController controllerDurasi = TextEditingController();
   TextEditingController controllerPulau = TextEditingController();
   TextEditingController controllerTransportasi = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+
   double _rating = 0.0;
   double hargaInput = 0;
   String _selectedValue = 'Alam';
@@ -146,183 +148,207 @@ class _InputPageState extends State<InputPage> {
       appBar: AppBar(
         title: Text(isUpdate ? "Update Objek Wisata" : "Insert Objek Wisata"),
       ),
-      body: ListView(
-        padding: EdgeInsets.all(16),
-        children: <Widget>[
-          CustomTextFormField(
-            controller: controllerNama,
-            hintText: 'Nama',
-            validator: (value) =>
-                value == '' ? 'Nama tidak boleh kosong' : null,
-          ),
-          SizedBox(height: 12),
-          Container(
-            height: 200,
-            child: CustomTextFormField(
-              controller: controllerDeskripsi,
-              hintText: 'Deskripsi',
-              maxLines: 10,
-              contentPadding: EdgeInsets.all(10),
+      body: Container(
+          child: Form(
+        key: formKey,
+        child: ListView(
+          padding: EdgeInsets.all(16),
+          children: <Widget>[
+            CustomTextFormField(
+              key: Key('nama'),
+              controller: controllerNama,
+              hintText: 'Nama',
               validator: (value) =>
-                  value == '' ? 'Deskripsi tidak boleh kosong' : null,
+                  value == '' ? 'Nama tidak boleh kosong' : null,
             ),
-          ),
-          SizedBox(height: 12),
-          CustomTextFormField(
-            controller: controllerHarga,
-            hintText: 'Harga',
-            keyboardType: TextInputType.number,
-            validator: (value) =>
-                value == '' ? 'Harga tidak boleh kosong' : null,
-          ),
-          SizedBox(height: 12),
-          CustomTextFormField(
-            controller: controllerAkomodasi,
-            hintText: 'Akomodasi',
-            validator: (value) =>
-                value == '' ? 'Akomodasi tidak boleh kosong' : null,
-          ),
-          SizedBox(height: 12),
-          CustomTextFormField(
-            controller: controllerDurasi,
-            hintText: 'Durasi',
-            validator: (value) =>
-                value == '' ? 'Durasi tidak boleh kosong' : null,
-          ),
-          SizedBox(height: 12),
-          CustomTextFormField(
-            controller: controllerPulau,
-            hintText: 'Pulau',
-            validator: (value) =>
-                value == '' ? 'Pulau tidak boleh kosong' : null,
-          ),
-          SizedBox(height: 12),
-          CustomTextFormField(
-            controller: controllerTransportasi,
-            hintText: 'Transportasi',
-            validator: (value) =>
-                value == '' ? 'Transportasi tidak boleh kosong' : null,
-          ),
-          SizedBox(height: 20),
-          Padding(
-              padding: EdgeInsets.only(left: 10),
-              child: Text(
-                'Pick Image',
-                style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey,
-                    fontFamily: 'Poppins'),
-              )),
-          Row(
-            children: <Widget>[
-              ElevatedButton(
-                onPressed: _pickImageFromGallery,
-                child: Text("Gallery"),
+            SizedBox(height: 12),
+            Container(
+              height: 200,
+              child: CustomTextFormField(
+                key: Key('deskripsi'),
+                controller: controllerDeskripsi,
+                hintText: 'Deskripsi',
+                maxLines: 10,
+                contentPadding: EdgeInsets.all(10),
+                validator: (value) =>
+                    value == '' ? 'Deskripsi tidak boleh kosong' : null,
               ),
-              SizedBox(width: 12),
-              ElevatedButton(
-                onPressed: _pickImageFromCamera,
-                child: Text("Camera"),
-              ),
-            ],
-          ),
-          SizedBox(height: 24),
-          _imageFile != null
-              ? Container(
-                  height: 200,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: FileImage(_imageFile!),
+            ),
+            SizedBox(height: 12),
+            CustomTextFormField(
+              key: Key('harga'),
+              controller: controllerHarga,
+              hintText: 'Harga',
+              keyboardType: TextInputType.number,
+              validator: (value) =>
+                  value == '' ? 'Harga tidak boleh kosong' : null,
+            ),
+            SizedBox(height: 12),
+            CustomTextFormField(
+              key: Key('akomodasi'),
+              controller: controllerAkomodasi,
+              hintText: 'Akomodasi',
+              validator: (value) =>
+                  value == '' ? 'Akomodasi tidak boleh kosong' : null,
+            ),
+            SizedBox(height: 12),
+            CustomTextFormField(
+              key: Key('durasi'),
+              controller: controllerDurasi,
+              hintText: 'Durasi',
+              validator: (value) =>
+                  value == '' ? 'Durasi tidak boleh kosong' : null,
+            ),
+            SizedBox(height: 12),
+            CustomTextFormField(
+              key: Key('pulau'),
+              controller: controllerPulau,
+              hintText: 'Pulau',
+              validator: (value) =>
+                  value == '' ? 'Pulau tidak boleh kosong' : null,
+            ),
+            SizedBox(height: 12),
+            CustomTextFormField(
+              key: Key('transportasi'),
+              controller: controllerTransportasi,
+              hintText: 'Transportasi',
+              validator: (value) =>
+                  value == '' ? 'Transportasi tidak boleh kosong' : null,
+            ),
+            SizedBox(height: 20),
+            Padding(
+                padding: EdgeInsets.only(left: 10),
+                child: Text(
+                  'Pick Image',
+                  style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey,
+                      fontFamily: 'Poppins'),
+                )),
+            Row(
+              children: <Widget>[
+                ElevatedButton(
+                  onPressed: _pickImageFromGallery,
+                  child: Text("Gallery"),
+                ),
+                SizedBox(width: 12),
+                ElevatedButton(
+                  onPressed: _pickImageFromCamera,
+                  child: Text("Camera"),
+                ),
+              ],
+            ),
+            SizedBox(height: 24),
+            _imageFile != null
+                ? Container(
+                    height: 200,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: FileImage(_imageFile!),
+                      ),
                     ),
-                  ),
-                )
-              : Container(),
-          SizedBox(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Padding(
+                  )
+                : Container(),
+            SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Padding(
                   padding: EdgeInsets.only(left: 10),
                   child: Text(
                     'Kategori  : ',
                     style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey,
-                        fontFamily: 'Poppins'),
-                  )),
-              SizedBox(width: 24),
-              DropdownButton<String>(
-                value: _selectedValue,
-                onChanged: (String? newValue) {
-                  if (newValue != null) {
-                    setState(() {
-                      _selectedValue = newValue;
-                    });
-                  }
-                },
-                items: <String>[
-                  'Alam',
-                  'Budaya',
-                  'Komersial',
-                  'Kuliner',
-                  'Maritim',
-                  'Religius'
-                ].map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value,
-                        style: TextStyle(fontFamily: 'Poppins', fontSize: 13)),
-                  );
-                }).toList(),
-              ),
-            ],
-          ),
-          SizedBox(height: 24),
-          Padding(
-              padding: EdgeInsets.only(left: 10),
-              child: Text(
-                'Rating   : $_rating',
-                style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey,
-                    fontFamily: 'Poppins'),
-              )),
-          RatingBar.builder(
-            initialRating: _rating,
-            direction: Axis.horizontal,
-            allowHalfRating: true,
-            itemCount: 5,
-            itemSize: 48,
-            itemBuilder: (context, _) => Icon(
-              Icons.star,
-              color: Colors.amber,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey,
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
+                ),
+                SizedBox(width: 24),
+                Container(
+                  key: Key('kategori'), // Add a key to the Container
+                  child: DropdownButton<String>(
+                    value: _selectedValue,
+                    onChanged: (String? newValue) {
+                      if (newValue != null) {
+                        setState(() {
+                          _selectedValue = newValue;
+                        });
+                      }
+                    },
+                    items: <String>[
+                      'Alam',
+                      'Budaya',
+                      'Komersial',
+                      'Kuliner',
+                      'Maritim',
+                      'Religius'
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value,
+                            style:
+                                TextStyle(fontFamily: 'Poppins', fontSize: 13)),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
             ),
-            onRatingUpdate: (rating) {
-              setState(() {
-                _rating = rating;
-              });
-            },
-          ),
-          SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () async {
-              if (isUpdate) {
-                await updateData();
-              } else {
-                await insertData();
-              }
-              Navigator.pop(context);
-            },
-            child: Text("Simpan Data"),
-          ),
-          buttonCreatePDF(context),
-        ],
-      ),
+            SizedBox(height: 24),
+            Padding(
+                padding: EdgeInsets.only(left: 10),
+                child: Text(
+                  'Rating   : $_rating',
+                  style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey,
+                      fontFamily: 'Poppins'),
+                )),
+            KeyedSubtree(
+              key: Key('rating'), // Set a key for the KeyedSubtree
+              child: RatingBar.builder(
+                initialRating: _rating,
+                direction: Axis.horizontal,
+                allowHalfRating: true,
+                itemCount: 5,
+                itemSize: 48,
+                itemBuilder: (context, index) => Icon(
+                  Icons.star,
+                  color: Colors.amber,
+                  key: Key('star$index'),
+                ),
+                onRatingUpdate: (rating) {
+                  setState(() {
+                    _rating = rating;
+                  });
+                },
+              ),
+            ),
+            SizedBox(height: 24),
+            ElevatedButton(
+              key: Key('simpan'),
+              onPressed: () async {
+                if (formKey.currentState!.validate()) {
+                  if (isUpdate) {
+                    await updateData();
+                  } else {
+                    await insertData();
+                  }
+                  Navigator.pop(context);
+                }
+              },
+              child: Text("Simpan Data"),
+            ),
+            buttonCreatePDF(context),
+          ],
+        ),
+      )),
     );
   }
 
