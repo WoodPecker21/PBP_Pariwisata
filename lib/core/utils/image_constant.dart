@@ -22,4 +22,7 @@ class ImageConstant {
 
   //booking sukses
   static String tripperbumi = '$imagePath/img_tripper_bumi.png';
+
+  //booking show
+  static String imgPlaceholder = '$imagePath/alam.jpg';
 }

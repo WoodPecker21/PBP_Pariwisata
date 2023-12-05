@@ -16,6 +16,7 @@ import 'package:ugd1/model/user.dart';
 import 'package:country_pickers/country.dart';
 import 'package:country_pickers/country_pickers.dart';
 import 'package:ugd1/widgets/custom_phone_number.dart';
+import 'package:intl/intl.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -242,7 +243,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                       if (selectedDate != null) {
                                         this.selectedDate = selectedDate;
                                         final formattedDate =
-                                            "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
+                                            DateFormat('yyyy-MM-dd')
+                                                .format(selectedDate);
                                         birthdateController.text =
                                             formattedDate;
                                       }

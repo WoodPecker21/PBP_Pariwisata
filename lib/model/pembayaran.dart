@@ -12,7 +12,7 @@ class Pembayaran {
       Pembayaran.fromJson(json.decode(str));
   factory Pembayaran.fromJson(Map<String, dynamic> json) => Pembayaran(
         id: json["id"],
-        price: json["price"],
+        price: json["price"].toDouble(),
         metode: json["metode"],
       );
 

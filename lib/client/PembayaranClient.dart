@@ -53,17 +53,23 @@ class PembayaranClient {
   }
 
   //membuat data baru
-  static Future<int> create(Pembayaran objek) async {
+  static Future<int?> create(Pembayaran objek) async {
     try {
-      var response = await post(Uri.http(url, endpoint),
-          headers: {'Content-Type': 'application/json'},
-          body: objek.toRawJson());
+      var response = await post(
+        Uri.http(url, endpoint),
+        headers: {'Content-Type': 'application/json'},
+        body: objek.toRawJson(),
+      );
 
       print('Response Status Code: ${response.statusCode}');
       print('Response Body: ${response.body}');
-      if (response.statusCode != 200) throw Exception(response.reasonPhrase);
-      int id = json.decode(response.body)['data']['id'];
-      return id;
+
+      if (response.statusCode == 200) {
+        int id = json.decode(response.body)['data']['id'];
+        return id;
+      } else {
+        throw Exception(response.reasonPhrase);
+      }
     } catch (e) {
       return Future.error(e.toString());
     }

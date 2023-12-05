@@ -34,7 +34,7 @@ class ObjekWisata {
       harga: json["harga"].toDouble(), // Cast to double
       akomodasi: json["akomodasi"],
       transportasi: json["transportasi"],
-      durasi: json["durasi"]);
+      durasi: json["durasi"].toInt());
 
   //untuk buat json dari objek barang yg akan dikirim ke API
   String toRawJson() => json.encode(toJson());

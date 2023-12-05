@@ -7,6 +7,7 @@ import 'package:ugd1/widgets/app_bar/custom_app_bar.dart';
 import 'package:ugd1/widgets/app_bar/appbar_image.dart';
 import 'package:ugd1/widgets/app_bar/appbar_subtitle.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class Booking1Page extends StatefulWidget {
   const Booking1Page({Key? key}) : super(key: key);
@@ -119,15 +120,15 @@ class _Booking1PageState extends State<Booking1Page> {
                                 );
                                 if (selectedDate != null) {
                                   this.selectedDate = selectedDate;
-                                  final formattedDate =
-                                      "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
+                                  final formattedDate = DateFormat('yyyy-MM-dd')
+                                      .format(selectedDate);
                                   tglstartController.text = formattedDate;
 
                                   final tglend = selectedDate.add(Duration(
                                       days: durasi)); //durasi dari shared pref
 
                                   final formattedDate2 =
-                                      "${tglend.year}-${tglend.month}-${tglend.day}";
+                                      DateFormat('yyyy-MM-dd').format(tglend);
                                   tglendController.text = formattedDate2;
                                 }
                               },

@@ -64,9 +64,9 @@ class BookingSukses extends StatelessWidget {
         text: "OK",
         textColor: theme.colorScheme.primary,
         margin: EdgeInsets.only(left: 40, right: 34, bottom: 16),
-        onPressed: () {
-          insertDataPembayaran();
-          insertDataBooking();
+        onPressed: () async {
+          await insertDataPembayaran();
+          await insertDataBooking();
           Navigator.popUntil(context, (route) {
             return route.settings.name == AppRoutes.home;
           });
@@ -83,14 +83,14 @@ class BookingSukses extends StatelessWidget {
       Pembayaran pembayaran =
           Pembayaran(price: pricePembayaran, metode: metodePembayaran);
       var insertedIdBayar = await PembayaranClient.create(pembayaran);
+      if (insertedIdBayar != null) {
+        print('insert data pembayaran success, id = $insertedIdBayar');
+        await prefs.setInt('bookingIdBayar', insertedIdBayar);
 
-      print('insert data pembayaran success');
-
-      await prefs.setInt('bookingIdBayar', insertedIdBayar);
-
-      //hapus key dari shared pref setelah insert ke db
-      prefs.remove('bookingTotalHarga');
-      prefs.remove('bookingMetode');
+        //hapus key dari shared pref setelah insert ke db
+        prefs.remove('bookingTotalHarga');
+        prefs.remove('bookingMetode');
+      }
     } catch (e) {
       print('error insert data pembayaran: $e');
     }

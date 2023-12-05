@@ -100,7 +100,11 @@ class CustomTextStyles {
         fontWeight: FontWeight.w600,
       );
 
-  //------- USELESS-----------------------
+  //------- future booking-----------------------
+  static get buttonBooking => theme.textTheme.bodySmall!.copyWith(
+        fontSize: 8,
+        color: Colors.white,
+      );
 
   static get titleSmallSemiBold => theme.textTheme.titleSmall!.copyWith(
         fontWeight: FontWeight.w600,

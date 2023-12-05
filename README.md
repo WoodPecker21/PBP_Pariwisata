@@ -53,3 +53,22 @@ Fungsi:
 - update profile (Idelia)
 - cruds objekwisata (Agustinus, Idelia)
 - cruds transaksi (Idelia)
+
+--------------------- UGD Testing ----------------------------
+Fungsi:
+
+- Testing Login (Joanna dan idelia)
+- Testing Register (Idelia, Candra, Agustinus)
+- Testing input objek wisata (Idelia)
+
+-------------------- TUBES EXTRA ------------------------------
+Fungsi:
+
+- Home User (Candra)
+- Transaksi/booking step 1,2,3,sukses (Idelia)
+- show booking, edit tgl dan delete booking (idelia)
+- fix profil (Agustinus)
+- show, input news (Joanna)
+- landing page (idelia)
+- privacy policy page (joanna)
+- dst

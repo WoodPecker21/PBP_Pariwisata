@@ -13,7 +13,7 @@ class TransaksiClient {
           Uri.http(url, endpoint)); // request ke api dan menyimpan responsenya
 
       if (response.statusCode != 200) throw Exception(response.reasonPhrase);
-
+      print(response.body);
       //ambil data dari response body
       Iterable list = json.decode(response.body)['data'];
 
@@ -44,20 +44,30 @@ class TransaksiClient {
       var response = await post(Uri.http(url, endpoint),
           headers: {'Content-Type': 'application/json'},
           body: objek.toRawJson());
+      print(response.body);
       if (response.statusCode != 200) throw Exception(response.reasonPhrase);
+
       return response;
     } catch (e) {
       return Future.error(e.toString());
     }
   }
 
-  //mengubaah data sesuai id
-  static Future<Response> update(Transaksi objek) async {
+  //mengubah data sesuai id
+  static Future<Response> update(int id, String tanggal) async {
     try {
-      var response = await put(Uri.http(url, '$endpoint/${objek.id}'),
-          headers: {'Content-Type': 'application/json'},
-          body: objek.toRawJson());
+      String endpointUpdateTanggal =
+          UrlClient.endpoint + UrlClient.updateTanggal;
 
+      var urlId = Uri.http(url, '$endpointUpdateTanggal/$id');
+
+      var response = await put(
+        urlId,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'tglStart': tanggal}),
+      );
+
+      print(response.body);
       if (response.statusCode != 200) throw Exception(response.reasonPhrase);
       return response;
     } catch (e) {

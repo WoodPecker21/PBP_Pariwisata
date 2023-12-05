@@ -16,6 +16,9 @@ import 'package:ugd1/View/homeUser.dart';
 import 'package:ugd1/View/profil.dart';
 import 'package:ugd1/View/news.dart';
 import 'package:ugd1/View/newsUser.dart';
+import 'package:ugd1/View/editBooking.dart';
+import 'package:ugd1/View/editBookingSukses.dart';
+import 'package:ugd1/View/ShowBooking.dart';
 
 class AppRoutes {
   static const String landingPageScreen = '/landing_page_screen';
@@ -34,6 +37,9 @@ class AppRoutes {
   static const String profil = '/profil';
   static const String newsPageInput = '/newsPageInput';
   static const String newsPage = '/newsPage';
+  static const String editBooking = '/editBooking';
+  static const String editBookingSukses = '/editBookingSukses';
+  static const String showBooking = '/ShowBooking';
 
   static Map<String, WidgetBuilder> routes = {
     landingPageScreen: (context) => const LandingPageScreen(),
@@ -51,6 +57,9 @@ class AppRoutes {
     homeUser: (context) => const HomePageUser(),
     profil: (context) => const Profile(),
     newsPageInput: (context) => const NewsPageInput(),
+    editBooking: (context) => const EditBooking(),
+    editBookingSukses: (context) => const EditBookingSukses(),
+    showBooking: (context) => BookingView(),
     // newsPage: (context) => const NewsPage(),
   };
 }

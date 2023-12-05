@@ -8,6 +8,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ugd1/client/ObjekWisataClient.dart';
 import 'package:ugd1/model/objekWisata.dart';
+import 'package:ugd1/View/ShowBooking.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class HomeView extends ConsumerWidget {
@@ -49,10 +50,6 @@ class HomeView extends ConsumerWidget {
             onPressed: scaffold.hideCurrentSnackBar,
           )),
     );
-  }
-
-  Widget _buildUGDContent() {
-    return const UGD();
   }
 
   @override
@@ -103,6 +100,7 @@ class HomeView extends ConsumerWidget {
           ),
           Profile(),
           UGD(),
+          BookingView(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -128,13 +126,20 @@ class HomeView extends ConsumerWidget {
             ),
             label: 'UGD',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.home,
+              color: Colors.black,
+            ),
+            label: 'Booking',
+          ),
         ],
         currentIndex:
             ref.watch(selectedIndexProvider), // Retrieve the state value
         onTap: (index) {
           selectedIndexState.state = index;
         },
-        selectedItemColor: Colors.blue,
+        selectedItemColor: ThemeHelper().themeColor().blueA700,
       ),
     );
   }

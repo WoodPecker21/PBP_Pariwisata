@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'package:ugd1/model/user.dart';
+import 'package:ugd1/model/pembayaran.dart';
+import 'package:ugd1/model/objekWisata.dart';
 
 class Transaksi {
   final int? id;
@@ -10,6 +13,11 @@ class Transaksi {
   final String? ktpNumber;
   final String? tglStart;
 
+  // Additional fields for associations
+  final User? user;
+  final Pembayaran? bayar;
+  final ObjekWisata? objek;
+
   Transaksi({
     this.id,
     this.idUser,
@@ -19,6 +27,9 @@ class Transaksi {
     this.jumlahTamu,
     this.ktpNumber,
     this.tglStart,
+    this.user,
+    this.bayar,
+    this.objek,
   });
 
   @override
@@ -26,7 +37,7 @@ class Transaksi {
     return 'Transaksi[id: $id, idUser: $idUser, idBayar: $idBayar, idObjekWisata: $idObjek, name: $name, jumlahTamu: $jumlahTamu, noktp: $ktpNumber, tglStart: $tglStart]';
   }
 
-  //untuk buat objek dari json yg diterima API
+  // Factory methods for JSON serialization and deserialization
   factory Transaksi.fromRawJson(String str) =>
       Transaksi.fromJson(json.decode(str));
   factory Transaksi.fromJson(Map<String, dynamic> json) => Transaksi(
@@ -38,9 +49,14 @@ class Transaksi {
         jumlahTamu: json["jumlahTamu"],
         ktpNumber: json["ktpNumber"],
         tglStart: json["tglStart"],
+        user: json["user"] != null ? User.fromJson(json["user"]) : null,
+        bayar:
+            json["bayar"] != null ? Pembayaran.fromJson(json["bayar"]) : null,
+        objek:
+            json["objek"] != null ? ObjekWisata.fromJson(json["objek"]) : null,
       );
 
-  //untuk buat json dari objek barang yg akan dikirim ke API
+  // Methods for creating JSON from the object
   String toRawJson() => json.encode(toJson());
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -51,5 +67,8 @@ class Transaksi {
         "jumlahTamu": jumlahTamu,
         "ktpNumber": ktpNumber,
         "tglStart": tglStart,
+        "user": user?.toJson(),
+        "bayar": bayar?.toJson(),
+        "objek": objek?.toJson(),
       };
 }

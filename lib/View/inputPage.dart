@@ -195,6 +195,7 @@ class _InputPageState extends State<InputPage> {
             CustomTextFormField(
               key: Key('durasi'),
               controller: controllerDurasi,
+              keyboardType: TextInputType.number,
               hintText: 'Durasi',
               validator: (value) =>
                   value == '' ? 'Durasi tidak boleh kosong' : null,
