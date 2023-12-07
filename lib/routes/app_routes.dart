@@ -12,7 +12,7 @@ import 'package:ugd1/View/booking_sukses.dart';
 import 'package:ugd1/View/PaymentPage.dart';
 import 'package:ugd1/View/inputPage.dart';
 import 'package:ugd1/View/forgotpassword.dart';
-import 'package:ugd1/View/homeUser.dart';
+import 'package:ugd1/View/User/homeUser.dart';
 import 'package:ugd1/View/profil.dart';
 import 'package:ugd1/View/news.dart';
 import 'package:ugd1/View/newsUser.dart';
@@ -33,7 +33,7 @@ class AppRoutes {
   static const String paymentPage = '/PaymentPage';
   static const String inputPage = '/inputPage';
   static const String forgotpassword = '/forgotpassword';
-  static const String homeUser = '/homeUser';
+  static const String homeUser = '/User/homeUser';
   static const String profil = '/profil';
   static const String newsPageInput = '/newsPageInput';
   static const String newsPage = '/newsPage';
@@ -54,7 +54,7 @@ class AppRoutes {
     paymentPage: (context) => const PaymentPage(),
     inputPage: (context) => const InputPage(),
     forgotpassword: (context) => const ForgotPasswordPage(),
-    homeUser: (context) => const HomePageUser(),
+    homeUser: (context) => const HomePage(),
     profil: (context) => const Profile(),
     newsPageInput: (context) => const NewsPageInput(),
     editBooking: (context) => const EditBooking(),
