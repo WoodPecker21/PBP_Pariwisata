@@ -71,4 +71,5 @@ Fungsi:
 - show, input news (Joanna)
 - landing page (idelia)
 - privacy policy page (joanna)
+- home amdin (Agustinus)
 - dst
