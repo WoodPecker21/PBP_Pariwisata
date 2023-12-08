@@ -12,6 +12,7 @@ import 'package:ugd1/widgets/custom_text_form_field.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ugd1/client/UserClient.dart';
 import 'package:ugd1/View/home.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Loginview extends StatefulWidget {
   const Loginview({super.key});
@@ -201,11 +202,14 @@ class _LoginviewState extends State<Loginview> {
                                       if (await checkUserExist(
                                           usernameController.text,
                                           passwordController.text)) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          const SnackBar(
-                                            content: Text('Login Success'),
-                                          ),
+                                        Fluttertoast.showToast(
+                                          msg: "Login Success",
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.BOTTOM,
+                                          timeInSecForIosWeb: 1,
+                                          backgroundColor: Colors.green,
+                                          textColor: Colors.white,
+                                          fontSize: 16.0,
                                         );
 
                                         if (usernameController.text ==

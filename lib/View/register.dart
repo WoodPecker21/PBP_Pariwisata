@@ -17,6 +17,7 @@ import 'package:country_pickers/country.dart';
 import 'package:country_pickers/country_pickers.dart';
 import 'package:ugd1/widgets/custom_phone_number.dart';
 import 'package:intl/intl.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -433,13 +434,17 @@ class _RegisterPageState extends State<RegisterPage> {
                                                     onPressed: () async {
                                                       // Call addUser only if the user clicks "OK"
                                                       await addUser();
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                        const SnackBar(
-                                                          content: Text(
-                                                              'Register Success'),
-                                                        ),
+                                                      Fluttertoast.showToast(
+                                                        msg: "Register Success",
+                                                        toastLength:
+                                                            Toast.LENGTH_SHORT,
+                                                        gravity:
+                                                            ToastGravity.BOTTOM,
+                                                        timeInSecForIosWeb: 1,
+                                                        backgroundColor:
+                                                            Colors.green,
+                                                        textColor: Colors.white,
+                                                        fontSize: 16.0,
                                                       );
                                                       Navigator.pushNamed(
                                                           context,
