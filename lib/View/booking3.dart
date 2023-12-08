@@ -6,6 +6,8 @@ import 'package:ugd1/widgets/app_bar/custom_app_bar.dart';
 import 'package:ugd1/widgets/app_bar/appbar_image.dart';
 import 'package:ugd1/widgets/app_bar/appbar_subtitle.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shake/shake.dart';
+import 'dart:math';
 
 class Booking3Page extends StatefulWidget {
   const Booking3Page({super.key});
@@ -20,12 +22,78 @@ class _Booking3PageState extends State<Booking3Page> {
   double hargaPembayaran = 0;
   //untuk tampung nama dan id objek dari shared pref
   String namaObjekWisata = '';
+  bool isPromoReceived = false;
+  bool isPromoUsed = false;
   int idObjekWisata = 0;
+  
 
   @override
   void initState() {
     super.initState();
     loadData();
+    ShakeDetector detector = ShakeDetector.autoStart(
+      onPhoneShake: () {
+        // Simulasi mendapatkan promo atau tidak
+        _generateAndShowPromo();
+      },
+      minimumShakeCount: 1,
+      shakeSlopTimeMS: 500,
+      shakeCountResetTime: 3000,
+      shakeThresholdGravity: 2.7,
+    );
+  }
+
+  void _generateAndShowPromo() {
+    // Jika promo belum pernah digunakan dan belum pernah diterima, maka terapkan promo
+    if (!isPromoReceived && !isPromoUsed) {
+      // Simulasi mendapatkan promo
+      isPromoReceived = true;
+
+      // Terapkan promo pada hargaPembayaran
+      _applyPromoToBooking();
+
+      // Tampilkan pop-up card berhasil mendapatkan promo
+      _showPromoCard();
+    }
+  }
+
+  void _showPromoCard() {
+    if (isPromoReceived && !isPromoUsed) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Promo Received'),
+            content: Text('Berhasil mendapatkan potongan harga!'),
+          );
+        },
+      );
+    }
+  }
+
+  void _applyPromoToBooking() {
+    if (isPromoReceived && !isPromoUsed) {
+      // Ambil nilai diskon dari promo (misalnya 10%)
+      double promoDiscount = 0.1;
+
+      // Kurangkan nilai hargaPembayaran
+      setState(() {
+        hargaPembayaran = hargaPembayaran - (hargaPembayaran * promoDiscount);
+        isPromoUsed = true;
+      });
+
+      // Simpan status promo ke SharedPreferences atau database jika perlu
+      _savePromoStatus();
+    }
+  }
+
+  bool _getPromoStatus() {
+    return !isPromoUsed; // Jika promo belum digunakan, kembalikan true
+  }
+
+  void _savePromoStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isPromoUsed', isPromoUsed);
   }
 
   Future<void> loadData() async {

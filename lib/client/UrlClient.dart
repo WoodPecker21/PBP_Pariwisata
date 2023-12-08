@@ -1,5 +1,5 @@
 class UrlClient {
-  static const String baseurl = '192.168.0.172';
+  static const String baseurl = '192.168.1.31';
   //jika hp
   static const String endpoint = "/Laravel_Pariwisata/public/api";
   //jika emulator
