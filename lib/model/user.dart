@@ -9,7 +9,7 @@ class User {
   final String? phoneNumber;
   final String? birthDate;
   final String? gender;
-  final String? imageProfile;
+  String? imageProfile;
 
   User(
       {this.id,

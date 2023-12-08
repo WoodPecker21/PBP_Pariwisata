@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,7 @@ import 'package:ugd1/core/app_export.dart';
 import 'package:ugd1/widgets/custom_elevated_button.dart';
 import 'package:ugd1/client/UserClient.dart';
 import 'package:ugd1/model/user.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -29,8 +32,15 @@ class _ProfileState extends State<Profile> {
   bool _isEditing = false;
   int idUser = 0;
   String username = "";
-  Uint8List imageProfile = Uint8List(0);
+  Uint8List? imageProfile;
   final formKey = GlobalKey<FormState>();
+
+  String convertUint8ListToBase64String(Uint8List? uint8list) {
+    if (uint8list != null && uint8list.isNotEmpty) {
+      return base64Encode(uint8list);
+    }
+    return ''; // Return empty string or handle null case based on your requirement
+  }
 
   @override
   void initState() {
@@ -45,22 +55,28 @@ class _ProfileState extends State<Profile> {
   }
 
   Future<void> loadImageProfile() async {
-    // Uint8List? imageData = await SQLHelper.getImageProfile(idUser);
-    // if (imageData != null && imageData.isNotEmpty) {
-    //   setState(() {
-    //     imageProfile = imageData;
-    //   });
-    // } else {
-    //   // Set default image when imageData is null or empty
-    //   Uint8List defaultImage = Uint8List.fromList(await loadDefaultImage());
-    //   setState(() {
-    //     imageProfile = defaultImage;
-    //   });
-    // }
-    Uint8List defaultImage = Uint8List.fromList(await loadDefaultImage());
-    setState(() {
-      imageProfile = defaultImage;
-    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? storedImage = prefs.getString('user_image');
+    if (storedImage != null && storedImage.isNotEmpty) {
+      // If image is stored in SharedPreferences, decode and set it as the profile image
+      setState(() {
+        imageProfile = base64Decode(storedImage);
+      });
+    } else {
+      // Load the default image if no image is stored in SharedPreferences
+      Uint8List defaultImage = await loadDefaultImage();
+      setState(() {
+        imageProfile = defaultImage;
+      });
+
+      // Save the default image to SharedPreferences
+      _saveImageToPrefs(defaultImage);
+
+      // Update the default image in the database
+      User user = await UserClient.find(idUser);
+      String base64DefaultImage = base64Encode(defaultImage);
+      await UserClient.updateImage(user, base64DefaultImage);
+    }
     print('load image');
   }
 
@@ -93,7 +109,9 @@ class _ProfileState extends State<Profile> {
 
   Future<void> saveEditedData() async {
     try {
-      User user = User(
+      String base64Image = convertUint8ListToBase64String(imageProfile);
+
+      User userData = User(
         id: idUser,
         name: usernameController.text,
         password: passwordController.text,
@@ -101,13 +119,21 @@ class _ProfileState extends State<Profile> {
         phoneNumber: phoneNumberController.text,
         birthDate: birthdateController.text,
         gender: genderController.text,
-        imageProfile: null, //biarkan dulu
+        imageProfile: base64Image,
       );
 
       setState(() {
         _isEditing = false;
       });
-      await UserClient.update(user);
+      await UserClient.update(userData);
+
+      Fluttertoast.showToast(
+        msg: 'Success update profile',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+      );
 
       print('User updated successfully');
     } catch (e) {
@@ -132,6 +158,101 @@ class _ProfileState extends State<Profile> {
       // Handle errors as needed
       print('Error checking email uniqueness: $e');
     }
+  }
+
+  Future<void> updateProfileImage(Uint8List imageBytes) async {
+    String base64Image = convertUint8ListToBase64String(imageBytes);
+
+    // Update gambar di aplikasi
+    setState(() {
+      imageProfile = imageBytes;
+    });
+
+    // Mengambil user dari database
+    User userData = await UserClient.find(idUser);
+
+    // Memperbarui gambar di database
+    await UserClient.updateImage(userData, base64Image);
+
+    // Simpan gambar terpilih ke SharedPreferences
+    _saveImageToPrefs(imageBytes);
+  }
+
+  // Contoh bagaimana Anda bisa memanggil fungsi updateProfileImage saat ada perubahan gambar profil
+  Future<void> _pickImageFromGallery() async {
+    final returnedImage = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 25,
+    );
+
+    if (returnedImage == null) return;
+
+    final imageFile = File(returnedImage.path);
+    final imageBytes = await imageFile.readAsBytes();
+
+    // Update gambar profil
+    await updateProfileImage(imageBytes);
+  }
+
+  Future<void> _pickImageFromCamera() async {
+    final returnedImage = await ImagePicker().pickImage(
+      source: ImageSource.camera,
+      imageQuality: 25,
+    );
+
+    if (returnedImage == null) return;
+
+    final imageFile = File(returnedImage.path);
+    final imageBytes = await imageFile.readAsBytes();
+
+    // Mengubah gambar menjadi base64
+    String base64Image = base64Encode(imageBytes);
+
+    // Simpan gambar terpilih ke SharedPreferences
+    _saveImageToPrefs(imageBytes);
+
+    // Update gambar di aplikasi
+    setState(() {
+      imageProfile = imageBytes;
+    });
+
+    // Mengambil user dari database
+    User userData = await UserClient.find(idUser);
+
+    // Memperbarui gambar di database
+    await UserClient.updateImage(userData, base64Image);
+  }
+
+  Future<void> _saveImageToPrefs(Uint8List imageBytes) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String base64Image = base64Encode(imageBytes);
+    await prefs.setString('user_image', base64Image);
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedImage = await ImagePicker().pickImage(
+      source: source,
+      imageQuality: 25,
+    );
+
+    if (pickedImage == null) return;
+
+    final imageFile = File(pickedImage.path);
+    final imageBytes = await imageFile.readAsBytes();
+    final username = usernameController.text;
+
+    // Update the image profile
+    User user = await UserClient.find(idUser);
+    String base64Image = base64Encode(imageBytes);
+    user.imageProfile = base64Image;
+
+    // Call the updateImage method with the updated User object
+    await UserClient.updateImage(user, base64Image);
+
+    setState(() {
+      imageProfile = imageBytes;
+      loadUserData();
+    });
   }
 
   @override
@@ -190,69 +311,65 @@ class _ProfileState extends State<Profile> {
                 children: <Widget>[
                   GestureDetector(
                     onTap: () async {
-                      await showModalBottomSheet(
-                        context: context,
-                        builder: ((builder) {
-                          return Container(
-                            height: 110.0,
-                            width: MediaQuery.of(context).size.width,
-                            margin: EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 20,
-                            ),
-                            child: Column(
-                              children: <Widget>[
-                                Text(
-                                  "Choose Profile Photo",
-                                  style: TextStyle(
-                                    fontSize: 20.0,
+                      if (_isEditing) {
+                        await showModalBottomSheet(
+                          context: context,
+                          builder: ((builder) {
+                            return Container(
+                              height: 110.0,
+                              width: MediaQuery.of(context).size.width,
+                              margin: EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 20,
+                              ),
+                              child: Column(
+                                children: <Widget>[
+                                  Text(
+                                    "Choose Profile Photo",
+                                    style: TextStyle(
+                                      fontSize: 20.0,
+                                    ),
                                   ),
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: <Widget>[
-                                    TextButton.icon(
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: <Widget>[
+                                      TextButton.icon(
                                         onPressed: () {
-                                          Navigator.pop(
-                                              context); // Close the modal
+                                          Navigator.pop(context);
                                           _pickImageFromCamera();
                                         },
                                         icon: Icon(Icons.camera),
-                                        label: Text("Camera")),
-                                    TextButton.icon(
+                                        label: Text("Camera"),
+                                      ),
+                                      TextButton.icon(
                                         onPressed: () {
-                                          Navigator.pop(
-                                              context); // Close the modal
+                                          Navigator.pop(context);
                                           _pickImageFromGallery();
                                         },
                                         icon: Icon(Icons.image),
-                                        label: Text('Gallery'))
-                                  ],
-                                )
-                              ],
-                            ),
-                          );
-                        }),
-                      );
+                                        label: Text('Gallery'),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            );
+                          }),
+                        );
+                      }
                     },
                     child: CircleAvatar(
-                        backgroundColor: Colors.white70,
-                        minRadius: 60.0,
-                        child: CircleAvatar(
-                          radius: 50.0,
-                          backgroundImage: imageProfile.isNotEmpty
-                              ? Image.memory(
-                                  imageProfile, // Uint8List image data
-                                  fit: BoxFit
-                                      .cover, // Choose the appropriate BoxFit
-                                ).image // Use MemoryImage for Uint8List
-                              : const AssetImage(
-                                  'image/profilCat.jpg'), // Default image if imageProfile is empty
-                        )),
+                      radius: 50.0,
+                      backgroundImage:
+                          imageProfile != null && imageProfile!.isNotEmpty
+                              ? MemoryImage(imageProfile!)
+                              : Image.asset('image/profilCat.jpg')
+                                  .image, // Ubah bagian ini
+                    ),
                   ),
                 ],
               ),
@@ -469,42 +586,5 @@ class _ProfileState extends State<Profile> {
         ))
       ],
     );
-  }
-
-  Future _pickImageFromGallery() async {
-    final returnedImage = await ImagePicker()
-        .pickImage(source: ImageSource.gallery, imageQuality: 25);
-
-    if (returnedImage == null) return;
-    final imageFile = File(returnedImage.path);
-    final imageBytes = await imageFile.readAsBytes();
-    final username = usernameController.text;
-
-    // final result = await SQLHelper.updateProfileImages(username, imageBytes);
-
-    // if (result > 0) {
-    //   setState(() {
-    //     imageProfile = imageBytes;
-    //     loadUserData();
-    //   });
-  }
-
-  Future _pickImageFromCamera() async {
-    final returnedImage = await ImagePicker()
-        .pickImage(source: ImageSource.camera, imageQuality: 25);
-
-    if (returnedImage == null) return;
-    final imageFile = File(returnedImage.path);
-    final imageBytes = await imageFile.readAsBytes();
-    final username = usernameController.text;
-
-    // final result = await SQLHelper.updateProfileImages(username, imageBytes);
-
-    // if (result > 0) {
-    //   setState(() {
-    //     imageProfile = imageBytes;
-    //     loadUserData();
-    //   });
-    //}
   }
 }
