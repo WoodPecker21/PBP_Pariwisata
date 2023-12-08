@@ -8,7 +8,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ugd1/client/ObjekWisataClient.dart';
 import 'package:ugd1/model/objekWisata.dart';
-import 'package:ugd1/View/ShowBooking.dart';
+import 'package:ugd1/View/news.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class HomeView extends ConsumerWidget {
@@ -88,19 +88,43 @@ class HomeView extends ConsumerWidget {
       body: IndexedStack(
         index: ref.watch(selectedIndexProvider),
         children: [
-          listener.when(
-            data: (objekwisatas) => ListView.builder(
-              itemCount: objekwisatas.length,
-              itemBuilder: (context, index) {
-                return buildKonten(objekwisatas[index], context, ref);
-              },
-            ),
-            error: (err, s) => Center(child: Text(err.toString())),
-            loading: () => const Center(child: CircularProgressIndicator()),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 40,
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 8, left: 16, right: 16),
+                child: Text(
+                  "Hi, Admin",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 35,
+                    fontFamily: 'Poppins',
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Expanded(
+                child: listener.when(
+                  data: (objekwisatas) => ListView.builder(
+                    itemCount: objekwisatas.length,
+                    itemBuilder: (context, index) {
+                      return buildKonten(objekwisatas[index], context, ref);
+                    },
+                  ),
+                  error: (err, s) => Center(child: Text(err.toString())),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                ),
+              ),
+            ],
           ),
+          NewsPageInput(),
           Profile(),
-          UGD(),
-          BookingView(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -114,24 +138,17 @@ class HomeView extends ConsumerWidget {
           ),
           BottomNavigationBarItem(
             icon: Icon(
+              Icons.work,
+              color: Colors.black,
+            ),
+            label: 'News',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
               Icons.person,
               color: Colors.black,
             ),
             label: 'Profile',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.work,
-              color: Colors.black,
-            ),
-            label: 'UGD',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home,
-              color: Colors.black,
-            ),
-            label: 'Booking',
           ),
         ],
         currentIndex:

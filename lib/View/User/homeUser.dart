@@ -155,7 +155,6 @@ class HomePage extends ConsumerWidget {
   Widget homeContent(BuildContext context, WidgetRef ref) {
     var listener = ref.watch(listProvider);
 
-    var pulau;
     return Container(
       padding: EdgeInsets.all(25),
       child: SingleChildScrollView(
@@ -228,19 +227,30 @@ class HomePage extends ConsumerWidget {
                     width: double.infinity,
                     height: 200,
                     padding: EdgeInsets.only(top: 15),
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: listener.maybeWhen(
-                        data: (objekwisatas) => objekwisatas.length,
-                        orElse: () => 0,
+                    child: listener.when(
+                      loading: () => Center(
+                        child:
+                            CircularProgressIndicator(), // Circular loading icon
                       ),
-                      itemBuilder: (context, index) {
-                        final objekwisatas = listener.value;
-                        if (objekwisatas != null && objekwisatas.isNotEmpty) {
-                          return kontenAtraksi(
-                              objekwisatas[index], context, ref);
+                      error: (error, stackTrace) => Center(
+                        child: Text(
+                            'Error loading data'), // Display an error message
+                      ),
+                      data: (objekwisatas) {
+                        if (objekwisatas.isEmpty) {
+                          return Center(
+                            child: Text(
+                                'No data available'), // Display a message for empty data
+                          );
                         } else {
-                          return Container(); // Return an empty container or a loading indicator as needed
+                          return ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: objekwisatas.length,
+                            itemBuilder: (context, index) {
+                              return kontenAtraksi(
+                                  objekwisatas[index], context, ref);
+                            },
+                          );
                         }
                       },
                     ),
@@ -276,14 +286,14 @@ class HomePage extends ConsumerWidget {
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: [
-                          for (pulau in listPulau)
+                          for (var pulau in listPulau)
                             ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 //utk menyimpan data pulau yg dipilih
-                                final prefs = SharedPreferences.getInstance();
-                                prefs.then((value) {
-                                  value.setString('pulauSelected', pulau);
-                                });
+                                final prefs =
+                                    await SharedPreferences.getInstance();
+                                prefs.setString('pulauSelected', pulau);
+                                print('pulau selected $pulau');
                                 Navigator.push(
                                   context,
                                   PageRouteBuilder(

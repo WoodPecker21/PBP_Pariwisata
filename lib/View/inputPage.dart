@@ -377,7 +377,6 @@ class _InputPageState extends State<InputPage> {
               key: Key('simpan'),
               onPressed: () async {
                 if (formKey.currentState!.validate()) {
-                  allValid = true;
                   if (isUpdate) {
                     await updateData();
                   } else {
@@ -400,7 +399,11 @@ class _InputPageState extends State<InputPage> {
       margin: EdgeInsets.symmetric(vertical: 2),
       child: ElevatedButton(
         onPressed: () {
-          if (allValid == false) {
+          if (controllerNama.text.isEmpty ||
+              controllerDeskripsi.text.isEmpty ||
+              controllerHarga.text.isEmpty ||
+              _selectedValue.isEmpty ||
+              _rating == 0.0) {
             showDialog(
               context: context,
               builder: (context) => AlertDialog(
