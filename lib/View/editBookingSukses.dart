@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ugd1/core/app_export.dart';
 import 'package:ugd1/widgets/custom_elevated_button.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import 'package:ugd1/model/transaksi.dart';
-import 'package:ugd1/client/TransaksiClient.dart';
-import 'package:ugd1/model/pembayaran.dart';
-import 'package:ugd1/client/PembayaranClient.dart';
 
 class EditBookingSukses extends StatelessWidget {
   const EditBookingSukses({Key? key}) : super(key: key);

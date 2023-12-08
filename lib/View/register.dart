@@ -412,16 +412,44 @@ class _RegisterPageState extends State<RegisterPage> {
                                             check1 == true) {
                                           print('masuk validasi---------');
 
-                                          await addUser();
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            const SnackBar(
-                                              content: Text('Register Success'),
-                                            ),
+                                          //alert confirm
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: Text("Confirm Register"),
+                                                content: Text(
+                                                    "Are you sure you want to register?"),
+                                                actions: [
+                                                  TextButton(
+                                                    child: Text("Cancel"),
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                  ),
+                                                  TextButton(
+                                                    child: Text("OK"),
+                                                    onPressed: () async {
+                                                      // Call addUser only if the user clicks "OK"
+                                                      await addUser();
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        const SnackBar(
+                                                          content: Text(
+                                                              'Register Success'),
+                                                        ),
+                                                      );
+                                                      Navigator.pushNamed(
+                                                          context,
+                                                          AppRoutes.login);
+                                                    },
+                                                  ),
+                                                ],
+                                              );
+                                            },
                                           );
-
-                                          Navigator.pushNamed(
-                                              context, AppRoutes.login);
                                         }
                                       },
                                     ),

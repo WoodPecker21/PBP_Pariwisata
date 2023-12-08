@@ -1,187 +1,210 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ugd1/client/ObjekWisataClient.dart';
+import 'package:ugd1/model/objekWisata.dart';
+import 'package:ugd1/core/app_export.dart';
 
-void main() {
-  runApp(Browse());
-}
+class Browse extends ConsumerWidget {
+  Browse({super.key});
+  String pulauSelected = '';
 
-class Browse extends StatelessWidget {
-  const Browse({Key? key}) : super(key: key);
+//provider utk ambil list objek wisata dari API
+  final listProvider = FutureProvider<List<ObjekWisata>>((ref) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String pulau = prefs.getString('pulauSelected') ?? '';
+      print('retrieve data');
+      return await ObjekWisataClient.fetchByPulau(pulau);
+    } catch (e) {
+      return Future.error(e.toString());
+    }
+  });
+
+  Future<String> getPrefsPulauSelected() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('pulauSelected') ?? '';
+  }
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: SafeArea(
-        child: Scaffold(
-          appBar: AppBar(
-            elevation: 0,
-            leading: Row(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(left: 8),
-                  child: IconButton(
-                    onPressed: () {
-                      // Navigate back to the homepage
-                      Navigator.of(context).pop();
-                    },
-                    icon: const Icon(
-                      Icons.arrow_back_ios,
-                      size: 15,
-                      color: Colors.black,
+  Widget build(BuildContext context, WidgetRef ref) {
+    var listener = ref.watch(listProvider);
+
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        leading: Row(
+          children: [
+            Container(
+              margin: EdgeInsets.only(left: 8),
+              child: IconButton(
+                onPressed: () {
+                  // Navigate back to the homepage
+                  Navigator.of(context).pop();
+                },
+                icon: const Icon(
+                  Icons.arrow_back_ios,
+                  size: 15,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+            Container()
+          ],
+        ),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 5,
+            ),
+            Text(
+              getPrefsPulauSelected() as String,
+              style: TextStyle(
+                  fontSize: 18,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.white,
+      ),
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        decoration: BoxDecoration(color: Colors.white),
+        padding: EdgeInsets.all(20),
+        child: ListView.builder(
+          scrollDirection: Axis.vertical,
+          itemCount: listener.maybeWhen(
+            data: (objekwisatas) => objekwisatas.length,
+            orElse: () => 0,
+          ),
+          itemBuilder: (context, index) {
+            final objekwisatas = listener.value;
+            if (objekwisatas != null && objekwisatas.isNotEmpty) {
+              return buttonObjek(objekwisatas[index], context, ref);
+            } else {
+              return Container(); // Return an empty container
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget buttonObjek(ObjekWisata o, context, ref) {
+    return MaterialButton(
+      onPressed: () {
+        showModalBottomSheet(
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          context: context,
+          builder: (context) => buildSheet(o, context),
+        );
+      },
+      padding: EdgeInsets.zero,
+      elevation: 0,
+      child: Ink(
+        child: Column(
+          children: [
+            Container(
+              height: 135,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: Color(0x33000000), width: 1),
+                borderRadius: BorderRadius.circular(25),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 125,
+                    height: MediaQuery.of(context).size.height,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('images/papua.jpg'),
+                        fit: BoxFit.cover,
+                      ),
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          bottomLeft: Radius.circular(20)),
                     ),
                   ),
-                ),
-                Container()
-              ],
-            ),
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 5,
-                ),
-                Text(
-                  'Papua',
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black),
-                ),
-              ],
-            ),
-            backgroundColor: Colors.white,
-          ),
-          body: Container(
-            height: MediaQuery.of(context).size.height,
-            decoration: BoxDecoration(color: Colors.white),
-            padding: EdgeInsets.all(20),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  for (int i = 0; i < 4; i++)
-                    MaterialButton(
-                      onPressed: () {
-                        showModalBottomSheet(
-                          isScrollControlled: true,
-                          backgroundColor: Colors.transparent,
-                          context: context,
-                          builder: (context) => buildSheet(context),
-                        );
-                      },
-                      padding: EdgeInsets.zero,
-                      elevation: 0,
-                      child: Ink(
-                        child: Column(
+                  SizedBox(width: 5),
+                  Container(
+                    padding: EdgeInsets.only(top: 27, left: 27),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          child: Text(
+                            o.nama!,
+                            style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                        Container(
+                          child: Text(
+                            o.pulau!,
+                            style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                        SizedBox(height: 3),
+                        Container(
+                          child: Text(
+                            '${o.rating} ⭐',
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 9,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 18),
+                        Row(
                           children: [
+                            // Container(
+                            //   child: Text(
+                            //     '4.98',
+                            //     style: TextStyle(
+                            //         fontFamily: 'Poppins',
+                            //         fontSize: 11,
+                            //         fontWeight: FontWeight.w500),
+                            //   ),
+                            // ),
+                            // SizedBox(width: 4),
                             Container(
-                              height: 135,
-                              width: MediaQuery.of(context).size.width,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border.all(
-                                    color: Color(0x33000000), width: 1),
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    width: 125,
-                                    height: MediaQuery.of(context).size.height,
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: AssetImage('images/papua.jpg'),
-                                        fit: BoxFit.cover,
-                                      ),
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(20),
-                                          bottomLeft: Radius.circular(20)),
-                                    ),
-                                  ),
-                                  SizedBox(width: 5),
-                                  Container(
-                                    padding: EdgeInsets.only(top: 27, left: 27),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          child: Text(
-                                            'Raja Ampat',
-                                            style: TextStyle(
-                                                fontFamily: 'Poppins',
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w600),
-                                          ),
-                                        ),
-                                        Container(
-                                          child: Text(
-                                            'West Papua',
-                                            style: TextStyle(
-                                                fontFamily: 'Poppins',
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.w500),
-                                          ),
-                                        ),
-                                        SizedBox(height: 3),
-                                        Container(
-                                          child: Text(
-                                            '⭐⭐⭐⭐⭐',
-                                            style: TextStyle(
-                                              fontFamily: 'Poppins',
-                                              fontSize: 9,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(height: 18),
-                                        Row(
-                                          children: [
-                                            Container(
-                                              child: Text(
-                                                '4.98',
-                                                style: TextStyle(
-                                                    fontFamily: 'Poppins',
-                                                    fontSize: 11,
-                                                    fontWeight:
-                                                        FontWeight.w500),
-                                              ),
-                                            ),
-                                            SizedBox(width: 4),
-                                            Container(
-                                              child: Text(
-                                                '(2,180 reviews)',
-                                                style: TextStyle(
-                                                    fontFamily: 'Poppins',
-                                                    fontSize: 11,
-                                                    fontWeight:
-                                                        FontWeight.w500),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(left: 60),
-                                    child: Icon(
-                                      Icons.arrow_forward_ios,
-                                      size: 20,
-                                    ),
-                                  ),
-                                ],
+                              child: Text(
+                                '(2,180 reviews)',
+                                style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w500),
                               ),
                             ),
-                            SizedBox(height: 22),
                           ],
                         ),
-                      ),
+                      ],
                     ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(left: 60),
+                    child: Icon(
+                      Icons.arrow_forward_ios,
+                      size: 20,
+                    ),
+                  ),
                 ],
               ),
             ),
-          ),
+            SizedBox(height: 22),
+          ],
         ),
       ),
     );
@@ -195,15 +218,15 @@ class Browse extends StatelessWidget {
     );
   }
 
-  Widget buildSheet(BuildContext context) => makeDismissable(
+  Widget buildSheet(ObjekWisata o, BuildContext context) => makeDismissable(
         context,
         child: DraggableScrollableSheet(
           minChildSize: 0.5,
           maxChildSize: 0.77,
           initialChildSize: 0.77,
           builder: (BuildContext sheetContext, ScrollController controller) {
-            double screenHeight = MediaQuery.of(sheetContext).size.height;
-            double screenWidth = MediaQuery.of(sheetContext).size.width;
+            // double screenHeight = MediaQuery.of(sheetContext).size.height;
+            // double screenWidth = MediaQuery.of(sheetContext).size.width;
 
             return Stack(
               children: [
@@ -247,7 +270,7 @@ class Browse extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Raja Ampat',
+                          o.nama!,
                           style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontFamily: 'Poppins',
@@ -258,7 +281,7 @@ class Browse extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Papua',
+                              o.pulau!,
                               style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 15,
@@ -278,16 +301,10 @@ class Browse extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              '⭐⭐⭐⭐⭐',
+                              '${o.rating} ⭐',
                               style: TextStyle(fontSize: 15),
                             ),
                             SizedBox(width: 6),
-                            Text(
-                              '4,98',
-                              style: TextStyle(
-                                  fontFamily: 'Poppins', fontSize: 14),
-                            ),
-                            SizedBox(width: 2),
                             Text(
                               '(2,180 reviews)',
                               style: TextStyle(
@@ -301,7 +318,7 @@ class Browse extends StatelessWidget {
                           width: 357,
                           // decoration: BoxDecoration(color: Colors.red),
                           child: Text(
-                            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent consequat magna non arcu malesuada convallis. Donec rutrum interdum orci id porta. Fusce vestibulum a nisi sed vehicula. Sed efficitur nisl id est tristique, ac faucibus lectus sollicitudin. Nam luctus eros neque.',
+                            o.deskripsi!,
                             style: TextStyle(
                                 fontSize: 12.5,
                                 fontFamily: 'Poppins',
@@ -408,7 +425,7 @@ class Browse extends StatelessWidget {
                                       Container(
                                         padding: EdgeInsets.only(top: 7),
                                         child: Text(
-                                          'Bus',
+                                          o.transportasi!,
                                           style: TextStyle(
                                               fontFamily: 'Poppins',
                                               fontSize: 14,
@@ -456,7 +473,7 @@ class Browse extends StatelessWidget {
                                         padding:
                                             EdgeInsets.only(right: 7, top: 7),
                                         child: Text(
-                                          '2 day 1 night',
+                                          '${o.durasi} day ${o.durasi! - 1} night',
                                           style: TextStyle(
                                               fontFamily: 'Poppins',
                                               fontSize: 14,
@@ -505,7 +522,7 @@ class Browse extends StatelessWidget {
                                   Container(
                                     padding: EdgeInsets.only(top: 7, right: 7),
                                     child: Text(
-                                      'Seaside Villa',
+                                      o.akomodasi!,
                                       style: TextStyle(
                                           fontFamily: 'Poppins',
                                           fontSize: 14,
@@ -529,7 +546,13 @@ class Browse extends StatelessWidget {
                         ),
                         SizedBox(height: 5),
                         ElevatedButton(
-                          onPressed: () => print('Button Pressed'),
+                          onPressed: () async {
+                            final prefs = await SharedPreferences.getInstance();
+                            await prefs.setInt('idObjek', o.id!);
+                            await prefs.setString('namaObjek', o.nama!);
+                            await prefs.setInt('durasiObjek', o.durasi!);
+                            Navigator.pushNamed(context, AppRoutes.booking1);
+                          },
                           style: ElevatedButton.styleFrom(
                             primary: Color(0xFF0044AA),
                             textStyle: TextStyle(

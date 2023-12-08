@@ -207,8 +207,17 @@ class _LoginviewState extends State<Loginview> {
                                             content: Text('Login Success'),
                                           ),
                                         );
-                                        Navigator.pushNamed(
-                                            context, AppRoutes.home);
+
+                                        if (usernameController.text ==
+                                                'admin' &&
+                                            passwordController.text ==
+                                                'admin') {
+                                          Navigator.pushNamed(
+                                              context, AppRoutes.home);
+                                        } else {
+                                          Navigator.pushNamed(
+                                              context, AppRoutes.homeUser);
+                                        }
                                       } else {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(

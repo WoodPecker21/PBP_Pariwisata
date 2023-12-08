@@ -54,7 +54,7 @@ class AppRoutes {
     paymentPage: (context) => const PaymentPage(),
     inputPage: (context) => const InputPage(),
     forgotpassword: (context) => const ForgotPasswordPage(),
-    homeUser: (context) => const HomePage(),
+    homeUser: (context) => HomePage(),
     profil: (context) => const Profile(),
     newsPageInput: (context) => const NewsPageInput(),
     editBooking: (context) => const EditBooking(),

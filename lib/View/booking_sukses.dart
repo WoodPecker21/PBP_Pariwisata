@@ -68,7 +68,7 @@ class BookingSukses extends StatelessWidget {
           await insertDataPembayaran();
           await insertDataBooking();
           Navigator.popUntil(context, (route) {
-            return route.settings.name == AppRoutes.home;
+            return route.settings.name == AppRoutes.homeUser;
           });
         });
   }

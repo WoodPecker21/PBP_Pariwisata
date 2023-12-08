@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ugd1/client/objekWisataClient.dart';
+import 'package:ugd1/core/app_export.dart';
 import 'package:ugd1/model/objekWisata.dart';
 import 'package:ugd1/widgets/custom_text_form_field.dart';
 import 'package:uuid/uuid.dart';
@@ -22,18 +23,19 @@ class _InputPageState extends State<InputPage> {
   TextEditingController controllerHarga = TextEditingController();
   TextEditingController controllerAkomodasi = TextEditingController();
   TextEditingController controllerDurasi = TextEditingController();
-  TextEditingController controllerPulau = TextEditingController();
   TextEditingController controllerTransportasi = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
   double _rating = 0.0;
   double hargaInput = 0;
   String _selectedValue = 'Alam';
-  String gambarPath = 'image/alam.jpg';
+  String _selectedPulau = 'Jawa';
+  String gambarPath = ImageConstant.imgPlaceholder;
   String id = Uuid().v1();
   bool isUpdate = false;
   int updatedId = 0;
   File? _imageFile;
+  bool allValid = false;
 
   void initState() {
     super.initState();
@@ -50,13 +52,13 @@ class _InputPageState extends State<InputPage> {
 
         setState(() {
           _selectedValue = objekWisata.kategori ?? '';
+          _selectedPulau = objekWisata.pulau ?? '';
           _rating = objekWisata.rating ?? 0;
           controllerNama.text = objekWisata.nama ?? '';
           controllerDeskripsi.text = objekWisata.deskripsi ?? '';
           controllerHarga.text = objekWisata.harga.toString();
           controllerAkomodasi.text = objekWisata.akomodasi ?? '';
           controllerDurasi.text = objekWisata.durasi.toString();
-          controllerPulau.text = objekWisata.pulau ?? '';
           controllerTransportasi.text = objekWisata.transportasi ?? '';
           updatedId = objekWisata.id ?? 0;
         });
@@ -79,7 +81,7 @@ class _InputPageState extends State<InputPage> {
         harga: double.parse(controllerHarga.text),
         akomodasi: controllerAkomodasi.text,
         durasi: int.parse(controllerDurasi.text),
-        pulau: controllerPulau.text,
+        pulau: _selectedPulau,
         transportasi: controllerTransportasi.text,
         kategori: _selectedValue,
         rating: _rating,
@@ -103,7 +105,7 @@ class _InputPageState extends State<InputPage> {
         harga: double.parse(controllerHarga.text),
         akomodasi: controllerAkomodasi.text,
         durasi: int.parse(controllerDurasi.text),
-        pulau: controllerPulau.text,
+        pulau: _selectedPulau,
         transportasi: controllerTransportasi.text,
         kategori: _selectedValue,
         rating: _rating,
@@ -201,12 +203,51 @@ class _InputPageState extends State<InputPage> {
                   value == '' ? 'Durasi tidak boleh kosong' : null,
             ),
             SizedBox(height: 12),
-            CustomTextFormField(
-              key: Key('pulau'),
-              controller: controllerPulau,
-              hintText: 'Pulau',
-              validator: (value) =>
-                  value == '' ? 'Pulau tidak boleh kosong' : null,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Text(
+                    'Pulau  : ',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey,
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
+                ),
+                SizedBox(width: 24),
+                Container(
+                  key: Key('pulau'), // Add a key to the Container
+                  child: DropdownButton<String>(
+                    value: _selectedPulau,
+                    onChanged: (String? newValue) {
+                      if (newValue != null) {
+                        setState(() {
+                          _selectedPulau = newValue;
+                        });
+                      }
+                    },
+                    items: <String>[
+                      'Jawa',
+                      'Bali',
+                      'Sumatera',
+                      'Sulawesi',
+                      'Kalimantan',
+                      'Papua'
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value,
+                            style:
+                                TextStyle(fontFamily: 'Poppins', fontSize: 13)),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
             ),
             SizedBox(height: 12),
             CustomTextFormField(
@@ -336,6 +377,7 @@ class _InputPageState extends State<InputPage> {
               key: Key('simpan'),
               onPressed: () async {
                 if (formKey.currentState!.validate()) {
+                  allValid = true;
                   if (isUpdate) {
                     await updateData();
                   } else {
@@ -358,10 +400,7 @@ class _InputPageState extends State<InputPage> {
       margin: EdgeInsets.symmetric(vertical: 2),
       child: ElevatedButton(
         onPressed: () {
-          if (_selectedValue.isEmpty ||
-              controllerNama.text.isEmpty ||
-              controllerDeskripsi.text.isEmpty ||
-              controllerHarga.text.isEmpty) {
+          if (allValid == false) {
             showDialog(
               context: context,
               builder: (context) => AlertDialog(

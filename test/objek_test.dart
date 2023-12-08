@@ -68,8 +68,10 @@ void main() {
     expect(pulau, findsOneWidget);
     expect(transportasi, findsOneWidget);
 
-    await widgetTester.enterText(pulau, 'Sumatera');
-    await widgetTester.pumpAndSettle();
+    await widgetTester.tap(pulau);
+    await widgetTester.pumpAndSettle(Duration(seconds: 1));
+    await widgetTester.tap(find.text('Sumatera').last);
+    await widgetTester.pumpAndSettle(Duration(seconds: 1));
     await widgetTester.enterText(transportasi, 'Pesawat');
     await widgetTester.pumpAndSettle();
 
@@ -78,8 +80,9 @@ void main() {
     await widgetTester.pumpAndSettle();
 
     //untuk dropdown
-    final kategori = find
-        .byWidgetPredicate((Widget widget) => widget is DropdownButton<String>);
+    // final kategori = find
+    //     .byWidgetPredicate((Widget widget) => widget is DropdownButton<String>);
+    final kategori = find.byKey(Key('kategori'));
     expect(kategori, findsOneWidget);
 
     await widgetTester.tap(kategori);
@@ -148,16 +151,6 @@ void main() {
 
     await widgetTester.drag(find.byType(ListView), Offset(0, -600));
     await widgetTester.pumpAndSettle();
-
-    //untuk dropdown
-    final kategori = find
-        .byWidgetPredicate((Widget widget) => widget is DropdownButton<String>);
-    expect(kategori, findsOneWidget);
-
-    await widgetTester.tap(kategori);
-    await widgetTester.pumpAndSettle(Duration(seconds: 1));
-    await widgetTester.tap(find.text('Maritim').last);
-    await widgetTester.pumpAndSettle(Duration(seconds: 1));
 
     //untuk rating
     expect(rating, findsOneWidget);

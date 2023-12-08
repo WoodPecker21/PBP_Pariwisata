@@ -26,7 +26,6 @@ dependencies:
   image_picker: ^1.0.4
   intl: ^0.18.1
   mobile_scanner: ^3.2.0
-  mockito: ^5.4.3
   path: ^1.8.0
   path_provider: ^2.0.15
   pdf: ^3.6.4
@@ -34,7 +33,6 @@ dependencies:
   qr_flutter: ^4.1.0
   shake: ^2.2.0
   shared_preferences: ^2.0.6
-  sqflite: ^2.2.6
   url_launcher: ^6.0.10
   uuid: ^3.0.6
 
@@ -87,10 +85,6 @@ flutter:
           weight: 500
         - asset: assets/fonts/RobotoRegular.ttf
           weight: 400
-    - family: Poppins
-      fonts:
-        - asset: fonts/Poppins-Regular.ttf
-        - asset: fonts/Poppins-Bold.ttf
     - family: Inter
       fonts:
         - asset: assets/fonts/InterRegular.ttf
