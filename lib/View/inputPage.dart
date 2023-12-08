@@ -1,14 +1,14 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ugd1/View/pdf_view.dart';
 import 'package:ugd1/client/objekWisataClient.dart';
-import 'package:ugd1/core/app_export.dart';
 import 'package:ugd1/model/objekWisata.dart';
 import 'package:ugd1/widgets/custom_text_form_field.dart';
 import 'package:uuid/uuid.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ugd1/View/pdf_view.dart';
 
 class InputPage extends StatefulWidget {
   const InputPage({Key? key}) : super(key: key);
@@ -28,14 +28,13 @@ class _InputPageState extends State<InputPage> {
 
   double _rating = 0.0;
   double hargaInput = 0;
-  String _selectedValue = 'Alam';
   String _selectedPulau = 'Jawa';
-  String gambarPath = ImageConstant.imgPlaceholder;
+  String _selectedValue = 'Alam';
   String id = Uuid().v1();
-  bool isUpdate = false;
+  bool  isUpdate = false;
   int updatedId = 0;
   File? _imageFile;
-  bool allValid = false;
+  String gambarPath = 'image/alam.jpg';
 
   void initState() {
     super.initState();
@@ -51,7 +50,6 @@ class _InputPageState extends State<InputPage> {
         final objekWisata = await ObjekWisataClient.find(idObjekUpdate);
 
         setState(() {
-          _selectedValue = objekWisata.kategori ?? '';
           _selectedPulau = objekWisata.pulau ?? '';
           _rating = objekWisata.rating ?? 0;
           controllerNama.text = objekWisata.nama ?? '';
@@ -72,9 +70,16 @@ class _InputPageState extends State<InputPage> {
     }
   }
 
-  // Tambahkan method untuk menyimpan objek wisata
   Future<void> insertData() async {
     try {
+      String base64Image = '';
+
+      // Check if _imageFile is not null
+      if (_imageFile != null) {
+        List<int> imageBytes = await _imageFile!.readAsBytes();
+        base64Image = base64Encode(imageBytes);
+      }
+
       ObjekWisata objek = ObjekWisata(
         nama: controllerNama.text,
         deskripsi: controllerDeskripsi.text,
@@ -82,10 +87,10 @@ class _InputPageState extends State<InputPage> {
         akomodasi: controllerAkomodasi.text,
         durasi: int.parse(controllerDurasi.text),
         pulau: _selectedPulau,
-        transportasi: controllerTransportasi.text,
         kategori: _selectedValue,
         rating: _rating,
-        gambar: null,
+        gambar: base64Image, // Assign the base64-encoded image data
+        imageFile: _imageFile,
       );
 
       await ObjekWisataClient.create(objek);
@@ -106,10 +111,9 @@ class _InputPageState extends State<InputPage> {
         akomodasi: controllerAkomodasi.text,
         durasi: int.parse(controllerDurasi.text),
         pulau: _selectedPulau,
-        transportasi: controllerTransportasi.text,
-        kategori: _selectedValue,
         rating: _rating,
         gambar: null,
+        imageFile: _imageFile,
       );
 
       await ObjekWisataClient.update(objek);
@@ -224,7 +228,7 @@ class _InputPageState extends State<InputPage> {
                   child: DropdownButton<String>(
                     value: _selectedPulau,
                     onChanged: (String? newValue) {
-                      if (newValue != null) {
+                      if (newValue != null && newValue != 'Jawa') {
                         setState(() {
                           _selectedPulau = newValue;
                         });

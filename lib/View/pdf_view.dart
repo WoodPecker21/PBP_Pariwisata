@@ -11,7 +11,7 @@ Future<void> createPdf(
   TextEditingController controllerDeskripsi,
   TextEditingController controllerHarga,
   String kategori,
-  gambarPath,
+  String gambarPath,
   double rating,
   BuildContext context,
   String id,
@@ -19,6 +19,29 @@ Future<void> createPdf(
   final doc = pw.Document();
   final now = DateTime.now();
   final formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
+  String gambarPath; // Tetapkan path gambar berdasarkan kategori
+  switch (kategori) {
+    case 'Alam':
+      gambarPath = 'image/alam.jpg';
+      break;
+    case 'Budaya':
+      gambarPath = 'image/budaya.jpg';
+      break;
+    case 'Komersial':
+      gambarPath = 'image/komersial.jpg';
+      break;
+    case 'Kuliner':
+      gambarPath = 'image/kuliner.jpg';
+      break;
+    case 'Maritim':
+      gambarPath = 'image/maritim.jpg';
+      break;
+    case 'Religius':
+      gambarPath = 'image/religius.jpg';
+      break;
+    default:
+      gambarPath = 'image/default.jpg';
+  }
   final image = (await rootBundle.load(gambarPath)).buffer.asUint8List();
   final imagetampil = pw.MemoryImage(image);
 

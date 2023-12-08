@@ -1,9 +1,9 @@
 class UrlClient {
-  static const String baseurl = '192.168.230.19';
+  static const String baseurl = '10.0.2.2:8000';
   //jika hp
-  static const String endpoint = "/Laravel_Pariwisata/public/api";
+  // static const String endpoint = "/Laravel_Pariwisata/public/api";
   //jika emulator
-  //static const String endpoint = "/api";
+  static const String endpoint = "/api";
   static const String user = "/user";
   static const String objekwisata = "/objekwisata";
   static const String transaksi = "/transaksi";

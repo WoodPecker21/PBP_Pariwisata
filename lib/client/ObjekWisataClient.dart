@@ -49,12 +49,17 @@ class ObjekWisataClient {
   //ambil data dari API sesuai id
   static Future<ObjekWisata> find(id) async {
     try {
-      var response = await get(Uri.http(url, '$endpoint/$id')); //req ke api
+      var response = await get(Uri.http(url, '$endpoint/$id'));
 
       if (response.statusCode != 200) throw Exception(response.reasonPhrase);
 
-      //buat objek berdasarkan data dari response body
-      return ObjekWisata.fromJson(json.decode(response.body)['data']);
+      Map<String, dynamic> data = json.decode(response.body)['data'];
+
+      // Fetch the base64 image
+      String? base64Image = await fetchImageBase64(id);
+      data['gambar'] = base64Image; // Add or update the 'gambar' field
+
+      return ObjekWisata.fromJson(data);
     } catch (e) {
       return Future.error(e.toString());
     }
@@ -63,9 +68,11 @@ class ObjekWisataClient {
   //membuat data baru
   static Future<Response> create(ObjekWisata objek) async {
     try {
+      print('Data to be created: ${objek.toRawJson()}');
       var response = await post(Uri.http(url, endpoint),
           headers: {'Content-Type': 'application/json'},
           body: objek.toRawJson());
+      print(response.body);
       if (response.statusCode != 200) throw Exception(response.reasonPhrase);
       return response;
     } catch (e) {
@@ -96,6 +103,24 @@ class ObjekWisataClient {
       return response;
     } catch (e) {
       return Future.error(e.toString());
+    }
+  }
+
+  static Future<String?> fetchImageBase64(int id) async {
+    try {
+      var response = await get(Uri.http(url, '$endpoint/image/$id'));
+
+      if (response.statusCode == 200) {
+        final List<int> bytes = response.bodyBytes;
+        final String base64String = base64Encode(bytes);
+        return base64String;
+      } else {
+        print('Failed to load image: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching image: $e');
+      return null;
     }
   }
 }
