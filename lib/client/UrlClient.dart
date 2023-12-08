@@ -13,4 +13,5 @@ class UrlClient {
   static const String news = "/news";
   static const String newsUser = "/newsUser";
   static const String fetchPulau = "/showByPulau";
+  static const String transaksiUser = "/showTransactionsByUserId";
 }

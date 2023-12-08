@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
-import 'dart:convert';
 import 'package:ugd1/client/NewsClient.dart';
-import 'package:ugd1/core/app_export.dart';
 import 'package:ugd1/model/news.dart';
-import 'package:ugd1/widgets/custom_text_form_field.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ugd1/View/newsUser.dart';
 
@@ -37,11 +33,6 @@ class _NewsPageInputState extends State<NewsPageInput> {
   TextEditingController controllerPengarang = TextEditingController();
   File? _imageFile;
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
   Future<void> insertData() async {
     try {
       if (controllerJudul.text.isEmpty ||
@@ -55,9 +46,7 @@ class _NewsPageInputState extends State<NewsPageInput> {
         judul: controllerJudul.text,
         isiBerita: controllerIsiBerita.text,
         pengarang: controllerPengarang.text,
-        gambar: _imageFile != null
-            ? base64Encode(await _imageFile!.readAsBytes())
-            : null,
+        gambar: null,
       );
 
       await NewsClient.create(objek);
@@ -216,7 +205,6 @@ class _NewsPageInputState extends State<NewsPageInput> {
               onPressed: () async {
                 if (formKey.currentState!.validate()) {
                   await insertData();
-                  Navigator.pop(context);
                 }
               },
               child: Text("Simpan Data"),

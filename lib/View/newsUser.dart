@@ -1,15 +1,57 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ugd1/core/app_export.dart';
 import 'package:ugd1/widgets/custome_news.dart';
 import 'package:ugd1/View/news.dart';
 import 'package:ugd1/widgets/custom_elevated_button.dart';
+import 'package:ugd1/client/newsClient.dart';
+import 'package:ugd1/model/news.dart';
 
-//ini masih salah deh kayanya
-class NewsPage extends StatelessWidget {
-  // final NewsData newsData;
+//ini masih salah deh kayanya, okeh
+class NewsPage extends StatefulWidget {
+  const NewsPage({super.key});
 
-  const NewsPage({Key? key}) : super(key: key);
+  @override
+  State<NewsPage> createState() => _NewsPageState();
+}
+
+class _NewsPageState extends State<NewsPage> {
+  int idnews = -1;
+  News n = News();
+
+  @override
+  void initState() {
+    super.initState();
+    getNews();
+  }
+
+  Future<void> getNews() async {
+    final prefs = await SharedPreferences.getInstance();
+    int id = prefs.getInt('idNews') ?? 0;
+    print('id news dari halaman newsuser $id');
+
+    setState(() {
+      idnews = id;
+    });
+
+    //get the news from api
+    try {
+      if (id != -1) {
+        final news = await NewsClient.find(idnews);
+
+        setState(() {
+          n.judul = news.judul ?? '';
+          n.isiBerita = news.isiBerita ?? '';
+          n.pengarang = news.pengarang ?? '';
+        });
+        print('retrieve news data ${n.judul}');
+      } else {
+        print('id news tidak ditemukan');
+      }
+    } catch (e) {
+      print('error retrieve news data $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,46 +63,32 @@ class NewsPage extends StatelessWidget {
             children: [
               _buildStackImage(context),
               SizedBox(height: 19),
-              _buildRowTuguYogyakarta(context),
+              _buildRowTitlePengarang(n, context),
               SizedBox(height: 10),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: EdgeInsets.only(left: 19),
-                  child: Text(
-                    "Overview",
-                    style: CustomTextStyles.labelLarge12,
-                  ),
-                ),
-              ),
               SizedBox(height: 5),
               Container(
                 width: double.infinity,
-                margin: EdgeInsets.symmetric(horizontal: 19),
+                margin: EdgeInsets.symmetric(horizontal: 25),
                 child: SingleChildScrollView(
                   child: Text(
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ",
+                    n.isiBerita!,
                     style: TextStyle(
-                      color: Colors
-                          .black, // Ubah warna teks jika latar belakangnya terlalu terang
-                      fontSize: 16, // Ubah ukuran teks jika perlu
+                      color: Colors.black,
+                      fontSize: 16,
                     ),
                     textAlign: TextAlign
                         .justify, // Atur penataan teks agar rata kanan kiri
                   ),
                 ),
               ),
-              SizedBox(height: 18),
-              _buildListAndroidLargeSix(context),
+              // SizedBox(height: 18),
+              // _buildListAndroidLargeSix(context),
               SizedBox(height: 23),
-              CustomElevatedButton(
-                text: "Add Your Photos",
-                margin: EdgeInsets.symmetric(horizontal: 19),
-                onPressed: () {
-                  // Tambahkan logika ketika tombol ditekan di sini
-                },
-              ),
-              SizedBox(height: 5),
+              // CustomElevatedButton(
+              //   text: "Add Your Photos",
+              //   margin: EdgeInsets.symmetric(horizontal: 19),
+              // ),
+              // SizedBox(height: 5),
             ],
           ),
         ),
@@ -85,29 +113,29 @@ class NewsPage extends StatelessWidget {
                   bottomRight: Radius.circular(64)),
               alignment: Alignment.center),
           Align(
-              alignment: Alignment.topCenter,
+              alignment: Alignment.topLeft,
               child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
-                  decoration: AppDecoration.fillGray.copyWith(
-                      borderRadius: BorderRadiusStyle.roundedBorder24),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                   child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(height: 13),
-                        CustomImageView(
-                            imagePath: ImageConstant.imgArrowLeft,
-                            height: 24,
-                            width: 24,
-                            onTap: () {
-                              onTapImgArrowLeft(context);
-                            })
+                        IconButton(
+                          icon: Icon(
+                            Icons.keyboard_arrow_left,
+                            size: 40,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        )
                       ])))
         ]));
   }
 
   /// Section Widget
-  Widget _buildRowTuguYogyakarta(BuildContext context) {
+  Widget _buildRowTitlePengarang(News n, BuildContext context) {
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: 19),
         child: Row(
@@ -115,8 +143,8 @@ class NewsPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text("Tugu Yogyakarta", style: theme.textTheme.titleLarge),
-                Text("Central Java", style: theme.textTheme.bodyMedium)
+                Text(n.judul!, style: theme.textTheme.titleLarge),
+                Text(n.pengarang!, style: theme.textTheme.bodyMedium)
               ]),
               CustomImageView(
                   imagePath: ImageConstant.imgIconParkOutlineLike,
@@ -127,23 +155,18 @@ class NewsPage extends StatelessWidget {
   }
 
   /// Section Widget
-  Widget _buildListAndroidLargeSix(BuildContext context) {
-    return SizedBox(
-        height: 91,
-        child: ListView.separated(
-            padding: EdgeInsets.symmetric(horizontal: 19),
-            scrollDirection: Axis.horizontal,
-            separatorBuilder: (context, index) {
-              return SizedBox(width: 8);
-            },
-            itemCount: 3,
-            itemBuilder: (context, index) {
-              return CustomeNews();
-            }));
-  }
-
-  /// Navigates back to the previous screen.
-  onTapImgArrowLeft(BuildContext context) {
-    Navigator.pop(context);
-  }
+  // Widget _buildListAndroidLargeSix(BuildContext context) {
+  //   return SizedBox(
+  //       height: 91,
+  //       child: ListView.separated(
+  //           padding: EdgeInsets.symmetric(horizontal: 19),
+  //           scrollDirection: Axis.horizontal,
+  //           separatorBuilder: (context, index) {
+  //             return SizedBox(width: 8);
+  //           },
+  //           itemCount: 3,
+  //           itemBuilder: (context, index) {
+  //             return CustomeNews();
+  //           }));
+  // }
 }

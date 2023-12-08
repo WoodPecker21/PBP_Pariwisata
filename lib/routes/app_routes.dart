@@ -36,7 +36,7 @@ class AppRoutes {
   static const String homeUser = '/User/homeUser';
   static const String profil = '/profil';
   static const String newsPageInput = '/newsPageInput';
-  static const String newsPage = '/newsPage';
+  static const String newsPage = '/newsUser';
   static const String editBooking = '/editBooking';
   static const String editBookingSukses = '/editBookingSukses';
   static const String showBooking = '/ShowBooking';

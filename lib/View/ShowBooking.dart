@@ -15,7 +15,9 @@ class BookingView extends ConsumerWidget {
   final listProvider = FutureProvider<List<Transaksi>>((ref) async {
     try {
       print('retrieve data transaksi');
-      return await TransaksiClient.fetchAll();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int idUser = prefs.getInt('id') ?? 0;
+      return await TransaksiClient.fetchByUser(idUser);
     } catch (e) {
       return Future.error(e.toString());
     }
@@ -44,7 +46,7 @@ class BookingView extends ConsumerWidget {
               Padding(
                 padding: const EdgeInsets.all(30),
                 child: Text(
-                  "Future Booking",
+                  "My Booking",
                   style: CustomTextStyles.titleForm,
                 ),
               ),

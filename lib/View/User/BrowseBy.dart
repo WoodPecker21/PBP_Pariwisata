@@ -129,100 +129,87 @@ class Browse extends ConsumerWidget {
         child: Ink(
           child: Column(
             children: [
-              Container(
-                height: 135,
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Color(0x33000000), width: 1),
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 125,
-                      height: MediaQuery.of(context).size.height,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage('images/papua.jpg'),
-                          fit: BoxFit.cover,
-                        ),
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            bottomLeft: Radius.circular(20)),
-                      ),
+              Stack(
+                children: [
+                  Container(
+                    height: 135,
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: Color(0x33000000), width: 1),
+                      borderRadius: BorderRadius.circular(25),
                     ),
-                    SizedBox(width: 5),
-                    Container(
-                      padding: EdgeInsets.only(top: 27, left: 27),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            child: Text(
-                              o.nama!,
-                              style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 125,
+                          height: MediaQuery.of(context).size.height,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('images/papua.jpg'),
+                              fit: BoxFit.cover,
+                            ),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              bottomLeft: Radius.circular(20),
                             ),
                           ),
-                          Container(
-                            child: Text(
-                              o.pulau!,
-                              style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ),
-                          SizedBox(height: 3),
-                          Container(
-                            child: Text(
-                              '${o.rating} ⭐',
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: 9,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 18),
-                          Row(
+                        ),
+                        SizedBox(width: 5),
+                        Container(
+                          padding: EdgeInsets.only(top: 27, left: 27),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Container(
-                              //   child: Text(
-                              //     '4.98',
-                              //     style: TextStyle(
-                              //         fontFamily: 'Poppins',
-                              //         fontSize: 11,
-                              //         fontWeight: FontWeight.w500),
-                              //   ),
-                              // ),
-                              // SizedBox(width: 4),
                               Container(
                                 child: Text(
-                                  '(2,180 reviews)',
+                                  o.nama!,
                                   style: TextStyle(
-                                      fontFamily: 'Poppins',
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w500),
+                                    fontFamily: 'Poppins',
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
+                              Container(
+                                child: Text(
+                                  o.pulau!,
+                                  style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 3),
+                              Container(
+                                child: Text(
+                                  '${o.rating} ⭐',
+                                  style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 9,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 18),
                             ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    Container(
-                      margin: EdgeInsets.only(left: 60),
+                  ),
+                  Positioned(
+                    top: 50,
+                    right: 15,
+                    child: Container(
                       child: Icon(
                         Icons.arrow_forward_ios,
                         size: 20,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
               SizedBox(height: 22),
             ],
@@ -244,7 +231,7 @@ class Browse extends ConsumerWidget {
         context,
         child: DraggableScrollableSheet(
           minChildSize: 0.5,
-          maxChildSize: 0.77,
+          maxChildSize: 1.00,
           initialChildSize: 0.77,
           builder: (BuildContext sheetContext, ScrollController controller) {
             // double screenHeight = MediaQuery.of(sheetContext).size.height;
@@ -286,312 +273,282 @@ class Browse extends ConsumerWidget {
                         color: Colors.white,
                         borderRadius:
                             BorderRadius.vertical(top: Radius.circular(25))),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          o.nama!,
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'Poppins',
-                              fontSize: 19),
-                        ),
-                        SizedBox(height: 13),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              o.pulau!,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 15,
-                                  fontFamily: 'Poppins'),
-                            ),
-                            Text(
-                              'RP 1.500.000 /pax',
-                              style: TextStyle(
-                                  color: Color(0XFF777474),
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w700,
-                                  fontFamily: 'Poppins'),
-                            )
-                          ],
-                        ),
-                        SizedBox(height: 13),
-                        Row(
-                          children: [
-                            Text(
-                              '${o.rating} ⭐',
-                              style: TextStyle(fontSize: 15),
-                            ),
-                            SizedBox(width: 6),
-                            Text(
-                              '(2,180 reviews)',
-                              style: TextStyle(
-                                  fontFamily: 'Poppins', fontSize: 14),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 7),
-                        Container(
-                          // height: 155,
-                          width: 357,
-                          // decoration: BoxDecoration(color: Colors.red),
-                          child: Text(
-                            o.deskripsi!,
+                    child: SingleChildScrollView(
+                      controller: controller,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            o.nama!,
                             style: TextStyle(
-                                fontSize: 12.5,
+                                fontWeight: FontWeight.w600,
                                 fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w500),
+                                fontSize: 19),
                           ),
-                        ),
-                        SizedBox(height: 5),
-                        Row(
-                          children: [
-                            Text(
-                              'Highlight:',
+                          SizedBox(height: 13),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                o.pulau!,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 15,
+                                    fontFamily: 'Poppins'),
+                              ),
+                              Text(
+                                'RP ${o.harga} /pax',
+                                style: TextStyle(
+                                    color: Color(0XFF777474),
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w700,
+                                    fontFamily: 'Poppins'),
+                              )
+                            ],
+                          ),
+                          SizedBox(height: 13),
+                          Row(
+                            children: [
+                              Text(
+                                '${o.rating} ⭐',
+                                style: TextStyle(fontSize: 15),
+                              ),
+                              SizedBox(width: 6),
+                              Text(
+                                '(2,180 reviews)',
+                                style: TextStyle(
+                                    fontFamily: 'Poppins', fontSize: 14),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 15),
+                          Container(
+                            // height: 155,
+                            width: 357,
+                            // decoration: BoxDecoration(color: Colors.red),
+                            child: Text(
+                              o.deskripsi!,
                               style: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.w600),
+                                  fontSize: 12.5,
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w500),
                             ),
-                            SizedBox(width: 10),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.all(5),
-                                  // height: 27,
-                                  // width: 140,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Color(0XFFD9D9D9)),
-                                  child: Text(
-                                    'Natural Environment',
-                                    style: TextStyle(
-                                        fontSize: 10.5, fontFamily: 'Poppins'),
+                          ),
+                          SizedBox(height: 15),
+                          Row(
+                            children: [
+                              Text(
+                                'Kategori :',
+                                style: TextStyle(
+                                    fontSize: 14, fontWeight: FontWeight.w600),
+                              ),
+                              SizedBox(width: 10),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(5),
+                                    // height: 27,
+                                    // width: 140,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: Color(0XFFD9D9D9)),
+                                    child: Text(
+                                      '${o.kategori}',
+                                      style: TextStyle(
+                                          fontSize: 10.5,
+                                          fontFamily: 'Poppins'),
+                                    ),
                                   ),
-                                ),
-                                SizedBox(height: 7),
-                                Row(
+                                  SizedBox(height: 7),
+                                ],
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 15),
+                          Container(
+                            child: Text(
+                              'What is included',
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Poppins'),
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(1.5),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(15),
+                                    border: Border.all(
+                                        color: Color(0x33000000), width: 1)),
+                                child: Row(
                                   children: [
                                     Container(
-                                      padding: EdgeInsets.all(5),
-                                      // height: 27,
-                                      // width: 80,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: Color(0XFFD9D9D9)),
-                                      child: Text(
-                                        'Landscape',
-                                        style: TextStyle(
-                                            fontSize: 10.5,
-                                            fontFamily: 'Poppins'),
+                                      padding: EdgeInsets.all(7),
+                                      child: Icon(
+                                        Icons.directions_bus,
+                                        size: 27,
                                       ),
                                     ),
-                                    SizedBox(width: 6),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          padding: EdgeInsets.only(top: 7),
+                                          child: Text(
+                                            o.transportasi!,
+                                            style: TextStyle(
+                                                fontFamily: 'Poppins',
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.only(right: 7),
+                                          child: Text(
+                                            'Transportation',
+                                            style: TextStyle(
+                                                fontFamily: 'Poppins',
+                                                fontSize: 12.5,
+                                                fontWeight: FontWeight.w400,
+                                                color: Colors.grey),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(width: 7),
+                              Expanded(
+                                child: Container(
+                                  padding: EdgeInsets.all(1.5),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(15),
+                                      border: Border.all(
+                                          color: Color(0x33000000), width: 1)),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.all(7),
+                                        child: Icon(
+                                          Icons.punch_clock_rounded,
+                                          size: 25,
+                                        ),
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            padding: EdgeInsets.only(
+                                                right: 7, top: 7),
+                                            child: Text(
+                                              '${o.durasi} days',
+                                              style: TextStyle(
+                                                  fontFamily: 'Poppins',
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                          ),
+                                          Container(
+                                            padding: EdgeInsets.only(bottom: 3),
+                                            child: Text(
+                                              'Duration',
+                                              style: TextStyle(
+                                                  fontFamily: 'Poppins',
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: Colors.grey),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 8),
+                          Container(
+                            width: 160,
+                            padding: EdgeInsets.all(1.5),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15),
+                                border: Border.all(
+                                    color: Color(0x33000000), width: 1)),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(7),
+                                  child: Icon(
+                                    Icons.villa,
+                                    size: 25,
+                                  ),
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
                                     Container(
-                                      padding: EdgeInsets.all(5),
-                                      // height: 27,
-                                      // width: 118,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: Color(0XFFD9D9D9)),
+                                      padding:
+                                          EdgeInsets.only(top: 7, right: 7),
                                       child: Text(
-                                        'Water Recreation',
+                                        o.akomodasi!,
                                         style: TextStyle(
-                                            fontSize: 10.5,
-                                            fontFamily: 'Poppins'),
+                                            fontFamily: 'Poppins',
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    ),
+                                    Container(
+                                      child: Text(
+                                        'Accomodation',
+                                        style: TextStyle(
+                                            fontFamily: 'Poppins',
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w400,
+                                            color: Colors.grey),
                                       ),
                                     ),
                                   ],
                                 ),
                               ],
                             ),
-                          ],
-                        ),
-                        SizedBox(height: 10),
-                        Container(
-                          child: Text(
-                            'What is included',
-                            style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Poppins'),
                           ),
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(1.5),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(15),
-                                  border: Border.all(
-                                      color: Color(0x33000000), width: 1)),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.all(7),
-                                    child: Icon(
-                                      Icons.directions_bus,
-                                      size: 27,
-                                    ),
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        padding: EdgeInsets.only(top: 7),
-                                        child: Text(
-                                          o.transportasi!,
-                                          style: TextStyle(
-                                              fontFamily: 'Poppins',
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                      ),
-                                      Container(
-                                        padding: EdgeInsets.only(right: 7),
-                                        child: Text(
-                                          'Transportation',
-                                          style: TextStyle(
-                                              fontFamily: 'Poppins',
-                                              fontSize: 12.5,
-                                              fontWeight: FontWeight.w400,
-                                              color: Colors.grey),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                          SizedBox(height: 15),
+                          ElevatedButton(
+                            onPressed: () async {
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+                              await prefs.setInt('idObjek', o.id!);
+                              await prefs.setString('namaObjek', o.nama!);
+                              await prefs.setInt('durasiObjek', o.durasi!);
+                              Navigator.pushNamed(context, AppRoutes.booking1);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color(0xFF0044AA),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
                               ),
+                              fixedSize:
+                                  Size(MediaQuery.of(context).size.width, 40),
                             ),
-                            SizedBox(width: 7),
-                            Container(
-                              padding: EdgeInsets.all(1.5),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(15),
-                                  border: Border.all(
-                                      color: Color(0x33000000), width: 1)),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.all(7),
-                                    child: Icon(
-                                      Icons.punch_clock_rounded,
-                                      size: 25,
-                                    ),
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        padding:
-                                            EdgeInsets.only(right: 7, top: 7),
-                                        child: Text(
-                                          '${o.durasi} day ${o.durasi! - 1} night',
-                                          style: TextStyle(
-                                              fontFamily: 'Poppins',
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                      ),
-                                      Container(
-                                        padding: EdgeInsets.only(bottom: 3),
-                                        child: Text(
-                                          'Duration',
-                                          style: TextStyle(
-                                              fontFamily: 'Poppins',
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w400,
-                                              color: Colors.grey),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 8),
-                        Container(
-                          width: 147,
-                          padding: EdgeInsets.all(1.5),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(15),
-                              border: Border.all(
-                                  color: Color(0x33000000), width: 1)),
-                          child: Row(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(7),
-                                child: Icon(
-                                  Icons.villa,
-                                  size: 25,
-                                ),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.only(top: 7, right: 7),
-                                    child: Text(
-                                      o.akomodasi!,
-                                      style: TextStyle(
-                                          fontFamily: 'Poppins',
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
-                                  Container(
-                                    child: Text(
-                                      'Accomodation',
-                                      style: TextStyle(
-                                          fontFamily: 'Poppins',
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.grey),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                            child: Text('Book Trip',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'Poppins',
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w500)),
                           ),
-                        ),
-                        SizedBox(height: 5),
-                        ElevatedButton(
-                          onPressed: () async {
-                            final prefs = await SharedPreferences.getInstance();
-                            await prefs.setInt('idObjek', o.id!);
-                            await prefs.setString('namaObjek', o.nama!);
-                            await prefs.setInt('durasiObjek', o.durasi!);
-                            Navigator.pushNamed(context, AppRoutes.booking1);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            primary: Color(0xFF0044AA),
-                            textStyle: TextStyle(
-                                color: Colors.white,
-                                fontFamily: 'Poppins',
-                                fontSize: 17,
-                                fontWeight: FontWeight.w500),
-                            // padding: EdgeInsets.all(10),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            fixedSize:
-                                Size(MediaQuery.of(context).size.width, 40),
-                          ),
-                          child: Text(
-                            'Book Trip',
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),

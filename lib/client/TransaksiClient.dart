@@ -24,6 +24,24 @@ class TransaksiClient {
     }
   }
 
+  static Future<List<Transaksi>> fetchByUser(int id) async {
+    try {
+      String endpointFetchByUser = UrlClient.endpoint + UrlClient.transaksiUser;
+      var response = await get(Uri.http(url,
+          '$endpointFetchByUser/$id')); // request ke api dan menyimpan responsenya
+
+      if (response.statusCode != 200) throw Exception(response.reasonPhrase);
+      print(response.body);
+      //ambil data dari response body
+      Iterable list = json.decode(response.body)['data'];
+
+      //list map utk membuat list obejk user berdasar tiap elemen dari list
+      return list.map((e) => Transaksi.fromJson(e)).toList();
+    } catch (e) {
+      return Future.error(e.toString());
+    }
+  }
+
   //ambil data dari API sesuai id
   static Future<Transaksi> find(id) async {
     try {

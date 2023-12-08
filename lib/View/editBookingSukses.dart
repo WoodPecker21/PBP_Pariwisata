@@ -60,7 +60,7 @@ class EditBookingSukses extends StatelessWidget {
         margin: EdgeInsets.only(left: 40, right: 34, bottom: 16),
         onPressed: () {
           Navigator.popUntil(context, (route) {
-            return route.settings.name == AppRoutes.home;
+            return route.settings.name == AppRoutes.homeUser;
           });
         });
   }
