@@ -25,4 +25,11 @@ class ImageConstant {
 
   //booking show
   static String imgPlaceholder = '$imagePath/alam.jpg';
+
+  //news
+  static String imgIconParkOutlineLike =
+      '$imagePath/img_icon_park_outline_like.svg';
+
+  static String imgArrowLeft = '$imagePath/img_arrow_left.svg';
+  static String imgRectangle1036 = '$imagePath/img_rectangle_1036.png';
 }

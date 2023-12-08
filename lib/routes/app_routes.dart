@@ -60,6 +60,6 @@ class AppRoutes {
     editBooking: (context) => const EditBooking(),
     editBookingSukses: (context) => const EditBookingSukses(),
     showBooking: (context) => BookingView(),
-    // newsPage: (context) => const NewsPage(),
+    newsPage: (context) => const NewsPage(),
   };
 }

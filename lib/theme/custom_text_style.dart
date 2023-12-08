@@ -109,6 +109,11 @@ class CustomTextStyles {
   static get titleSmallSemiBold => theme.textTheme.titleSmall!.copyWith(
         fontWeight: FontWeight.w600,
       );
+
+  //--news--
+  static get labelLarge12 => theme.textTheme.labelLarge!.copyWith(
+        fontSize: 12,
+      );
 }
 
 extension on TextStyle {
