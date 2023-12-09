@@ -7,27 +7,25 @@ class ObjekWisata {
   double? rating, harga;
   String? akomodasi, transportasi;
   int? durasi;
-  File? _imageFile;
-  String? image;
 
-  ObjekWisata({
-    this.id,
-    this.nama,
-    this.deskripsi,
-    this.kategori,
-    this.gambar,
-    this.pulau,
-    this.rating,
-    this.harga,
-    this.durasi,
-    this.akomodasi,
-    this.transportasi,
-    File? imageFile,
-  }) : _imageFile = imageFile {
-    if (_imageFile != null) {
-      image = base64Encode(_imageFile!.readAsBytesSync());
-    }
-  }
+  ObjekWisata(
+      {this.id,
+      this.nama,
+      this.deskripsi,
+      this.kategori,
+      this.gambar,
+      this.pulau,
+      this.rating,
+      this.harga,
+      this.durasi,
+      this.akomodasi,
+      this.transportasi
+      //   File? imageFile,
+      // }) : _imageFile = imageFile {
+      //   if (_imageFile != null) {
+      //     image = base64Encode(_imageFile!.readAsBytesSync());
+      //   }
+      });
 
   factory ObjekWisata.fromRawJson(String str) =>
       ObjekWisata.fromJson(json.decode(str));
@@ -44,7 +42,6 @@ class ObjekWisata {
         akomodasi: json["akomodasi"],
         transportasi: json["transportasi"],
         durasi: json["durasi"].toInt(),
-        imageFile: json['image'],
       );
 
   String toRawJson() {
@@ -60,7 +57,6 @@ class ObjekWisata {
       "akomodasi": akomodasi,
       "transportasi": transportasi,
       "durasi": durasi,
-      "image": image,
     };
 
     rawJsonMap.removeWhere((key, value) => value == null || value == '');
@@ -81,7 +77,6 @@ class ObjekWisata {
       "akomodasi": akomodasi,
       "transportasi": transportasi,
       "durasi": durasi,
-      "image": image,
     };
 
     jsonMap.removeWhere((key, value) => value == null || value == '');

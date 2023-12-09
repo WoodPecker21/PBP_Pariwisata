@@ -38,20 +38,6 @@ class PembayaranClient {
     }
   }
 
-  //ambil sum pembayaran dari satu transaksi (bisa pembayaran normal + denda update tgl)
-  static Future<Pembayaran> sumPembayaran(idTransaksi) async {
-    try {
-      var response =
-          await get(Uri.http(url, '$endpoint/$idTransaksi')); //req ke api
-
-      if (response.statusCode != 200) throw Exception(response.reasonPhrase);
-
-      return Pembayaran.fromJson(json.decode(response.body)['data']);
-    } catch (e) {
-      return Future.error(e.toString());
-    }
-  }
-
   //membuat data baru
   static Future<int?> create(Pembayaran objek) async {
     try {
@@ -84,6 +70,33 @@ class PembayaranClient {
       return response;
     } catch (e) {
       return Future.error(e.toString());
+    }
+  }
+
+  static Future<Pembayaran> updateDenda(int idBooking, double priceNew) async {
+    try {
+      String endpointUpdateDenda = UrlClient.endpoint + UrlClient.updateDenda;
+
+      var urlfin = Uri.http(url, '$endpointUpdateDenda/$idBooking');
+
+      var response = await put(
+        urlfin,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'price': priceNew}),
+      );
+      print(response.body);
+
+      if (response.statusCode == 200) {
+        Pembayaran p = Pembayaran.fromJson(json.decode(response.body));
+        return p;
+      } else {
+        var errorResponse = json.decode(response.body);
+        var errorMessage = errorResponse['message'];
+        throw Exception(errorMessage);
+      }
+    } catch (e) {
+      print('error client: $e');
+      throw Exception(e.toString());
     }
   }
 }

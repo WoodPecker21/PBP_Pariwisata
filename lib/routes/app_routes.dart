@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'package:ugd1/View/landing_page_screen.dart';
 import 'package:ugd1/View/login.dart';
 import 'package:ugd1/View/home.dart';
@@ -19,6 +18,7 @@ import 'package:ugd1/View/newsUser.dart';
 import 'package:ugd1/View/editBooking.dart';
 import 'package:ugd1/View/editBookingSukses.dart';
 import 'package:ugd1/View/ShowBooking.dart';
+import 'package:ugd1/View/editBayar.dart';
 
 class AppRoutes {
   static const String landingPageScreen = '/landing_page_screen';
@@ -40,6 +40,7 @@ class AppRoutes {
   static const String editBooking = '/editBooking';
   static const String editBookingSukses = '/editBookingSukses';
   static const String showBooking = '/ShowBooking';
+  static const String editBayar = '/editBayar';
 
   static Map<String, WidgetBuilder> routes = {
     landingPageScreen: (context) => const LandingPageScreen(),
@@ -61,5 +62,6 @@ class AppRoutes {
     editBookingSukses: (context) => const EditBookingSukses(),
     showBooking: (context) => BookingView(),
     newsPage: (context) => const NewsPage(),
+    editBayar: (context) => const EditBayar(),
   };
 }

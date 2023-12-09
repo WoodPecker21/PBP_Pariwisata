@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
@@ -9,11 +11,10 @@ import 'package:ugd1/core/app_export.dart';
 import 'package:ugd1/widgets/custom_elevated_button.dart';
 import 'package:ugd1/client/UserClient.dart';
 import 'package:ugd1/model/user.dart';
-import 'package:ugd1/View/landing_page_screen.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
-
   @override
   _ProfileState createState() => _ProfileState();
 }
@@ -25,13 +26,19 @@ class _ProfileState extends State<Profile> {
   TextEditingController birthdateController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController genderController = TextEditingController();
-
   bool _isEditing = false;
   int idUser = 0;
   String username = "";
-  Uint8List imageProfile = Uint8List(0);
+  Uint8List? imageProfile;
   final formKey = GlobalKey<FormState>();
   bool _obscurePassword = true;
+
+  String convertUint8ListToBase64String(Uint8List? uint8list) {
+    if (uint8list != null && uint8list.isNotEmpty) {
+      return base64Encode(uint8list);
+    }
+    return ''; // Return empty string or handle null case based on your requirement
+  }
 
   @override
   void initState() {
@@ -46,10 +53,28 @@ class _ProfileState extends State<Profile> {
   }
 
   Future<void> loadImageProfile() async {
-    Uint8List defaultImage = Uint8List.fromList(await loadDefaultImage());
-    setState(() {
-      imageProfile = defaultImage;
-    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? storedImage = prefs.getString('user_image');
+    if (storedImage != null && storedImage.isNotEmpty) {
+      // If image is stored in SharedPreferences, decode and set it as the profile image
+      setState(() {
+        imageProfile = base64Decode(storedImage);
+      });
+    } else {
+      // Load the default image if no image is stored in SharedPreferences
+      Uint8List defaultImage = await loadDefaultImage();
+      setState(() {
+        imageProfile = defaultImage;
+      });
+
+      // Save the default image to SharedPreferences
+      _saveImageToPrefs(defaultImage);
+
+      // Update the default image in the database
+      User user = await UserClient.find(idUser);
+      String base64DefaultImage = base64Encode(defaultImage);
+      await UserClient.updateImage(user, base64DefaultImage);
+    }
     print('load image');
   }
 
@@ -64,7 +89,6 @@ class _ProfileState extends State<Profile> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       idUser = prefs.getInt('id') ?? 0;
       print('idUser: $idUser');
-
       User res = await UserClient.find(idUser);
       setState(() {
         usernameController.value = TextEditingValue(text: res.name!);
@@ -82,7 +106,9 @@ class _ProfileState extends State<Profile> {
 
   Future<void> saveEditedData() async {
     try {
-      User user = User(
+      String base64Image = convertUint8ListToBase64String(imageProfile);
+
+      User userData = User(
         id: idUser,
         name: usernameController.text,
         password: passwordController.text,
@@ -90,13 +116,21 @@ class _ProfileState extends State<Profile> {
         phoneNumber: phoneNumberController.text,
         birthDate: birthdateController.text,
         gender: genderController.text,
-        imageProfile: null, //biarkan dulu
+        imageProfile: base64Image,
       );
 
       setState(() {
         _isEditing = false;
       });
-      await UserClient.update(user);
+      await UserClient.update(userData);
+
+      Fluttertoast.showToast(
+        msg: 'Success update profile',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+      );
 
       print('User updated successfully');
     } catch (e) {
@@ -106,13 +140,11 @@ class _ProfileState extends State<Profile> {
   }
 
   bool isEmailUnik = false;
-
   Future<void> checkEmailUnik() async {
     try {
       // Call the cekEmailUnik method from UserClient
       bool getEmailUnik =
           await UserClient.cekEmailUnikEdit(emailController.text, idUser);
-
       setState(() {
         isEmailUnik = getEmailUnik;
       });
@@ -121,6 +153,109 @@ class _ProfileState extends State<Profile> {
       // Handle errors as needed
       print('Error checking email uniqueness: $e');
     }
+  }
+
+  Future<void> updateProfileImage(Uint8List imageBytes) async {
+    String base64Image = convertUint8ListToBase64String(imageBytes);
+
+    // Update gambar di aplikasi
+    setState(() {
+      imageProfile = imageBytes;
+    });
+    print('update profile image di user id $idUser');
+
+    try {
+      // Mengambil user dari database
+      User userData = await UserClient.find(idUser);
+
+      // Memperbarui gambar di database
+      await UserClient.updateImage(userData, base64Image);
+
+      // Simpan gambar terpilih ke SharedPreferences
+      _saveImageToPrefs(imageBytes);
+    } catch (e) {
+      print('error update profile image: $e');
+    }
+  }
+
+  // Contoh bagaimana Anda bisa memanggil fungsi updateProfileImage saat ada perubahan gambar profil
+  Future<void> _pickImageFromGallery() async {
+    final returnedImage = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 25,
+    );
+
+    if (returnedImage == null) return;
+
+    final imageFile = File(returnedImage.path);
+    final imageBytes = await imageFile.readAsBytes();
+
+    print('Picked image path: ${returnedImage.path}');
+    print('Image bytes length: ${imageBytes.length}');
+
+    // Update gambar profil
+    await updateProfileImage(imageBytes);
+  }
+
+  Future<void> _pickImageFromCamera() async {
+    final returnedImage = await ImagePicker().pickImage(
+      source: ImageSource.camera,
+      imageQuality: 25,
+    );
+
+    if (returnedImage == null) return;
+
+    final imageFile = File(returnedImage.path);
+    final imageBytes = await imageFile.readAsBytes();
+
+    // Mengubah gambar menjadi base64
+    String base64Image = base64Encode(imageBytes);
+
+    // Simpan gambar terpilih ke SharedPreferences
+    _saveImageToPrefs(imageBytes);
+
+    // Update gambar di aplikasi
+    setState(() {
+      imageProfile = imageBytes;
+    });
+
+    // Mengambil user dari database
+    User userData = await UserClient.find(idUser);
+
+    // Memperbarui gambar di database
+    await UserClient.updateImage(userData, base64Image);
+  }
+
+  Future<void> _saveImageToPrefs(Uint8List imageBytes) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String base64Image = base64Encode(imageBytes);
+    await prefs.setString('user_image', base64Image);
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedImage = await ImagePicker().pickImage(
+      source: source,
+      imageQuality: 25,
+    );
+
+    if (pickedImage == null) return;
+
+    final imageFile = File(pickedImage.path);
+    final imageBytes = await imageFile.readAsBytes();
+    final username = usernameController.text;
+
+    // Update the image profile
+    User user = await UserClient.find(idUser);
+    String base64Image = base64Encode(imageBytes);
+    user.imageProfile = base64Image;
+
+    // Call the updateImage method with the updated User object
+    await UserClient.updateImage(user, base64Image);
+
+    setState(() {
+      imageProfile = imageBytes;
+      loadUserData();
+    });
   }
 
   @override
@@ -144,7 +279,18 @@ class _ProfileState extends State<Profile> {
                     ), // Judul "Profile" di sebelah kiri
             ],
           ),
-          actions: [],
+          actions: [
+            IconButton(
+              icon: Icon(Icons.edit),
+              onPressed: () async {
+                setState(() {
+                  _isEditing = !_isEditing;
+                });
+                loadUserData();
+              },
+              color: Colors.black,
+            ),
+          ],
         ),
         body: buildProfileContent(),
       ),
@@ -170,7 +316,7 @@ class _ProfileState extends State<Profile> {
                 context: context,
                 builder: ((builder) {
                   return Container(
-                    height: 150.0,
+                    height: 120.0,
                     width: MediaQuery.of(context).size.width,
                     margin: EdgeInsets.symmetric(
                       horizontal: 20,
@@ -222,20 +368,18 @@ class _ProfileState extends State<Profile> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10.0),
                     image: DecorationImage(
-                      image: imageProfile.isNotEmpty
-                          ? Image.memory(
-                              imageProfile,
-                              fit: BoxFit.cover,
-                            ).image
-                          : AssetImage('image/profilCat.jpg'),
+                      image: imageProfile != null && imageProfile!.isNotEmpty
+                          ? MemoryImage(imageProfile!)
+                          : Image.asset('image/profilCat.jpg').image,
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
+
                 // Camera/Edit Icon
                 Positioned(
-                  bottom: 0,
-                  right: 0,
+                  bottom: 10,
+                  right: 10,
                   child: Container(
                     padding: EdgeInsets.all(8),
                     decoration: BoxDecoration(
@@ -253,278 +397,277 @@ class _ProfileState extends State<Profile> {
           ),
         ),
         Container(
-          child: Form(
-            key: formKey,
-            child: Column(
-              children: <Widget>[
-                ListTile(
-                  leading: Icon(
-                    Icons.person,
-                    color: Colors.black,
-                  ),
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                          controller: usernameController,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontFamily: 'Poppins',
-                            color: _isEditing ? Colors.black : Colors.grey,
-                          ),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                          ),
-                          readOnly: !_isEditing,
-                        ),
-                      ),
-                      if (_isEditing)
-                        IconButton(
-                          icon: Icon(Icons.save),
-                          onPressed: () {
-                            // Save logic here
-                            print('Save button clicked');
-                            // Call your function to save the edited data
-                            saveEditedData();
-                          },
-                        ),
-                      if (!_isEditing)
-                        IconButton(
-                          icon: Icon(Icons.edit),
-                          onPressed: () {
-                            // Enter editing mode
-                            setState(() {
-                              _isEditing = true;
-                            });
-                          },
-                        ),
-                    ],
-                  ),
+            child: Form(
+          key: formKey,
+          child: Column(
+            children: <Widget>[
+              const SizedBox(height: 20),
+              ListTile(
+                leading: Icon(
+                  Icons.person,
+                  color: Colors.black,
                 ),
-                ListTile(
-                  leading: Icon(
-                    Icons.email,
-                    color: Colors.black,
-                  ),
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                          controller: emailController,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontFamily: 'Poppins',
-                            color: _isEditing ? Colors.black : Colors.grey,
-                          ),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                          ),
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: usernameController,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontFamily: 'Poppins',
+                          color: _isEditing ? Colors.black : Colors.grey,
                         ),
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                        ),
+                        readOnly: !_isEditing,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Username harus terisi!!';
+                          } else if (value.length <= 5) {
+                            return 'Username minimal memiliki 5 karakter!';
+                          }
+                          return null;
+                        },
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                ListTile(
-                  leading: Icon(
-                    Icons.password,
-                    color: Colors.black,
-                  ),
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                          controller: passwordController,
-                          obscureText:
-                              _obscurePassword, // Use the _obscurePassword flag
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontFamily: 'Poppins',
-                            color: _isEditing ? Colors.black : Colors.grey,
-                          ),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscurePassword
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
-                                color: Colors.grey,
-                              ),
-                              onPressed: () {
-                                // Toggle the password visibility
-                                setState(() {
-                                  _obscurePassword = !_obscurePassword;
-                                });
-                              },
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.email,
+                  color: Colors.black,
+                ),
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: emailController,
+                        readOnly: !_isEditing,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontFamily: 'Poppins',
+                          color: _isEditing ? Colors.black : Colors.grey,
+                        ),
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Email harus terisi!!';
+                          } else if (!value.contains('@')) {
+                            return 'Email harus menggunakan @';
+                          } else if (isEmailUnik == false) {
+                            return 'Email harus unik!';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.password,
+                  color: Colors.black,
+                ),
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: passwordController,
+                        readOnly: !_isEditing,
+                        obscureText:
+                            _obscurePassword, // Use the _obscurePassword flag
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontFamily: 'Poppins',
+                          color: _isEditing ? Colors.black : Colors.grey,
+                        ),
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.grey,
                             ),
+                            onPressed: () {
+                              // Toggle the password visibility
+                              setState(() {
+                                _obscurePassword = !_obscurePassword;
+                              });
+                            },
                           ),
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Password harus terisi!!';
+                          } else if (value.length < 5) {
+                            return 'Password minimal memiliki 5 karakter!';
+                          }
+                          return null;
+                        },
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                ListTile(
-                  leading: Icon(
-                    Icons.person_2_outlined,
-                    color: Colors.black,
-                  ),
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                          controller: genderController,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontFamily: 'Poppins',
-                            color: _isEditing ? Colors.black : Colors.grey,
-                          ),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                          ),
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.calendar_today_outlined,
+                  color: Colors.black,
+                ),
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: birthdateController,
+                        readOnly: !_isEditing,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontFamily: 'Poppins',
+                          color: _isEditing ? Colors.black : Colors.grey,
                         ),
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Tanggal lahir harus terisi!!';
+                          }
+                          return null;
+                        },
                       ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(height: 25),
-        Container(
-            child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                color: Colors.grey,
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '5',
-                    style: TextStyle(
-                        color: const Color.fromARGB(255, 38, 82, 125),
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'trips',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(width: 2),
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                color: Colors.grey,
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '79',
-                    style: TextStyle(
-                        color: const Color.fromARGB(255, 38, 82, 125),
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'photos',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(width: 2),
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                color: Colors.grey,
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '20',
-                    style: TextStyle(
-                        color: const Color.fromARGB(255, 38, 82, 125),
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'comments',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        )),
-        SizedBox(height: 25),
-        InkWell(
-          onTap: () {
-            // Navigasi ke halaman landingPage.dart
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      LandingPageScreen()), // Sesuaikan dengan nama halaman dan path sebenarnya
-            );
-          },
-          child: Container(
-            child: ListTile(
-              leading: Icon(
-                Icons.dangerous,
-                color: Colors.black,
-              ),
-              title: Text(
-                'Logout',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red,
-                  fontFamily: 'Poppins',
+                    ),
+                  ],
                 ),
               ),
-              trailing: Icon(Icons.arrow_forward_ios),
-            ),
+              ListTile(
+                leading: Icon(
+                  Icons.phone,
+                  color: Colors.black,
+                ),
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: phoneNumberController,
+                        readOnly: !_isEditing,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontFamily: 'Poppins',
+                          color: _isEditing ? Colors.black : Colors.grey,
+                        ),
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                        ),
+                        validator: (value) {
+                          if (value == '') {
+                            return 'Nomor telepon harus terisi!!';
+                          }
+                          if (value!.length < 5) {
+                            return 'Nomor Telepon harus 5 digit';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.person_2_outlined,
+                  color: Colors.black,
+                ),
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: genderController,
+                        readOnly: !_isEditing,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontFamily: 'Poppins',
+                          color: _isEditing ? Colors.black : Colors.grey,
+                        ),
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Jenis Kelamin harus terisi!!';
+                          } else if (value != 'Laki-Laki' &&
+                              value != 'Perempuan') {
+                            return 'Jenis kelamin hanya bisa Laki-laki atau Perempuan';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              if (_isEditing) // Conditionally show the Save button
+                CustomElevatedButton(
+                  height: 50,
+                  text: "Simpan",
+                  margin: EdgeInsets.only(
+                    left: 20,
+                    right: 20,
+                  ),
+                  buttonStyle: CustomButtonStyles.fillPrimary,
+                  buttonTextStyle: CustomTextStyles.teksTombol,
+                  onPressed: () async {
+                    await checkEmailUnik();
+                    if (formKey.currentState!.validate()) {
+                      await saveEditedData();
+                    }
+                  },
+                ),
+              SizedBox(height: 25),
+              InkWell(
+                onTap: () {
+                  // Navigasi ke halaman login.dart
+                  Navigator.popUntil(context, (route) {
+                    return route.settings.name == AppRoutes.login;
+                  });
+                },
+                child: Container(
+                  child: ListTile(
+                    leading: Icon(
+                      Icons.dangerous,
+                      color: Colors.black,
+                    ),
+                    title: Text(
+                      'Logout',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                    trailing: Icon(Icons.arrow_forward_ios),
+                  ),
+                ),
+              ),
+              SizedBox(height: 25),
+            ],
           ),
-        ),
-        SizedBox(height: 25),
-        SizedBox(height: 25),
+        ))
       ],
     );
-  }
-
-  Future _pickImageFromGallery() async {
-    final returnedImage = await ImagePicker()
-        .pickImage(source: ImageSource.gallery, imageQuality: 25);
-
-    if (returnedImage == null) return;
-    final imageFile = File(returnedImage.path);
-    final imageBytes = await imageFile.readAsBytes();
-    final username = usernameController.text;
-  }
-
-  Future _pickImageFromCamera() async {
-    final returnedImage = await ImagePicker()
-        .pickImage(source: ImageSource.camera, imageQuality: 25);
-
-    if (returnedImage == null) return;
-    final imageFile = File(returnedImage.path);
-    final imageBytes = await imageFile.readAsBytes();
-    final username = usernameController.text;
   }
 }

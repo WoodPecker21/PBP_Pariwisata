@@ -147,14 +147,25 @@ class _EditBookingState extends State<EditBooking> {
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              CustomElevatedButton(
-                  width: 150,
-                  text: "Back",
-                  buttonStyle: CustomButtonStyles.fillGray,
-                  buttonTextStyle: CustomTextStyles.teksButtonBack,
-                  onPressed: () {
-                    Navigator.pop(context);
-                  }),
+              Container(
+                width: 110,
+                margin: EdgeInsets.only(top: 10, left: 15, bottom: 10),
+                child: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "Rp 300.000 \n",
+                        style: CustomTextStyles.labelHargaBooking,
+                      ),
+                      TextSpan(
+                        text: "/ Booking",
+                        style: CustomTextStyles.labelJumOrang,
+                      ),
+                    ],
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
               CustomElevatedButton(
                   width: 150,
                   text: "Next",
@@ -163,10 +174,8 @@ class _EditBookingState extends State<EditBooking> {
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
                       editTanggal();
-                      final prefs = SharedPreferences.getInstance();
-                      prefs.then((value) => value.remove('idEditBooking'));
-                      Navigator.pushNamed(context,
-                          AppRoutes.editBookingSukses); //GANTI KE BAYAR DENDA
+                      Navigator.pushNamed(
+                          context, AppRoutes.editBayar); //LANJUT KE BAYAR DENDA
                     }
                   })
             ]));

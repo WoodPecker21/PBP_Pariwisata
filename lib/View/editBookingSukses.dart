@@ -1,9 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:ugd1/core/app_export.dart';
 import 'package:ugd1/widgets/custom_elevated_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:ugd1/model/pembayaran.dart';
+import 'package:ugd1/client/PembayaranClient.dart';
 
 class EditBookingSukses extends StatelessWidget {
   const EditBookingSukses({Key? key}) : super(key: key);
+
+  Future<void> insertDataPembayaran() async {
+    try {
+      // final prefs = await SharedPreferences.getInstance();
+      // double pricePembayaran = prefs.getDouble('bookingTotalHarga') ?? 0;
+      // String metodePembayaran = prefs.getString('bookingMetode') ?? '';
+
+      //Simpan pembayaran ke database
+      // Pembayaran pembayaran =
+      //     Pembayaran(price: pricePembayaran, metode: metodePembayaran);
+      // var insertedIdBayar = await PembayaranClient.create(pembayaran);
+      final prefs = await SharedPreferences.getInstance();
+      int? id = prefs.getInt('idEditBooking');
+
+      Pembayaran pembayaran = await PembayaranClient.find(id);
+      await PembayaranClient.updateDenda(id!, pembayaran.price! + 300000);
+      prefs.remove('idEditBooking');
+
+      // if (insertedIdBayar != null) {
+      //   print('insert data pembayaran success, id = $insertedIdBayar');
+      //   await prefs.setInt('bookingIdBayar', insertedIdBayar);
+
+      //   //hapus key dari shared pref setelah insert ke db
+      //   prefs.remove('bookingTotalHarga');
+      //   prefs.remove('bookingMetode');
+      //   prefs.remove('idEditBooking');
+      // }
+    } catch (e) {
+      print('error insert data pembayaran: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

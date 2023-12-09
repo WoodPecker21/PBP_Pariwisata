@@ -3,7 +3,6 @@ import 'register_event.dart';
 import 'package:ugd1/repository/register_repository.dart';
 import 'package:ugd1/bloc/register_state.dart';
 import 'package:ugd1/bloc/form_submission_state.dart';
-import 'package:ugd1/bloc/register_event.dart';
 
 class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   final RegisterRepository registerRepository = RegisterRepository();

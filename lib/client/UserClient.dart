@@ -193,4 +193,20 @@ class UserClient {
       return false;
     }
   }
+
+  static Future<Response> updateImage(User user, String base64Image) async {
+    try {
+      var response = await put(
+        Uri.http(url, '$endpoint/updateImage/${user.id}'),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({"imageProfile": base64Image}),
+      );
+      print(response.body);
+      if (response.statusCode != 200) throw Exception(response.reasonPhrase);
+
+      return response;
+    } catch (e) {
+      return Future.error(e.toString());
+    }
+  }
 }

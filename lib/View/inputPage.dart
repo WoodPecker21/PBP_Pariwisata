@@ -9,6 +9,7 @@ import 'package:ugd1/model/objekWisata.dart';
 import 'package:ugd1/widgets/custom_text_form_field.dart';
 import 'package:uuid/uuid.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ugd1/core/app_export.dart';
 
 class InputPage extends StatefulWidget {
   const InputPage({Key? key}) : super(key: key);
@@ -31,10 +32,10 @@ class _InputPageState extends State<InputPage> {
   String _selectedPulau = 'Jawa';
   String _selectedValue = 'Alam';
   String id = Uuid().v1();
-  bool  isUpdate = false;
+  bool isUpdate = false;
   int updatedId = 0;
   File? _imageFile;
-  String gambarPath = 'image/alam.jpg';
+  String gambarPath = ImageConstant.imgPlaceholder; //gambar alam
 
   void initState() {
     super.initState();
@@ -86,11 +87,11 @@ class _InputPageState extends State<InputPage> {
         harga: double.parse(controllerHarga.text),
         akomodasi: controllerAkomodasi.text,
         durasi: int.parse(controllerDurasi.text),
+        transportasi: controllerTransportasi.text,
         pulau: _selectedPulau,
         kategori: _selectedValue,
         rating: _rating,
         gambar: base64Image, // Assign the base64-encoded image data
-        imageFile: _imageFile,
       );
 
       await ObjekWisataClient.create(objek);
@@ -102,6 +103,14 @@ class _InputPageState extends State<InputPage> {
 
   Future<void> updateData() async {
     try {
+      String base64Image = '';
+
+      // Check if _imageFile is not null
+      if (_imageFile != null) {
+        List<int> imageBytes = await _imageFile!.readAsBytes();
+        base64Image = base64Encode(imageBytes);
+      }
+
       final prefs = await SharedPreferences.getInstance();
       ObjekWisata objek = ObjekWisata(
         id: updatedId,
@@ -112,8 +121,7 @@ class _InputPageState extends State<InputPage> {
         durasi: int.parse(controllerDurasi.text),
         pulau: _selectedPulau,
         rating: _rating,
-        gambar: null,
-        imageFile: _imageFile,
+        gambar: base64Image,
       );
 
       await ObjekWisataClient.update(objek);
