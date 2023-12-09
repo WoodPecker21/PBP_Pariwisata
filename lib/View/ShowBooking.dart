@@ -68,6 +68,9 @@ class BookingView extends ConsumerWidget {
   }
 
   Widget buildKonten(Transaksi t, context, ref) {
+    String kategori = (t.objek?.kategori ?? '').toLowerCase();
+    String imagePath = 'image/$kategori.jpg';
+
     return Align(
         alignment: Alignment.center,
         child: Padding(
@@ -89,7 +92,7 @@ class BookingView extends ConsumerWidget {
                     Padding(
                       padding: const EdgeInsets.only(left: 10),
                       child: CustomImageView(
-                        imagePath: ImageConstant.imgPlaceholder,
+                        imagePath: imagePath,
                         height: 100,
                         width: 130,
                         radius: BorderRadius.circular(

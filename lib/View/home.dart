@@ -77,6 +77,11 @@ class HomeView extends ConsumerWidget {
             key: Key('inputobjek'),
             icon: Icon(Icons.add),
             onPressed: () async {
+              final prefs = await SharedPreferences.getInstance();
+              if (prefs.containsKey('idUpdate')) {
+                prefs.remove('idUpdate');
+              }
+
               Navigator.pushNamed(
                 context,
                 AppRoutes.inputPage,

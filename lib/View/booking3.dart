@@ -20,17 +20,19 @@ class _Booking3PageState extends State<Booking3Page> {
   final formKey = GlobalKey<FormState>();
   int selectedPayment = 0, jumlahTamu = 0;
   double hargaPembayaran = 0;
+  double afterPromo = 0;
   //untuk tampung nama dan id objek dari shared pref
   String namaObjekWisata = '';
   bool isPromoReceived = false;
   bool isPromoUsed = false;
   int idObjekWisata = 0;
-  
 
   @override
   void initState() {
     super.initState();
-    loadData();
+    loadData().then((_) {
+      print('load data success');
+    });
     ShakeDetector detector = ShakeDetector.autoStart(
       onPhoneShake: () {
         // Simulasi mendapatkan promo atau tidak
@@ -77,8 +79,9 @@ class _Booking3PageState extends State<Booking3Page> {
       double promoDiscount = 0.1;
 
       // Kurangkan nilai hargaPembayaran
+      afterPromo = hargaPembayaran;
       setState(() {
-        hargaPembayaran = hargaPembayaran - (hargaPembayaran * promoDiscount);
+        afterPromo = afterPromo - (afterPromo * promoDiscount);
         isPromoUsed = true;
       });
 
@@ -94,6 +97,8 @@ class _Booking3PageState extends State<Booking3Page> {
   void _savePromoStatus() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isPromoUsed', isPromoUsed);
+    await prefs.setDouble('bookingTotalHarga', afterPromo);
+    await loadData();
   }
 
   Future<void> loadData() async {
@@ -161,6 +166,9 @@ class _Booking3PageState extends State<Booking3Page> {
                 _buildHarga(context),
                 SizedBox(height: 14),
                 Divider(),
+                Center(
+                    child: Text("Shake to Receive Promo!",
+                        style: CustomTextStyles.labelJumOrang)),
                 Form(
                   key: formKey,
                   child: Padding(
@@ -273,7 +281,7 @@ class _Booking3PageState extends State<Booking3Page> {
                   margin: EdgeInsets.only(left: 10),
                   buttonStyle: CustomButtonStyles.fillPrimary,
                   onPressed: () {
-                    if (formKey.currentState!.validate()) {
+                    if (selectedPayment != 0) {
                       saveData();
                       Navigator.pushNamed(
                           context, AppRoutes.bookingSukses); //ke booking sukses

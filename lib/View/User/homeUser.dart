@@ -94,6 +94,9 @@ class HomePage extends ConsumerWidget {
   }
 
   Widget kontenAtraksi(ObjekWisata o, context, ref) {
+    String kategori = (o.kategori ?? '').toLowerCase();
+    String imagePath = 'image/$kategori.jpg';
+
     return ElevatedButton(
       onPressed: () {
         showModalBottomSheet(
@@ -112,7 +115,7 @@ class HomePage extends ConsumerWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           image: DecorationImage(
-            image: AssetImage('images/rajaampat.jpg'),
+            image: AssetImage(imagePath),
             fit: BoxFit.cover,
           ),
         ),
@@ -534,6 +537,8 @@ class HomePage extends ConsumerWidget {
           builder: (BuildContext sheetContext, ScrollController controller) {
             // double screenHeight = MediaQuery.of(sheetContext).size.height;
             // double screenWidth = MediaQuery.of(sheetContext).size.width;
+            String kategori = (o.kategori ?? '').toLowerCase();
+            String imagePath = 'image/$kategori.jpg';
 
             return Stack(
               children: [
@@ -552,8 +557,7 @@ class HomePage extends ConsumerWidget {
                     // height: MediaQuery.of(context).size.height,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                          image: AssetImage('images/rajaampat.jpg'),
-                          fit: BoxFit.cover),
+                          image: AssetImage(imagePath), fit: BoxFit.cover),
                       borderRadius: BorderRadius.vertical(
                         top: Radius.circular(20),
                       ),
