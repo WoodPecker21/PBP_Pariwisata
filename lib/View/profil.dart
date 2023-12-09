@@ -311,54 +311,9 @@ class _ProfileState extends State<Profile> {
           ),
           child: GestureDetector(
             onTap: () {
-              // Trigger the image picker when the profile image is tapped
-              showModalBottomSheet(
-                context: context,
-                builder: ((builder) {
-                  return Container(
-                    height: 120.0,
-                    width: MediaQuery.of(context).size.width,
-                    margin: EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 20,
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          "Choose Profile Photo",
-                          style: TextStyle(
-                            fontSize: 20.0,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            TextButton.icon(
-                              onPressed: () {
-                                Navigator.pop(context); // Close the modal
-                                _pickImageFromCamera();
-                              },
-                              icon: Icon(Icons.camera),
-                              label: Text("Camera"),
-                            ),
-                            TextButton.icon(
-                              onPressed: () {
-                                Navigator.pop(context); // Close the modal
-                                _pickImageFromGallery();
-                              },
-                              icon: Icon(Icons.image),
-                              label: Text('Gallery'),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                }),
-              );
+              if (_isEditing) {
+                _showImageOptions(); // Panggil fungsi untuk menampilkan modal pemilihan gambar
+              }
             },
             child: Stack(
               alignment: Alignment.center,
@@ -670,4 +625,55 @@ class _ProfileState extends State<Profile> {
       ],
     );
   }
+
+  void _showImageOptions() {
+  showModalBottomSheet(
+    context: context,
+    builder: ((builder) {
+      return Container(
+        height: 120.0,
+        width: MediaQuery.of(context).size.width,
+        margin: EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 20,
+        ),
+        child: Column(
+          children: <Widget>[
+            Text(
+              "Choose Profile Photo",
+              style: TextStyle(
+                fontSize: 20.0,
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                TextButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context); 
+                    _pickImageFromCamera();
+                  },
+                  icon: Icon(Icons.camera),
+                  label: Text("Camera"),
+                ),
+                TextButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context); 
+                    _pickImageFromGallery();
+                  },
+                  icon: Icon(Icons.image),
+                  label: Text('Gallery'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    }),
+  );
+}
+
 }
