@@ -278,9 +278,6 @@ class _RegisterPageState extends State<RegisterPage> {
                                           if (value == null || value.isEmpty) {
                                             return 'Tanggal lahir harus terisi!!';
                                           }
-                                          if (selectedDate.year > 2005) {
-                                            return 'Anda Harus Berumur 18 Tahun!!';
-                                          }
                                           return null;
                                         },
                                       ),
@@ -430,6 +427,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                                     },
                                                   ),
                                                   TextButton(
+                                                    key: Key('ok'),
                                                     child: Text("OK"),
                                                     onPressed: () async {
                                                       // Call addUser only if the user clicks "OK"

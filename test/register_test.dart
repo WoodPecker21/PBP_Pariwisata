@@ -82,6 +82,13 @@ void main() {
     await widgetTester.tap(registerButton);
     await widgetTester.pumpAndSettle(Duration(seconds: 5));
 
+    final okButton = find.byKey(Key('ok'));
+
+    expect(okButton, findsOneWidget);
+    await widgetTester.tap(okButton);
+
+    await widgetTester.pumpAndSettle(Duration(seconds: 5));
+
     final login = find.byKey(Key('login'));
     expect(login, findsOneWidget);
   });

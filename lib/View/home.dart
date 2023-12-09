@@ -242,12 +242,10 @@ class HomeView extends ConsumerWidget {
                           width: MediaQuery.of(context).size.width * 0.8,
                           height: 150,
                           child: Center(
-                            child: o.gambar != null
-                                ? Image.asset(
-                                    imagePath,
-                                    fit: BoxFit.cover,
-                                  )
-                                : Placeholder(),
+                            child: Image.asset(
+                              imagePath,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       ),
