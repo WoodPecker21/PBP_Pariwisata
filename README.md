@@ -64,12 +64,20 @@ Fungsi:
 -------------------- TUBES EXTRA ------------------------------
 Fungsi:
 
-- Home User (Candra)
+- Home User, widget tampil sheet objekwisata (Candra)
+- home user to API (Idelia)
 - Transaksi/booking step 1,2,3,sukses (Idelia)
 - show booking, edit tgl dan delete booking (idelia)
-- fix profil (Agustinus)
 - show, input news (Joanna)
 - landing page (idelia)
 - privacy policy page (joanna)
-- home amdin (Agustinus)
+- fix home admin (Idelia, Agustinus)
+- profil ui (Agustinus)
+- profil update profil (Joanna)
+- news (Joanna)
+- news to API (Idelia)
+- edit booking halaman denda (Idelia)
+- shake to get promo in booking langkah pembayaran (Candra)
+- deploy (Joanna)
+- login as admin, yaitu register biasa dengan username dan password admin (Idelia)
 - dst
